@@ -18,6 +18,8 @@
 
 #include <gtest/gtest.h>
 
+#include "tst_gameinfo.h"
+
 int main(int argc, char *argv[])
 {
     ::testing::InitGoogleTest(&argc, argv);

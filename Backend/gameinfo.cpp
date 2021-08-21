@@ -30,9 +30,59 @@ namespace Backend
         return this->playerInfos;
     }
 
-    void GameInfo::SetPlayers(std::vector<std::wstring> players)
+    const PlayerInfo& GameInfo::Dealer() const
     {
-        // todo : ensure uniqueness of names
+        return this->playerInfos[this->currentDealerIndex];
+    }
+
+    void GameInfo::SetPlayers(std::vector<std::wstring> players,
+                              std::wstring dealer,
+                              std::set<unsigned int> sitOutScheme)
+    {
+        bool dealerFound = false;
+        const auto playersSize = players.size();
+
+        if(playersSize < 4u)
+        {
+            throw std::exception("not enough players");
+        }
+
+        for(size_t i = 0; i < playersSize; ++i)
+        {
+            if(dealer == players[i])
+            {
+                dealerFound = true;
+            }
+
+            for(size_t j = i + 1; j < playersSize; ++j)
+            {
+                if(players[i] == players[j])
+                {
+                    throw std::exception("names must be unique");
+                }
+            }
+        }
+
+        if(!dealerFound)
+        {
+            throw std::exception("name of dealer must be among the players");
+        }
+
+        if(playersSize > 5u && sitOutScheme.size() + 5u != playersSize)
+        {
+            throw std::exception("incorrect size of the sit out scheme");
+        }
+
+        this->SortAndSetPlayerInfos(players);
+
+        this->SetDealer(dealer);
+
+        this->SetAndApplyScheme(sitOutScheme);
+    }
+
+    void Backend::GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)
+    {
+        this->numberOfPresentPlayers = static_cast<unsigned int>(players.size());
 
         std::vector<PlayerInfo> newInfos;
 
@@ -47,14 +97,77 @@ namespace Backend
 
             if(playerInfoIt != this->playerInfos.end())
             {
+                playerInfoIt->SetIsPresent(true);
                 newInfos.push_back(*playerInfoIt);
             }
             else
             {
-                newInfos.emplace_back(PlayerInfo(*playersIt));
+                PlayerInfo newPlayer(*playersIt);
+                newPlayer.SetIsPresent(true);
+                newInfos.emplace_back(newPlayer);
+            }
+        }
+
+        auto playerInfosIt = playerInfos.begin();
+        auto playerInfosEnd = playerInfos.end();
+        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        {
+
+            auto playerIt = std::find_if(
+                        players.begin(),
+                        players.end(),
+                        [&](std::wstring player){ return player == playerInfosIt->Name(); });
+
+            if( playerIt == players.end() && playerInfosIt->HasPlayed())
+            {
+                playerInfosIt->SetIsPresent(false);
+                playerInfosIt->SetIsPlaying(false);
+                newInfos.push_back(*playerInfosIt);
             }
         }
 
         this->playerInfos = newInfos;
+    }
+
+    void Backend::GameInfo::SetDealer(std::wstring dealer)
+    {
+        auto dealerIt = std::find_if(
+                    this->playerInfos.begin(),
+                    this->playerInfos.end(),
+                    [&](PlayerInfo pi){ return pi.Name() == dealer; });
+
+        if(dealerIt == this->playerInfos.end())
+        {
+            throw std::exception("logic error: dealer must be among the players");
+        }
+
+        this->currentDealerIndex = static_cast<unsigned int>(dealerIt - this->playerInfos.begin());
+    }
+
+    void Backend::GameInfo::SetAndApplyScheme(std::set<unsigned int> newScheme)
+    {
+        this->sitOutScheme = newScheme;
+
+        if(numberOfPresentPlayers > 4)
+        {
+            this->sitOutScheme.insert(0u);
+        }
+
+        for(unsigned int i = currentDealerIndex; i < currentDealerIndex + numberOfPresentPlayers; ++i)
+        {
+            bool isPlaying = this->sitOutScheme.count(i - currentDealerIndex) == 0;
+
+            this->playerInfos[i % this->numberOfPresentPlayers].SetIsPlaying(isPlaying);
+        }
+    }
+
+    void GameInfo::temp_SetAllPlayersToPlayed()
+    {
+        auto playerInfosIt = playerInfos.begin();
+        auto playersInfoEnd = playerInfos.end();
+        for(; playerInfosIt != playersInfoEnd; ++playerInfosIt)
+        {
+            playerInfosIt->SetHasPlayed(true);
+        }
     }
 }

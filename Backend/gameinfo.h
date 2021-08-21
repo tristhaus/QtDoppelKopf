@@ -20,6 +20,7 @@
 #define GAMEINFO_H
 
 #include <vector>
+#include <set>
 #include <string>
 #include "playerinfo.h"
 
@@ -33,6 +34,9 @@ namespace Backend
     {
     private:
         std::vector<PlayerInfo> playerInfos;
+        unsigned int numberOfPresentPlayers;
+        unsigned int currentDealerIndex;
+        std::set<unsigned int> sitOutScheme;
 
     public:
         /*!
@@ -47,10 +51,29 @@ namespace Backend
         const std::vector<PlayerInfo> & PlayerInfos() const;
 
         /*!
+         * \brief Indicates the current dealer.
+         * \return A player info about the current dealer.
+         */
+        const PlayerInfo & Dealer() const;
+
+        /*!
          * \brief Set the name of the current players.
          * \param players The names of the current players, which must be unique.
+         * \param dealer The name of the current dealer.
+         * \param sitOutScheme The positions of players sitting out, necessary for 6 players or more.
+         *                     Zero is the dealer, which is always implied.
          */
-        void SetPlayers(std::vector<std::wstring> players);
+        void SetPlayers(std::vector<std::wstring> players,
+                        std::wstring dealer,
+                        std::set<unsigned int> sitOutScheme);
+
+        // todo: remove this method and replace by playing
+        void temp_SetAllPlayersToPlayed();
+
+    private:
+        void SortAndSetPlayerInfos(std::vector<std::wstring> players);
+        void SetDealer(std::wstring dealer);
+        void SetAndApplyScheme(std::set<unsigned int> newScheme);
     };
 }
 

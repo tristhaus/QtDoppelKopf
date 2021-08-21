@@ -27,7 +27,8 @@ TEMPLATE = app
 CONFIG += console c++11 thread
 CONFIG -= app_bundle
 
-HEADERS +=
+HEADERS += \
+    tst_gameinfo.h
 
 SOURCES += \
         main.cpp
