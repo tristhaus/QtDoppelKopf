@@ -16,7 +16,7 @@
  *
  */
 
-#include "mainwindow.h"
+#include "../Frontend/mainwindow.h"
 
 #include <QApplication>
 
