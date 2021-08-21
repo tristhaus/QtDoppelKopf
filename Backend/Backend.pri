@@ -17,5 +17,9 @@
 #
 
 HEADERS += \
+    $$PWD/gameinfo.h \
+    $$PWD/playerinfo.h
 
 SOURCES += \
+    $$PWD/gameinfo.cpp \
+    $$PWD/playerinfo.cpp
