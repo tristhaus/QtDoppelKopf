@@ -80,6 +80,40 @@ namespace Backend
         this->SetAndApplyScheme(sitOutScheme);
     }
 
+    void GameInfo::PushDeal(std::vector<std::pair<std::wstring, int>> changes)
+    {
+        if(changes.size() != 4)
+        {
+            throw std::exception("changes must have size 4");
+        }
+
+        auto changesIt = changes.begin();
+        auto changesEnd = changes.end();
+        for(; changesIt != changesEnd; ++changesIt)
+        {
+            // todo also persist score
+            auto playerIt = std::find_if(this->playerInfos.begin(),
+                                      this->playerInfos.end(),
+                                      [&](PlayerInfo pi){ return pi.Name() == changesIt->first; });
+
+            if(playerIt == this->playerInfos.end())
+            {
+                throw std::exception("found change for unknown player");
+            }
+
+            if(!playerIt->IsPlaying())
+            {
+                throw std::exception("found change for player not playing");
+            }
+
+            playerIt->SetHasPlayed(true);
+        }
+
+        this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
+
+        this->ApplyScheme();
+    }
+
     void Backend::GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)
     {
         this->numberOfPresentPlayers = static_cast<unsigned int>(players.size());
@@ -153,21 +187,16 @@ namespace Backend
             this->sitOutScheme.insert(0u);
         }
 
+        this->ApplyScheme();
+    }
+
+    void Backend::GameInfo::ApplyScheme()
+    {
         for(unsigned int i = currentDealerIndex; i < currentDealerIndex + numberOfPresentPlayers; ++i)
         {
             bool isPlaying = this->sitOutScheme.count(i - currentDealerIndex) == 0;
 
             this->playerInfos[i % this->numberOfPresentPlayers].SetIsPlaying(isPlaying);
-        }
-    }
-
-    void GameInfo::temp_SetAllPlayersToPlayed()
-    {
-        auto playerInfosIt = playerInfos.begin();
-        auto playersInfoEnd = playerInfos.end();
-        for(; playerInfosIt != playersInfoEnd; ++playerInfosIt)
-        {
-            playerInfosIt->SetHasPlayed(true);
         }
     }
 }

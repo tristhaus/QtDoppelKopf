@@ -67,13 +67,17 @@ namespace Backend
                         std::wstring dealer,
                         std::set<unsigned int> sitOutScheme);
 
-        // todo: remove this method and replace by playing
-        void temp_SetAllPlayersToPlayed();
+        /*!
+         * \brief Pushes a game - todo: NOT YET PERSISTED.
+         * \param changes Collection of player names and (positive/negative) points awarded.
+         */
+        void PushDeal(std::vector<std::pair<std::wstring, int>> changes);
 
     private:
         void SortAndSetPlayerInfos(std::vector<std::wstring> players);
         void SetDealer(std::wstring dealer);
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
+        void ApplyScheme();
     };
 }
 
