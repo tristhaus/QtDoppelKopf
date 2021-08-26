@@ -22,6 +22,7 @@
 #include <memory>
 #include <vector>
 #include <set>
+#include <map>
 #include <string>
 #include "playerinfo.h"
 
@@ -36,6 +37,7 @@ namespace Backend
     private:
         class PlayerInfoInternal;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
+        std::map<std::wstring, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
         unsigned int numberOfPresentPlayers;
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;

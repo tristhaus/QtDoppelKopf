@@ -341,24 +341,14 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
         }
     }, std::exception);
 
-    EXPECT_THROW({
-        try
-        {
-            gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
-                         {
-                             std::make_pair<std::wstring, int>(L"A", 0),
-                             std::make_pair<std::wstring, int>(L"B", 0),
-                             std::make_pair<std::wstring, int>(L"C", 0),
-                             std::make_pair<std::wstring, int>(L"Z", 0)
-                         });
-        }
-        catch( const std::exception& e )
-        {
-            EXPECT_STREQ("found change for unknown player", e.what());
-            throw;
-        }
-    }, std::exception);
-
+    EXPECT_THROW({ gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                   {
+                       std::make_pair<std::wstring, int>(L"A", 0),
+                       std::make_pair<std::wstring, int>(L"B", 0),
+                       std::make_pair<std::wstring, int>(L"C", 0),
+                       std::make_pair<std::wstring, int>(L"Z", 0)
+                   });
+                 }, std::exception);
 
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D", L"E"}, L"A", emptySitOutScheme);
 
