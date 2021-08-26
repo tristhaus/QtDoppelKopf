@@ -35,28 +35,13 @@ namespace Backend
         return hasPlayed;
     }
 
-    void PlayerInfo::SetHasPlayed(bool hasPlayed)
-    {
-        this->hasPlayed = hasPlayed;
-    }
-
     bool PlayerInfo::IsPresent() const
     {
         return isPresent;
     }
 
-    void PlayerInfo::SetIsPresent(bool isPresent)
-    {
-        this->isPresent = isPresent;
-    }
-
     bool PlayerInfo::IsPlaying() const
     {
         return isPlaying;
-    }
-
-    void PlayerInfo::SetIsPlaying(bool isPlaying)
-    {
-        this->isPlaying = isPlaying;
     }
 }

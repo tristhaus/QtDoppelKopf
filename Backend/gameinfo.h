@@ -19,6 +19,7 @@
 #ifndef GAMEINFO_H
 #define GAMEINFO_H
 
+#include <memory>
 #include <vector>
 #include <set>
 #include <string>
@@ -33,7 +34,8 @@ namespace Backend
     class GameInfo
     {
     private:
-        std::vector<PlayerInfo> playerInfos;
+        class PlayerInfoInternal;
+        std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         unsigned int numberOfPresentPlayers;
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;
@@ -48,13 +50,13 @@ namespace Backend
          * \brief Provides access to the player information.
          * \return The player information.
          */
-        const std::vector<PlayerInfo> & PlayerInfos() const;
+        const std::vector<std::shared_ptr<PlayerInfo>> PlayerInfos() const;
 
         /*!
          * \brief Indicates the current dealer.
          * \return A player info about the current dealer.
          */
-        const PlayerInfo & Dealer() const;
+        const std::shared_ptr<PlayerInfo> Dealer() const;
 
         /*!
          * \brief Set the name of the current players.
@@ -78,6 +80,35 @@ namespace Backend
         void SetDealer(std::wstring dealer);
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
         void ApplyScheme();
+
+    private:
+        class PlayerInfoInternal : public PlayerInfo
+        {
+        public:
+            /*!
+             * \brief Initializes a new instance from the given name.
+             * \param The unique name of the player.
+             */
+            PlayerInfoInternal(std::wstring name);
+
+            /*!
+             * \brief Sets a value indicating whether the player has participated in any deal.
+             * \param a value indicating whether the player has participated in any deal.
+             */
+            void SetHasPlayed(bool hasPlayed);
+
+            /*!
+             * \brief Sets a value indicating whether the player is present at the table.
+             * \param a value indicating whether the player is present at the table.
+             */
+            void SetIsPresent(bool isPresent);
+
+            /*!
+             * \brief Sets a value indicating whether the player is playing during the next deal.
+             * \param a value indicating whether the player is playing during the next deal.
+             */
+            void SetIsPlaying(bool isPlaying);
+        };
     };
 }
 

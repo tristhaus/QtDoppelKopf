@@ -24,12 +24,12 @@
 namespace Backend
 {
     /*!
-     * \brief The PlayerInfo class collects and maintains information
+     * \brief The PlayerInfo class collects information
      *        regarding a player identified by name.
      */
     class PlayerInfo
     {
-    private:
+    protected:
         std::wstring name;
         bool hasPlayed;
         bool isPresent;
@@ -55,34 +55,16 @@ namespace Backend
         bool HasPlayed() const;
 
         /*!
-         * \brief Sets a value indicating whether the player has participated in any deal.
-         * \param a value indicating whether the player has participated in any deal.
-         */
-        void SetHasPlayed(bool hasPlayed);
-
-        /*!
          * \brief Gets a value indicating whether the player is present at the table.
          * \return A value indicating whether the player is present at the table.
          */
         bool IsPresent() const;
 
         /*!
-         * \brief Sets a value indicating whether the player is present at the table.
-         * \param a value indicating whether the player is present at the table.
-         */
-        void SetIsPresent(bool isPresent);
-
-        /*!
          * \brief Gets a value indicating whether the player is playing during the next deal.
          * \return A value indicating whether the player is playing during the next deal.
          */
         bool IsPlaying() const;
-
-        /*!
-         * \brief Sets a value indicating whether the player is playing during the next deal.
-         * \param a value indicating whether the player is playing during the next deal.
-         */
-        void SetIsPlaying(bool isPlaying);
     };
 }
 

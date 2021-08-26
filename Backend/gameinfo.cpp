@@ -25,12 +25,12 @@ namespace Backend
     {
     }
 
-    const std::vector<PlayerInfo> & GameInfo::PlayerInfos() const
+    const std::vector<std::shared_ptr<PlayerInfo>> GameInfo::PlayerInfos() const
     {
-        return this->playerInfos;
+        return std::vector<std::shared_ptr<PlayerInfo>>(this->playerInfos.begin(), this->playerInfos.end());
     }
 
-    const PlayerInfo& GameInfo::Dealer() const
+    const std::shared_ptr<PlayerInfo> GameInfo::Dealer() const
     {
         return this->playerInfos[this->currentDealerIndex];
     }
@@ -94,19 +94,19 @@ namespace Backend
             // todo also persist score
             auto playerIt = std::find_if(this->playerInfos.begin(),
                                       this->playerInfos.end(),
-                                      [&](PlayerInfo pi){ return pi.Name() == changesIt->first; });
+                                      [&](std::shared_ptr<PlayerInfoInternal> pi){ return pi->Name() == changesIt->first; });
 
             if(playerIt == this->playerInfos.end())
             {
                 throw std::exception("found change for unknown player");
             }
 
-            if(!playerIt->IsPlaying())
+            if(!(*playerIt)->IsPlaying())
             {
                 throw std::exception("found change for player not playing");
             }
 
-            playerIt->SetHasPlayed(true);
+            (*playerIt)->SetHasPlayed(true);
         }
 
         this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
@@ -118,7 +118,7 @@ namespace Backend
     {
         this->numberOfPresentPlayers = static_cast<unsigned int>(players.size());
 
-        std::vector<PlayerInfo> newInfos;
+        std::vector<std::shared_ptr<PlayerInfoInternal>> newInfos;
 
         auto playersIt = players.begin();
         auto playersEnd = players.end();
@@ -127,17 +127,17 @@ namespace Backend
             auto playerInfoIt = std::find_if(
                         this->playerInfos.begin(),
                         this->playerInfos.end(),
-                        [&](PlayerInfo pi){ return pi.Name() == *playersIt; });
+                        [&](std::shared_ptr<PlayerInfoInternal> pi){ return pi->Name() == *playersIt; });
 
             if(playerInfoIt != this->playerInfos.end())
             {
-                playerInfoIt->SetIsPresent(true);
+                (*playerInfoIt)->SetIsPresent(true);
                 newInfos.push_back(*playerInfoIt);
             }
             else
             {
-                PlayerInfo newPlayer(*playersIt);
-                newPlayer.SetIsPresent(true);
+                auto newPlayer = std::make_shared<PlayerInfoInternal>(*playersIt);
+                newPlayer->SetIsPresent(true);
                 newInfos.emplace_back(newPlayer);
             }
         }
@@ -150,12 +150,12 @@ namespace Backend
             auto playerIt = std::find_if(
                         players.begin(),
                         players.end(),
-                        [&](std::wstring player){ return player == playerInfosIt->Name(); });
+                        [&](std::wstring player){ return player == (*playerInfosIt)->Name(); });
 
-            if( playerIt == players.end() && playerInfosIt->HasPlayed())
+            if( playerIt == players.end() && (*playerInfosIt)->HasPlayed())
             {
-                playerInfosIt->SetIsPresent(false);
-                playerInfosIt->SetIsPlaying(false);
+                (*playerInfosIt)->SetIsPresent(false);
+                (*playerInfosIt)->SetIsPlaying(false);
                 newInfos.push_back(*playerInfosIt);
             }
         }
@@ -168,7 +168,7 @@ namespace Backend
         auto dealerIt = std::find_if(
                     this->playerInfos.begin(),
                     this->playerInfos.end(),
-                    [&](PlayerInfo pi){ return pi.Name() == dealer; });
+                    [&](std::shared_ptr<PlayerInfoInternal> pi){ return pi->Name() == dealer; });
 
         if(dealerIt == this->playerInfos.end())
         {
@@ -196,7 +196,27 @@ namespace Backend
         {
             bool isPlaying = this->sitOutScheme.count(i - currentDealerIndex) == 0;
 
-            this->playerInfos[i % this->numberOfPresentPlayers].SetIsPlaying(isPlaying);
+            this->playerInfos[i % this->numberOfPresentPlayers]->SetIsPlaying(isPlaying);
         }
+    }
+
+    Backend::GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name)
+        : PlayerInfo(name)
+    {
+    }
+
+    void Backend::GameInfo::PlayerInfoInternal::SetHasPlayed(bool hasPlayed)
+    {
+        this->hasPlayed = hasPlayed;
+    }
+
+    void Backend::GameInfo::PlayerInfoInternal::SetIsPresent(bool isPresent)
+    {
+        this->isPresent = isPresent;
+    }
+
+    void Backend::GameInfo::PlayerInfoInternal::SetIsPlaying(bool isPlaying)
+    {
+        this->isPlaying = isPlaying;
     }
 }
