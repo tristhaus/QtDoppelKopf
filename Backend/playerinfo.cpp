@@ -17,6 +17,7 @@
  */
 
 #include "playerinfo.h"
+#include <numeric>
 
 namespace Backend
 {
@@ -43,5 +44,10 @@ namespace Backend
     bool PlayerInfo::IsPlaying() const
     {
         return isPlaying;
+    }
+
+    int PlayerInfo::CurrentScore() const
+    {
+        return std::reduce(dealResults.begin(), dealResults.end());
     }
 }

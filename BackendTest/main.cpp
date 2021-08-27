@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 
 #include "tst_gameinfo.h"
+#include "tst_playerinfo.h"
 
 int main(int argc, char *argv[])
 {

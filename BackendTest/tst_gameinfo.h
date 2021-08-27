@@ -369,6 +369,26 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
             throw;
         }
     }, std::exception);
+
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"D", L"E"}, L"E", emptySitOutScheme);
+
+    EXPECT_THROW({
+        try
+        {
+            gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                         {
+                             std::make_pair<std::wstring, int>(L"A", 3),
+                             std::make_pair<std::wstring, int>(L"B", 3),
+                             std::make_pair<std::wstring, int>(L"C", 0),
+                             std::make_pair<std::wstring, int>(L"D", -3)
+                         });
+        }
+        catch( const std::exception& e )
+        {
+            EXPECT_STREQ("changes must sum to zero", e.what());
+            throw;
+        }
+    }, std::exception);
 }
 
 #endif // TST_GAMEINFO_H

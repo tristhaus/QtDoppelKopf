@@ -20,6 +20,7 @@
 #define PLAYERINFO_H
 
 #include <string>
+#include <vector>
 
 namespace Backend
 {
@@ -34,6 +35,7 @@ namespace Backend
         bool hasPlayed;
         bool isPresent;
         bool isPlaying;
+        std::vector<int> dealResults;
 
     public:
         /*!
@@ -65,6 +67,12 @@ namespace Backend
          * \return A value indicating whether the player is playing during the next deal.
          */
         bool IsPlaying() const;
+
+        /*!
+         * \brief Gets the current score of the player.
+         * \return A number indicating the current score of the player.
+         */
+        int CurrentScore() const;
     };
 }
 

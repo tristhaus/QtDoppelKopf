@@ -17,11 +17,13 @@
  */
 
 #include <algorithm>
+#include <numeric>
 #include "gameinfo.h"
 
 namespace Backend
 {
     GameInfo::GameInfo()
+        : DealsRecorded(0u)
     {
     }
 
@@ -89,6 +91,16 @@ namespace Backend
 
         auto changesIt = changes.begin();
         auto changesEnd = changes.end();
+
+        int checksum = std::accumulate(changesIt,
+                                       changesEnd,
+                                       0,
+                                       [](int s, std::pair<std::wstring, int> c){ s += c.second; return s; });
+        if(checksum != 0)
+        {
+            throw std::exception("changes must sum to zero");
+        }
+
         for(; changesIt != changesEnd; ++changesIt)
         {
             auto player = nameToPlayerInfo.at(changesIt->first);
@@ -98,7 +110,19 @@ namespace Backend
                 throw std::exception("found change for player not playing");
             }
 
+            player->PushDealResult(changesIt->second);
+
             player->SetHasPlayed(true);
+        }
+
+        auto playerInfosIt = this->playerInfos.begin();
+        auto playerInfosEnd = this->playerInfos.end();
+        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        {
+            if(!(*playerInfosIt)->IsPlaying())
+            {
+                (*playerInfosIt)->PushDealResult(0);
+            }
         }
 
         this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
@@ -118,7 +142,13 @@ namespace Backend
         {
             if(nameToPlayerInfo.count(*playersIt) == 0)
             {
-                nameToPlayerInfo[*playersIt] = std::make_shared<PlayerInfoInternal>(*playersIt);
+                auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt);
+                while(newPlayerInfo->NumberOfRecordedDeals() < this->DealsRecorded)
+                {
+                    newPlayerInfo->PushDealResult(0);
+                }
+
+                nameToPlayerInfo[*playersIt] = newPlayerInfo;
             }
 
             auto currentPlayerInfo = nameToPlayerInfo[*playersIt];
@@ -202,5 +232,15 @@ namespace Backend
     void GameInfo::PlayerInfoInternal::SetIsPlaying(bool isPlaying)
     {
         this->isPlaying = isPlaying;
+    }
+
+    void GameInfo::PlayerInfoInternal::PushDealResult(int dealResult)
+    {
+        this->dealResults.push_back(dealResult);
+    }
+
+    size_t GameInfo::PlayerInfoInternal::NumberOfRecordedDeals() const
+    {
+        return this->dealResults.size();
     }
 }

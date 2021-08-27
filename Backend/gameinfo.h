@@ -36,6 +36,7 @@ namespace Backend
     {
     private:
         class PlayerInfoInternal;
+        unsigned int DealsRecorded;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         std::map<std::wstring, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
         unsigned int numberOfPresentPlayers;
@@ -72,7 +73,7 @@ namespace Backend
                         std::set<unsigned int> sitOutScheme);
 
         /*!
-         * \brief Pushes a game - todo: NOT YET PERSISTED.
+         * \brief Pushes a game.
          * \param changes Collection of player names and (positive/negative) points awarded.
          */
         void PushDeal(std::vector<std::pair<std::wstring, int>> changes);
@@ -110,6 +111,18 @@ namespace Backend
              * \param a value indicating whether the player is playing during the next deal.
              */
             void SetIsPlaying(bool isPlaying);
+
+            /*!
+             * \brief Adds a result of a deal to the player.
+             * \param dealResult The change in score to push.
+             */
+            void PushDealResult(int dealResult);
+
+            /*!
+             * \brief Gets the number of recorded deals for this player.
+             * \return The number of records.
+             */
+            size_t NumberOfRecordedDeals() const;
         };
     };
 }
