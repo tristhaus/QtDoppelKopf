@@ -20,7 +20,7 @@ SOURCES += \
     $$PWD/mainwindow.cpp
 
 HEADERS += \
-    $$PWD/mainwindow.h
+    $$PWD/mainwindow.h \
+    $$PWD/mainwindow_ui.h
 
-FORMS += \
-    $$PWD/mainwindow.ui
+FORMS +=
