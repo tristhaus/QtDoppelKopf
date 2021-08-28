@@ -324,23 +324,6 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
                           std::make_pair<std::wstring, int>(L"D", 0)
                       });
 
-    EXPECT_THROW({
-        try
-        {
-            gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
-                         {
-                             std::make_pair<std::wstring, int>(L"A", 0),
-                             std::make_pair<std::wstring, int>(L"B", 0),
-                             std::make_pair<std::wstring, int>(L"C", 0)
-                         });
-        }
-        catch( const std::exception& e )
-        {
-            EXPECT_STREQ("changes must have size 4", e.what());
-            throw;
-        }
-    }, std::exception);
-
     EXPECT_THROW({ gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                    {
                        std::make_pair<std::wstring, int>(L"A", 0),

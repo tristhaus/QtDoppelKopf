@@ -84,23 +84,10 @@ namespace Backend
 
     void GameInfo::PushDeal(std::vector<std::pair<std::wstring, int>> changes)
     {
-        if(changes.size() != 4)
-        {
-            throw std::exception("changes must have size 4");
-        }
+        auto actualChanges = this->AutoCompleteDeal(changes);
 
-        auto changesIt = changes.begin();
-        auto changesEnd = changes.end();
-
-        int checksum = std::accumulate(changesIt,
-                                       changesEnd,
-                                       0,
-                                       [](int s, std::pair<std::wstring, int> c){ s += c.second; return s; });
-        if(checksum != 0)
-        {
-            throw std::exception("changes must sum to zero");
-        }
-
+        auto changesIt = actualChanges.begin();
+        auto changesEnd = actualChanges.end();
         for(; changesIt != changesEnd; ++changesIt)
         {
             auto player = nameToPlayerInfo.at(changesIt->first);
@@ -212,6 +199,76 @@ namespace Backend
 
             this->playerInfos[i % this->numberOfPresentPlayers]->SetIsPlaying(isPlaying);
         }
+    }
+
+    std::vector<std::pair<std::wstring, int>> GameInfo::AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges)
+    {
+        auto changesIt = inputChanges.begin();
+        auto changesEnd = inputChanges.end();
+        if(inputChanges.size() == 4)
+        {
+            int checksum = std::accumulate(changesIt,
+                                           changesEnd,
+                                           0,
+                                           [](int s, std::pair<std::wstring, int> c){ s += c.second; return s; });
+            if(checksum != 0)
+            {
+                throw std::exception("changes must sum to zero");
+            }
+
+            return inputChanges;
+        }
+        else if(inputChanges.size() > 4 || inputChanges.size() == 0)
+        {
+            throw std::exception("there can never be more than 4 or zero changes");
+        }
+
+        std::vector<std::pair<std::wstring, int>> newChanges;
+        int found = 0;
+        int instances = 0;
+
+        for(; changesIt != changesEnd; ++changesIt)
+        {
+            if(instances == 0)
+            {
+                found = changesIt->second;
+                ++instances;
+            }
+            else if(found == changesIt->second)
+            {
+                ++instances;
+            }
+            else
+            {
+                throw std::exception("unable to complete the changes from the information given");
+            }
+
+            newChanges.push_back(*changesIt);
+        }
+
+        int valueToSet = - (instances * found) / (4 - static_cast<int>(inputChanges.size()));
+
+        auto playersIt = this->playerInfos.begin();
+        auto playersEnd = this->playerInfos.end();
+        for(; playersIt != playersEnd; ++playersIt)
+        {
+            if(!(*playersIt)->IsPlaying())
+            {
+                continue;
+            }
+
+            auto changeIt = std::find_if(inputChanges.begin(),
+                                         changesEnd,
+                                         [&](std::pair<std::wstring, int> change){ return change.first == (*playersIt)->Name(); });
+            if(changeIt != changesEnd)
+            {
+                continue;
+            }
+
+            newChanges.emplace_back(std::pair<std::wstring, int>((*playersIt)->Name(), valueToSet));
+        }
+
+        return newChanges;
     }
 
     GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name)

@@ -83,6 +83,7 @@ namespace Backend
         void SetDealer(std::wstring dealer);
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
         void ApplyScheme();
+        std::vector<std::pair<std::wstring, int>> AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges);
 
     private:
         class PlayerInfoInternal : public PlayerInfo
