@@ -30,3 +30,50 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::UpdateDisplay()
+{
+    auto playerInfos = this->gameInfo.PlayerInfos();
+
+    // set visibility
+    for(unsigned int index = 0; index < ui->maxNumberOfPlayers; ++index)
+    {
+        bool visible = false;
+
+        if(index < playerInfos.size())
+        {
+            auto playerInfo = playerInfos[index];
+            visible = playerInfo->IsPresent() || playerInfo->HasPlayed();
+        }
+
+        ui->names[index]->setVisible(visible);
+        ui->lastGames[index]->setVisible(visible);
+        ui->actuals[index]->setVisible(visible);
+        ui->scores[index]->setVisible(visible);
+        ui->cashs[index]->setVisible(visible);
+
+        ui->statisticNames[index]->setVisible(visible);
+        ui->numberWons[index]->setVisible(visible);
+        ui->numberLosts[index]->setVisible(visible);
+        ui->numberPlayeds[index]->setVisible(visible);
+        ui->numberSoloWons[index]->setVisible(visible);
+        ui->numberSoloLosts[index]->setVisible(visible);
+        ui->pointsSolos[index]->setVisible(visible);
+        ui->maxSingleWins[index]->setVisible(visible);
+        ui->maxSingleLosss[index]->setVisible(visible);
+        ui->unmultipliedScores[index]->setVisible(visible);
+    }
+
+    // set data
+    for(unsigned int index = 0; index < playerInfos.size(); ++index)
+    {
+        auto playerInfo = playerInfos[index];
+
+        QString name = QString::fromStdWString(playerInfo->Name());
+        ui->names[index]->setText(name);
+        ui->statisticNames[index]->setText(name);
+
+        ui->scores[index]->setText(QString().setNum(playerInfo->CurrentScore()));
+        ui->actuals[index]->setEnabled(playerInfo->IsPlaying());
+    }
+}

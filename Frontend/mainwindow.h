@@ -20,6 +20,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "../Backend/gameinfo.h"
+#include "../Backend/playerinfo.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -29,11 +31,15 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+private:
+    Ui::MainWindow *ui;
+    Backend::GameInfo gameInfo;
+    unsigned int dealerIndex;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    void UpdateDisplay();
 };
 #endif // MAINWINDOW_H
