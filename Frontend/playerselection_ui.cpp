@@ -32,7 +32,16 @@ Ui::PlayerSelection::PlayerSelection(unsigned int maxNumberOfPlayers,
       originalSitOutScheme(currentSitOutScheme)
 {
     this->SetupUi();
+    this->SetOriginalPlayers();
     this->adjustSize();
+
+    connect(dialogAcceptButton, &QPushButton::clicked, this, &PlayerSelection::OnOKButtonClicked);
+    connect(dialogNumberOfPresentPlayers, &QSpinBox::valueChanged, this, &PlayerSelection::OnNumberOfPresentPlayersChange);
+}
+
+std::tuple<std::vector<QString>, QString, std::set<unsigned int>> Ui::PlayerSelection::GetResults() const
+{
+    return std::tuple<std::vector<QString>, QString, std::set<unsigned int>>(resultPlayers, resultDealer, resultSitOutScheme);
 }
 
 void Ui::PlayerSelection::SetupUi()
@@ -120,4 +129,134 @@ void Ui::PlayerSelection::SetupUi()
     verticalDialogLayout->addLayout(bottomLayout);
 
     this->setLayout(verticalDialogLayout);
+}
+
+void Ui::PlayerSelection::SetOriginalPlayers()
+{
+    auto dealerIt = std::find_if(originalPlayers.begin(), originalPlayers.end(), [&](std::pair<QString, bool> left) { return originalDealer.compare(left.first) == 0; } );
+
+    if(dealerIt == originalPlayers.end() || !dealerIt->second)
+    {
+        throw std::exception("dealer not among players or not active");
+    }
+
+    for(unsigned int index = 0; index < originalPlayers.size(); ++index)
+    {
+        dialogNames[index]->setText(originalPlayers[index].first);
+
+        bool needed = originalPlayers[index].second;
+        dialogNames[index]->setVisible(needed);
+        dialogNames[index]->setEnabled(needed);
+        dealerButtons[index]->setVisible(needed);
+        dealerButtons[index]->setEnabled(needed);
+    }
+
+    for(unsigned int index = 0; index < maxNumberOfPlayers; ++index)
+    {
+        bool checked = index == (dealerIt - originalPlayers.begin());
+        dealerButtons[index]->setChecked(checked);
+    }
+
+    unsigned int index = 1;
+    for(auto schemeIt = originalSitOutScheme.begin(); schemeIt != originalSitOutScheme.end(); ++schemeIt)
+    {
+        if(*schemeIt == 0){
+            continue;
+        }
+
+        dialogSittingOuts[index]->setValue((*schemeIt) + 1);
+        ++index;
+    }
+}
+
+void Ui::PlayerSelection::OnOKButtonClicked()
+{
+    // assemble and validate
+
+    QRegularExpression regexNameValidation("^[ \t]*$");
+
+    std::vector<QString> players;
+    QString dealer("");
+    std::set<unsigned int> sitOutScheme;
+
+    for(unsigned int index = 0; index < maxNumberOfPlayers; ++index)
+    {
+        if(dialogNames[index]->isVisible())
+        {
+            QString value(dialogNames[index]->text());
+
+            if(regexNameValidation.match(value).hasMatch())
+            {
+                return;
+            }
+
+            auto it = std::find_if(players.begin(), players.end(), [&](QString left){ return left.compare(value, Qt::CaseSensitivity::CaseInsensitive) == 0; });
+            if(it != players.end())
+            {
+                return;
+            }
+
+            players.push_back(value);
+
+            if(dealerButtons[index]->isChecked())
+            {
+                dealer = value;
+            }
+        }
+    }
+
+    if(dealer.isEmpty())
+    {
+        return;
+    }
+
+    for(unsigned int index = 1; index < (maxNumberOfPlayers - 4); ++index)
+    {
+        if(dialogSittingOuts[index]->isVisible())
+        {
+            unsigned int value = static_cast<unsigned int>(dialogSittingOuts[index]->value() - 1); // is one-indexed to user
+
+            if(value + 1 >= players.size() || sitOutScheme.count(value) > 0)
+            {
+                return;
+            }
+
+            sitOutScheme.insert(value);
+        }
+    }
+
+    // set
+
+    resultPlayers = players;
+    resultDealer = dealer;
+    resultSitOutScheme = sitOutScheme;
+
+    this->accept();
+}
+
+void Ui::PlayerSelection::OnNumberOfPresentPlayersChange()
+{
+    int newNumber = dialogNumberOfPresentPlayers->value();
+
+    for(unsigned int index = 0; index < maxNumberOfPlayers; ++index)
+    {
+        bool needed = index < static_cast<unsigned int>(newNumber);
+        dialogNames[index]->setVisible(needed);
+        dialogNames[index]->setEnabled(needed);
+
+        if(!needed && dealerButtons[index]->isChecked())
+        {
+            dealerButtons[index]->setChecked(false);
+            dealerButtons[newNumber - 1]->setChecked(true);
+        }
+
+        dealerButtons[index]->setVisible(needed);
+        dealerButtons[index]->setEnabled(needed);
+    }
+
+    for(unsigned int index = 0; index < (maxNumberOfPlayers - 4); ++index)
+    {
+        bool isVisible = (dialogNumberOfPresentPlayers->value() - (4 + static_cast<int>(index))) > 0;
+        dialogSittingOuts[index]->setVisible(isVisible);
+    }
 }

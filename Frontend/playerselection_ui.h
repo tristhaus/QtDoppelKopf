@@ -54,6 +54,10 @@ namespace Ui
         QString originalDealer;
         std::set<unsigned int> originalSitOutScheme;
 
+        std::vector<QString> resultPlayers;
+        QString resultDealer;
+        std::set<unsigned int> resultSitOutScheme;
+
     public:
         QVBoxLayout * verticalDialogLayout;
         QHBoxLayout * topLayout;
@@ -85,8 +89,22 @@ namespace Ui
                         std::set<unsigned int> currentSitOutScheme,
                         QWidget *parent);
 
+        /*!
+         * \brief Gets the results of the configuration regarding the players at the table.
+         * \return A tuple containing:
+         *           all player names
+         *           the name of the dealer
+         *           the zero-indexed sitting out scheme, 0 is the dealer
+         */
+        std::tuple<std::vector<QString>, QString, std::set<unsigned int>> GetResults() const;
+
     private:
         void SetupUi();
+        void SetOriginalPlayers();
+
+    private slots:
+        void OnOKButtonClicked();
+        void OnNumberOfPresentPlayersChange();
     };
 } // namespace Ui
 
