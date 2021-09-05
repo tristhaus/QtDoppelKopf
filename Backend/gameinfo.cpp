@@ -37,6 +37,11 @@ namespace Backend
         return this->playerInfos[this->currentDealerIndex];
     }
 
+    const std::set<unsigned int> GameInfo::SitOutScheme() const
+    {
+        return this->sitOutScheme;
+    }
+
     void GameInfo::SetPlayers(std::vector<std::wstring> players,
                               std::wstring dealer,
                               std::set<unsigned int> sitOutScheme)

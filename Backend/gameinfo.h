@@ -62,6 +62,12 @@ namespace Backend
         const std::shared_ptr<PlayerInfo> Dealer() const;
 
         /*!
+         * \brief Gets the indices of players that are sitting out.
+         * \return The indices of players that are sitting out.
+         */
+        const std::set<unsigned int> SitOutScheme() const;
+
+        /*!
          * \brief Set the name of the current players.
          * \param players The names of the current players, which must be unique.
          * \param dealer The name of the current dealer.
