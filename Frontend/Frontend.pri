@@ -17,10 +17,12 @@
 #
 
 SOURCES += \
-    $$PWD/mainwindow.cpp
+    $$PWD/mainwindow.cpp \
+    $$PWD/playerselection_ui.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
-    $$PWD/mainwindow_ui.h
+    $$PWD/mainwindow_ui.h \
+    $$PWD/playerselection_ui.h
 
 FORMS +=
