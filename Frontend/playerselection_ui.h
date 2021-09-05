@@ -39,6 +39,8 @@
 #include <set>
 #include <vector>
 
+class FrontendTest;
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui
@@ -46,6 +48,9 @@ namespace Ui
     class PlayerSelection : public QDialog
     {
         Q_OBJECT
+
+        friend FrontendTest;
+
     private:
         const unsigned int maxNumberOfPlayers;
         const unsigned int initialNumberOfPlayers;
@@ -58,7 +63,6 @@ namespace Ui
         QString resultDealer;
         std::set<unsigned int> resultSitOutScheme;
 
-    public:
         QVBoxLayout * verticalDialogLayout;
         QHBoxLayout * topLayout;
         QGridLayout * playerNamesGridLayout;

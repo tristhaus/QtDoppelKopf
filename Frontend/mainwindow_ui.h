@@ -35,11 +35,16 @@
 
 QT_BEGIN_NAMESPACE
 
+class MainWindow;
+
 class Ui_MainWindow
 {
+    friend MainWindow;
+
 public:
     const unsigned int maxNumberOfPlayers = 8;
 
+private:
     QWidget *centralwidget;
     QVBoxLayout *verticalLayout;
 
@@ -106,6 +111,7 @@ public:
     std::vector<QLabel*> maxSingleLosss;
     std::vector<QLabel*> unmultipliedScores;
 
+public:
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
