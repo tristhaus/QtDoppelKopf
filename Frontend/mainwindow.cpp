@@ -18,12 +18,17 @@
 
 #include "mainwindow.h"
 #include "mainwindow_ui.h"
+#include "playerselection_ui.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    connect(this->ui->changePlayersButton, &QAbstractButton::pressed, this, &MainWindow::OnChangePlayerPressed);
+
+    ShowPlayerSelection(true);
 }
 
 MainWindow::~MainWindow()
@@ -76,4 +81,157 @@ void MainWindow::UpdateDisplay()
         ui->scores[index]->setText(QString().setNum(playerInfo->CurrentScore()));
         ui->actuals[index]->setEnabled(playerInfo->IsPlaying());
     }
+}
+
+void MainWindow::ShowPlayerSelection(bool calledOnStartup)
+{
+    std::vector<std::pair<QString, bool>> currentPlayers;
+    QString currentDealer;
+    std::set<unsigned int> currentSitOutScheme;
+
+    if(gameInfo.PlayerInfos().size() > 0)
+    {
+        const std::vector<std::shared_ptr<Backend::PlayerInfo>> playerInfos = gameInfo.PlayerInfos();
+
+        for(auto playerInfosIt = playerInfos.begin(); playerInfosIt != playerInfos.end(); ++playerInfosIt)
+        {
+            currentPlayers.emplace_back(std::pair<QString, bool>(QString::fromStdWString((*playerInfosIt)->Name()), (*playerInfosIt)->IsPresent()));
+        }
+
+        std::wstring dealerName = gameInfo.Dealer()->Name();
+        auto dealerIt = std::find_if(playerInfos.cbegin(), playerInfos.cend(), [&](std::shared_ptr<Backend::PlayerInfo> left){ return left->Name().compare(dealerName) == 0; });
+        this->dealerIndex = dealerIt - playerInfos.cbegin();
+
+        currentSitOutScheme = gameInfo.SitOutScheme();
+    }
+    else
+    {
+        this->dealerIndex = 0;
+        currentPlayers = GetDefaultPlayers();
+    }
+
+    currentDealer = currentPlayers[this->dealerIndex].first;
+
+    Ui::PlayerSelection ps(ui->maxNumberOfPlayers, currentPlayers, currentDealer, currentSitOutScheme, this);
+    ps.setModal(true);
+    ps.show();
+    int dialogCode = ps.exec();
+
+    if(dialogCode == QDialog::Rejected)
+    {
+        if(calledOnStartup)
+        {
+            exit(EXIT_FAILURE);
+        }
+
+        return;
+    }
+
+    auto result = ps.GetResults();
+
+    std::vector<std::wstring> players;
+
+    std::transform(std::get<0>(result).begin(),
+                   std::get<0>(result).end(),
+                   std::back_inserter(players),
+                   [](QString qs) { return qs.toStdWString(); });
+
+    auto dealer = std::get<1>(result).toStdWString();
+
+    auto sitOutScheme = std::get<2>(result);
+
+    gameInfo.SetPlayers(players, dealer, sitOutScheme);
+
+    this->UpdateDisplay();
+}
+
+std::vector<std::pair<QString, bool>> MainWindow::GetDefaultPlayers()
+{
+#define PASTE(x, y) x##y
+#define MAKEWIDE(x) PASTE(L,x)
+    return std::vector<std::pair<QString, bool>>
+    {
+#ifdef MY_PLAYER_A
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_A)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler A"), true),
+#endif
+#ifdef MY_PLAYER_B
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_B)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler B"), true),
+#endif
+#ifdef MY_PLAYER_C
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_C)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler C"), true),
+#endif
+#ifdef MY_PLAYER_D
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_D)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler D"), true),
+#endif
+#ifdef MY_PLAYER_E
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_E)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler E"), true),
+#endif
+#ifdef MY_PLAYER_F
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_F)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler F"), true),
+#endif
+#ifdef MY_PLAYER_G
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_G)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler G"), true),
+#endif
+#ifdef MY_PLAYER_H
+        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_H)), true),
+#else
+        std::pair<QString, bool>(QString::fromStdWString(L"Spieler H"), true),
+#endif
+    };
+#undef PASTE
+#undef MAKEWIDE
+}
+
+void MainWindow::ShowNotImplementedMessageBox()
+{
+    auto messageBoxTitle = QString("Nicht implementiert");
+    auto messageBoxText = QString("Diese Funktion ist noch nicht implementiert.");
+    auto errorBox = std::make_unique<QMessageBox>(
+                    QMessageBox::Icon::Warning,
+                    messageBoxTitle,
+                    messageBoxText);
+
+    errorBox->exec();
+}
+
+QString MainWindow::DetermineMultiplierText() const
+{
+    auto preview = this->gameInfo.MultiplierPreview();
+
+    if(preview[2] > 0)
+    {
+        return QString("Dreifachbock (%1:%2:%3)").arg(preview[2]).arg(preview[1]).arg(preview[0]);
+    }
+    else if(preview[1] > 0)
+    {
+        return QString("Doppelbock (%1:%2)").arg(preview[1]).arg(preview[0]);
+    }
+    else if(preview[0] > 0)
+    {
+        return QString("Bock (%1)").arg(preview[0]);
+    }
+    else
+    {
+        return QString("Normalspiel");
+    }
+>>>>>>> 415e674 (i hate strings and the c preproc)
+}
+
+void MainWindow::OnChangePlayerPressed()
+{
+    ShowPlayerSelection(false);
 }

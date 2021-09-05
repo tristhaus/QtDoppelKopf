@@ -41,5 +41,10 @@ public:
 
 private:
     void UpdateDisplay();
+    void ShowPlayerSelection(bool calledOnStartup);
+    std::vector<std::pair<QString, bool>> GetDefaultPlayers();
+
+private slots:
+    void OnChangePlayerPressed();
 };
 #endif // MAINWINDOW_H
