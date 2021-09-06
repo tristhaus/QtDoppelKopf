@@ -23,6 +23,7 @@
 #endif
 
 #include <QtTest>
+#include <QTest>
 #include <QtWidgets/QMenuBar>
 
 #include "../Frontend/playerselection_ui.h"
@@ -37,6 +38,8 @@ public:
 
 private slots:
     void ConstructionShallWorkCompletely();
+    void ConstructionShallThrowOnBadDealer1();
+    void ConstructionShallThrowOnBadDealer2();
 };
 
 FrontendTest::FrontendTest()
@@ -105,6 +108,72 @@ void FrontendTest::ConstructionShallWorkCompletely()
     {
         QFAIL(ex.what());
     }
+}
+
+void FrontendTest::ConstructionShallThrowOnBadDealer1()
+{
+    std::vector<std::pair<QString, bool>> players
+    {
+        std::pair<QString, bool>(QString("A"), true),
+        std::pair<QString, bool>(QString("B"), true),
+        std::pair<QString, bool>(QString("C"), true),
+        std::pair<QString, bool>(QString("D"), false),
+        std::pair<QString, bool>(QString("E"), true),
+        std::pair<QString, bool>(QString("F"), true),
+        std::pair<QString, bool>(QString("G"), true)
+    };
+
+    QString dealer("D");
+    std::set<unsigned int> sitOutScheme
+    {
+        0,
+        3
+    };
+
+    QVERIFY_EXCEPTION_THROWN(
+        try
+        {
+            Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+        }
+        catch( const std::exception& e )
+        {
+            QCOMPARE("dealer not among players or not active", e.what());
+            throw;
+        }
+    , std::exception);
+}
+
+void FrontendTest::ConstructionShallThrowOnBadDealer2()
+{
+    std::vector<std::pair<QString, bool>> players
+    {
+        std::pair<QString, bool>(QString("A"), true),
+        std::pair<QString, bool>(QString("B"), true),
+        std::pair<QString, bool>(QString("C"), true),
+        std::pair<QString, bool>(QString("D"), false),
+        std::pair<QString, bool>(QString("E"), true),
+        std::pair<QString, bool>(QString("F"), true),
+        std::pair<QString, bool>(QString("G"), true)
+    };
+
+    QString dealer("unknown");
+    std::set<unsigned int> sitOutScheme
+    {
+        0,
+        3
+    };
+
+    QVERIFY_EXCEPTION_THROWN(
+        try
+        {
+            Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+        }
+        catch( const std::exception& e )
+        {
+            QCOMPARE("dealer not among players or not active", e.what());
+            throw;
+        }
+    , std::exception);
 }
 
 QTEST_MAIN(FrontendTest)
