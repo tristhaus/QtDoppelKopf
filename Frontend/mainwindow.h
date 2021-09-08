@@ -47,8 +47,14 @@ private:
     void UpdateDisplay();
     void ShowPlayerSelection(bool calledOnStartup);
     std::vector<std::pair<QString, bool>> GetDefaultPlayers();
+    void ShowNotImplementedMessageBox();
 
 private slots:
     void OnChangePlayerPressed();
+    void OnLoadGamePressed();
+    void OnSaveGamePressed();
+    void OnMandatorySoloPressed();
+    void OnCommitPressed();
+    void OnResetPressed();
 };
 #endif // MAINWINDOW_H

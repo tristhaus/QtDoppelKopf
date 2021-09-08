@@ -20,6 +20,8 @@
 #include "mainwindow_ui.h"
 #include "playerselection_ui.h"
 
+#include <QMessageBox>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -27,6 +29,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     connect(this->ui->changePlayersButton, &QAbstractButton::pressed, this, &MainWindow::OnChangePlayerPressed);
+    connect(this->ui->loadButton, &QAbstractButton::pressed, this, &MainWindow::OnLoadGamePressed);
+    connect(this->ui->saveButton, &QAbstractButton::pressed, this, &MainWindow::OnSaveGamePressed);
+    connect(this->ui->mandatorySoloButton, &QAbstractButton::pressed, this, &MainWindow::OnMandatorySoloPressed);
+    connect(this->ui->commitButton, &QAbstractButton::pressed, this, &MainWindow::OnCommitPressed);
+    connect(this->ui->resetButton, &QAbstractButton::pressed, this, &MainWindow::OnResetPressed);
 
     ShowPlayerSelection(true);
 }
@@ -229,9 +236,36 @@ QString MainWindow::DetermineMultiplierText() const
         return QString("Normalspiel");
     }
 >>>>>>> 415e674 (i hate strings and the c preproc)
+=======
+>>>>>>> be4fbf6 (Add "not implemented" message boxes to all main window buttons)
 }
 
 void MainWindow::OnChangePlayerPressed()
 {
-    ShowPlayerSelection(false);
+    this->ShowPlayerSelection(false);
+}
+
+void MainWindow::OnLoadGamePressed()
+{
+    this->ShowNotImplementedMessageBox();
+}
+
+void MainWindow::OnSaveGamePressed()
+{
+    this->ShowNotImplementedMessageBox();
+}
+
+void MainWindow::OnMandatorySoloPressed()
+{
+    this->ShowNotImplementedMessageBox();
+}
+
+void MainWindow::OnCommitPressed()
+{
+    this->ShowNotImplementedMessageBox();
+}
+
+void MainWindow::OnResetPressed()
+{
+    this->ShowNotImplementedMessageBox();
 }
