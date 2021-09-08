@@ -40,7 +40,7 @@ private:
     Backend::GameInfo gameInfo;
     unsigned int dealerIndex;
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(bool showPlayerSelection = true, QWidget *parent = nullptr);
     ~MainWindow();
 
 private:

@@ -36,10 +36,12 @@
 QT_BEGIN_NAMESPACE
 
 class MainWindow;
+class FrontendTest;
 
 class Ui_MainWindow
 {
     friend MainWindow;
+    friend FrontendTest;
 
 public:
     const unsigned int maxNumberOfPlayers = 8;

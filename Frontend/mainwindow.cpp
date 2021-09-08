@@ -22,7 +22,7 @@
 
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(bool showPlayerSelection, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -35,7 +35,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->commitButton, &QAbstractButton::pressed, this, &MainWindow::OnCommitPressed);
     connect(this->ui->resetButton, &QAbstractButton::pressed, this, &MainWindow::OnResetPressed);
 
-    ShowPlayerSelection(true);
+    if(showPlayerSelection)
+    {
+        this->ShowPlayerSelection(true);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -87,6 +90,7 @@ void MainWindow::UpdateDisplay()
 
         ui->scores[index]->setText(QString().setNum(playerInfo->CurrentScore()));
         ui->actuals[index]->setEnabled(playerInfo->IsPlaying());
+        ui->actuals[index]->clear();
     }
 }
 
@@ -262,7 +266,34 @@ void MainWindow::OnMandatorySoloPressed()
 
 void MainWindow::OnCommitPressed()
 {
-    this->ShowNotImplementedMessageBox();
+    std::vector<std::pair<std::wstring, int>> changes;
+
+    for (unsigned int index = 0; index < ui->maxNumberOfPlayers; ++index)
+    {
+        auto & actual = ui->actuals[index];
+
+        if(actual->isEnabled() && !actual->text().isEmpty())
+        {
+            bool intConversionOK = true;
+            int value = actual->text().toInt(&intConversionOK);
+            if(!intConversionOK)
+            {
+                return;
+            }
+
+            std::wstring name = ui->names[index]->text().toStdWString();
+            changes.emplace_back(std::make_pair(name, value));
+        }
+    }
+
+    if(changes.size() == 0)
+    {
+        return;
+    }
+
+    this->gameInfo.PushDeal(changes);
+
+    this->UpdateDisplay();
 }
 
 void MainWindow::OnResetPressed()
