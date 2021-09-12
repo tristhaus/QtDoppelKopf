@@ -36,6 +36,8 @@ class MainWindow : public QMainWindow
     friend FrontendTest;
 
 private:
+    const QString StandardNamesStylesheet = "QLabel { }";
+    const QString DealerNamesStylesheet = "QLabel { border: 3px solid orange ; border-radius : 6px }";
     Ui::MainWindow *ui;
     Backend::GameInfo gameInfo;
     unsigned int dealerIndex;

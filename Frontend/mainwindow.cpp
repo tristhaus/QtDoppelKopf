@@ -49,6 +49,7 @@ MainWindow::~MainWindow()
 void MainWindow::UpdateDisplay()
 {
     auto playerInfos = this->gameInfo.PlayerInfos();
+    auto dealer = this->gameInfo.Dealer();
 
     // set visibility
     for(unsigned int index = 0; index < ui->maxNumberOfPlayers; ++index)
@@ -86,6 +87,15 @@ void MainWindow::UpdateDisplay()
 
         QString name = QString::fromStdWString(playerInfo->Name());
         ui->names[index]->setText(name);
+        if(playerInfo->Name().compare(dealer->Name()) == 0)
+        {
+            ui->names[index]->setStyleSheet(this->DealerNamesStylesheet);
+        }
+        else
+        {
+            ui->names[index]->setStyleSheet(this->StandardNamesStylesheet);
+        }
+
         ui->statisticNames[index]->setText(name);
 
         ui->scores[index]->setText(QString().setNum(playerInfo->CurrentScore()));

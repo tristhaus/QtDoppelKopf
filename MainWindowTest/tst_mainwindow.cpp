@@ -32,6 +32,10 @@ class FrontendTest : public QObject
 {
     Q_OBJECT
 
+private:
+    const QString ExpectedStandardNamesStyleSheet = "QLabel { }";
+    const QString ExpectedDealerNamesStyleSheet = "QLabel { border: 3px solid orange ; border-radius : 6px }";
+
 public:
     FrontendTest();
     ~FrontendTest();
@@ -207,6 +211,9 @@ void FrontendTest::ConstructionShallWorkCompletely()
         {
             QVERIFY2(mw.ui->unmultipliedScores[i], "unmultiplied scores label not created");
         }
+
+        QVERIFY2(mw.StandardNamesStylesheet.compare(ExpectedStandardNamesStyleSheet) == 0, "unexpected content of standard names style sheet");
+        QVERIFY2(mw.DealerNamesStylesheet.compare(ExpectedDealerNamesStyleSheet) == 0, "unexpected content of dealer names style sheet");
     }
     catch (std::exception & ex)
     {
@@ -248,6 +255,13 @@ void FrontendTest::SetDataShallBeDisplayed()
     QVERIFY2(mw.ui->names[3]->text().compare(QString("D")) == 0, "incorrect player name 3");
     QVERIFY2(mw.ui->names[4]->text().compare(QString("E")) == 0, "incorrect player name 4");
     QVERIFY2(mw.ui->names[5]->text().compare(QString("F")) == 0, "incorrect player name 5");
+
+    QVERIFY2(mw.ui->names[0]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 0");
+    QVERIFY2(mw.ui->names[1]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 1");
+    QVERIFY2(mw.ui->names[2]->styleSheet().compare(ExpectedDealerNamesStyleSheet) == 0, "incorrect dealer state name 2");
+    QVERIFY2(mw.ui->names[3]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 3");
+    QVERIFY2(mw.ui->names[4]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 4");
+    QVERIFY2(mw.ui->names[5]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 5");
 
     QVERIFY2(mw.ui->actuals[0]->isEnabled() == true, "incorrect state actuals 0");
     QVERIFY2(mw.ui->actuals[1]->isEnabled() == true, "incorrect state actuals 1");
@@ -309,6 +323,13 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
     QVERIFY2(mw.ui->names[3]->text().compare(QString("D")) == 0, "incorrect player name 3");
     QVERIFY2(mw.ui->names[4]->text().compare(QString("E")) == 0, "incorrect player name 4");
     QVERIFY2(mw.ui->names[5]->text().compare(QString("F")) == 0, "incorrect player name 5");
+
+    QVERIFY2(mw.ui->names[0]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 0");
+    QVERIFY2(mw.ui->names[1]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 1");
+    QVERIFY2(mw.ui->names[2]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 2");
+    QVERIFY2(mw.ui->names[3]->styleSheet().compare(ExpectedDealerNamesStyleSheet) == 0, "incorrect dealer state name 3");
+    QVERIFY2(mw.ui->names[4]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 4");
+    QVERIFY2(mw.ui->names[5]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 5");
 
     QVERIFY2(mw.ui->actuals[0]->isEnabled() == false, "incorrect state actuals 0");
     QVERIFY2(mw.ui->actuals[1]->isEnabled() == true, "incorrect state actuals 1");
@@ -374,6 +395,13 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->names[3]->text().compare(QString("D")) == 0, "incorrect player name 3");
     QVERIFY2(mw.ui->names[4]->text().compare(QString("E")) == 0, "incorrect player name 4");
     QVERIFY2(mw.ui->names[5]->text().compare(QString("F")) == 0, "incorrect player name 5");
+
+    QVERIFY2(mw.ui->names[0]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 0");
+    QVERIFY2(mw.ui->names[1]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 1");
+    QVERIFY2(mw.ui->names[2]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 2");
+    QVERIFY2(mw.ui->names[3]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 3");
+    QVERIFY2(mw.ui->names[4]->styleSheet().compare(ExpectedDealerNamesStyleSheet) == 0, "incorrect dealer state name 4");
+    QVERIFY2(mw.ui->names[5]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 5");
 
     QVERIFY2(mw.ui->actuals[0]->isEnabled() == true, "incorrect state actuals 0");
     QVERIFY2(mw.ui->actuals[1]->isEnabled() == false, "incorrect state actuals 1");
