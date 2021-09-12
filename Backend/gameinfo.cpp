@@ -103,8 +103,19 @@ namespace Backend
             }
 
             player->PushDealResult(changesIt->second);
+            player->SetParticipatedInDeal(true);
 
             player->SetHasPlayed(true);
+
+            auto relevantChange = std::find_if(changes.begin(), changes.end(), [&](std::pair<std::wstring, int> change){ return change.first == player->Name(); });
+            if(relevantChange != changes.end())
+            {
+                player->SetInputInDeal(std::to_wstring(relevantChange->second));
+            }
+            else
+            {
+                player->SetInputInDeal(std::wstring(L""));
+            }
         }
 
         auto playerInfosIt = this->playerInfos.begin();
@@ -114,6 +125,8 @@ namespace Backend
             if(!(*playerInfosIt)->IsPlaying())
             {
                 (*playerInfosIt)->PushDealResult(0);
+                (*playerInfosIt)->SetParticipatedInDeal(false);
+                (*playerInfosIt)->SetInputInDeal(std::wstring(L""));
             }
         }
 
@@ -138,6 +151,7 @@ namespace Backend
                 while(newPlayerInfo->NumberOfRecordedDeals() < this->DealsRecorded)
                 {
                     newPlayerInfo->PushDealResult(0);
+                    newPlayerInfo->SetParticipatedInDeal(false);
                 }
 
                 nameToPlayerInfo[*playersIt] = newPlayerInfo;
@@ -299,6 +313,16 @@ namespace Backend
     void GameInfo::PlayerInfoInternal::PushDealResult(int dealResult)
     {
         this->dealResults.push_back(dealResult);
+    }
+
+    void GameInfo::PlayerInfoInternal::SetParticipatedInDeal(bool participated)
+    {
+        this->participatedInLastDeal = participated;
+    }
+
+    void GameInfo::PlayerInfoInternal::SetInputInDeal(std::wstring input)
+    {
+        this->dealInput.push_back(input);
     }
 
     size_t GameInfo::PlayerInfoInternal::NumberOfRecordedDeals() const

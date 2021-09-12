@@ -22,7 +22,11 @@
 namespace Backend
 {
     PlayerInfo::PlayerInfo(std::wstring name)
-        : name(name)
+        : name(name),
+          hasPlayed(false),
+          isPresent(false),
+          isPlaying(false),
+          participatedInLastDeal(false)
     {
     }
 
@@ -49,5 +53,20 @@ namespace Backend
     int PlayerInfo::CurrentScore() const
     {
         return std::reduce(dealResults.begin(), dealResults.end());
+    }
+
+    bool PlayerInfo::ParticipatedInLastDeal() const
+    {
+        return this->participatedInLastDeal;
+    }
+
+    int PlayerInfo::ScoreInLastDeal() const
+    {
+        return this->dealResults.back();
+    }
+
+    std::wstring PlayerInfo::InputInLastDeal() const
+    {
+        return !this->dealInput.empty() ? this->dealInput.back() : std::wstring(L"");
     }
 }

@@ -345,6 +345,13 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
     QVERIFY2(mw.ui->scores[4]->text().compare(QString("-2")) == 0, "incorrect scores 4");
     QVERIFY2(mw.ui->scores[5]->text().compare(QString("0")) == 0, "incorrect scores 5");
 
+    QVERIFY2(mw.ui->lastGames[0]->text().compare(QString("2")) == 0, "incorrect last games 0");
+    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString("-2")) == 0, "incorrect last games 1");
+    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString("")) == 0, "incorrect last games 2");
+    QVERIFY2(mw.ui->lastGames[3]->text().compare(QString("2")) == 0, "incorrect last games 3");
+    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString("-2")) == 0, "incorrect last games 4");
+    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString("")) == 0, "incorrect last games 5");
+
     QVERIFY2(mw.ui->actuals[0]->text().isEmpty(), "actuals 0 not empty");
     QVERIFY2(mw.ui->actuals[1]->text().isEmpty(), "actuals 1 not empty");
     QVERIFY2(mw.ui->actuals[2]->text().isEmpty(), "actuals 2 not empty");
@@ -416,6 +423,13 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->scores[3]->text().compare(QString("2")) == 0, "incorrect scores 3");
     QVERIFY2(mw.ui->scores[4]->text().compare(QString("-5")) == 0, "incorrect scores 4");
     QVERIFY2(mw.ui->scores[5]->text().compare(QString("3")) == 0, "incorrect scores 5");
+
+    QVERIFY2(mw.ui->lastGames[0]->text().compare(QString("")) == 0, "incorrect last games 0");
+    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString("3")) == 0, "incorrect last games 1");
+    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString("-3")) == 0, "incorrect last games 2");
+    QVERIFY2(mw.ui->lastGames[3]->text().compare(QString("")) == 0, "incorrect last games 3");
+    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString("-3")) == 0, "incorrect last games 4");
+    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString("3")) == 0, "incorrect last games 5");
 
     QVERIFY2(mw.ui->actuals[0]->text().isEmpty(), "actuals 0 not empty");
     QVERIFY2(mw.ui->actuals[1]->text().isEmpty(), "actuals 1 not empty");

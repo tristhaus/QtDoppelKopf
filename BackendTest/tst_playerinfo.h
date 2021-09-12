@@ -38,6 +38,12 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
     EXPECT_STREQ(L"D", playerInfos[3]->Name().c_str());
     EXPECT_STREQ(L"E", playerInfos[4]->Name().c_str());
 
+    EXPECT_FALSE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[4]->ParticipatedInLastDeal());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"B", -2),
@@ -51,6 +57,17 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
     EXPECT_EQ( 2, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 2, playerInfos[4]->CurrentScore());
+
+    EXPECT_FALSE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[4]->ParticipatedInLastDeal());
+
+    EXPECT_EQ(-2, playerInfos[1]->ScoreInLastDeal());
+    EXPECT_EQ( 2, playerInfos[2]->ScoreInLastDeal());
+    EXPECT_EQ(-2, playerInfos[3]->ScoreInLastDeal());
+    EXPECT_EQ( 2, playerInfos[4]->ScoreInLastDeal());
 
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
@@ -66,6 +83,17 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 3, playerInfos[4]->CurrentScore());
 
+    EXPECT_TRUE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[4]->ParticipatedInLastDeal());
+
+    EXPECT_EQ(-3, playerInfos[0]->ScoreInLastDeal());
+    EXPECT_EQ( 1, playerInfos[2]->ScoreInLastDeal());
+    EXPECT_EQ( 1, playerInfos[3]->ScoreInLastDeal());
+    EXPECT_EQ( 1, playerInfos[4]->ScoreInLastDeal());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"A", -2),
@@ -79,6 +107,17 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
     EXPECT_EQ( 3, playerInfos[2]->CurrentScore());
     EXPECT_EQ( 5, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[4]->CurrentScore());
+
+    EXPECT_TRUE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[4]->ParticipatedInLastDeal());
+
+    EXPECT_EQ(-2, playerInfos[0]->ScoreInLastDeal());
+    EXPECT_EQ(-2, playerInfos[1]->ScoreInLastDeal());
+    EXPECT_EQ( 6, playerInfos[3]->ScoreInLastDeal());
+    EXPECT_EQ(-2, playerInfos[4]->ScoreInLastDeal());
 }
 
 TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
@@ -108,6 +147,17 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ(-2, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 2, playerInfos[4]->CurrentScore());
 
+    EXPECT_FALSE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[4]->ParticipatedInLastDeal());
+
+    EXPECT_EQ(-2, playerInfos[1]->ScoreInLastDeal());
+    EXPECT_EQ( 2, playerInfos[2]->ScoreInLastDeal());
+    EXPECT_EQ(-2, playerInfos[3]->ScoreInLastDeal());
+    EXPECT_EQ( 2, playerInfos[4]->ScoreInLastDeal());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"C", 1),
@@ -121,6 +171,17 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 3, playerInfos[4]->CurrentScore());
 
+    EXPECT_TRUE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[4]->ParticipatedInLastDeal());
+
+    EXPECT_EQ(-3, playerInfos[0]->ScoreInLastDeal());
+    EXPECT_EQ( 1, playerInfos[2]->ScoreInLastDeal());
+    EXPECT_EQ( 1, playerInfos[3]->ScoreInLastDeal());
+    EXPECT_EQ( 1, playerInfos[4]->ScoreInLastDeal());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"D", 6),
@@ -132,6 +193,17 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ( 5, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[4]->CurrentScore());
 
+    EXPECT_TRUE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[4]->ParticipatedInLastDeal());
+
+    EXPECT_EQ(-2, playerInfos[0]->ScoreInLastDeal());
+    EXPECT_EQ(-2, playerInfos[1]->ScoreInLastDeal());
+    EXPECT_EQ( 6, playerInfos[3]->ScoreInLastDeal());
+    EXPECT_EQ(-2, playerInfos[4]->ScoreInLastDeal());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"E", -9),
@@ -142,6 +214,17 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ( 6, playerInfos[2]->CurrentScore());
     EXPECT_EQ( 5, playerInfos[3]->CurrentScore());
     EXPECT_EQ(-8, playerInfos[4]->CurrentScore());
+
+    EXPECT_TRUE(playerInfos[0]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[1]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[2]->ParticipatedInLastDeal());
+    EXPECT_FALSE(playerInfos[3]->ParticipatedInLastDeal());
+    EXPECT_TRUE(playerInfos[4]->ParticipatedInLastDeal());
+
+    EXPECT_EQ( 3, playerInfos[0]->ScoreInLastDeal());
+    EXPECT_EQ( 3, playerInfos[1]->ScoreInLastDeal());
+    EXPECT_EQ( 3, playerInfos[2]->ScoreInLastDeal());
+    EXPECT_EQ(-9, playerInfos[4]->ScoreInLastDeal());
 }
 
 TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCompleted)

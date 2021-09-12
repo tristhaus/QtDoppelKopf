@@ -103,19 +103,19 @@ namespace Backend
 
             /*!
              * \brief Sets a value indicating whether the player has participated in any deal.
-             * \param a value indicating whether the player has participated in any deal.
+             * \param hasPlayed A value indicating whether the player has participated in any deal.
              */
             void SetHasPlayed(bool hasPlayed);
 
             /*!
              * \brief Sets a value indicating whether the player is present at the table.
-             * \param a value indicating whether the player is present at the table.
+             * \param isPresent A value indicating whether the player is present at the table.
              */
             void SetIsPresent(bool isPresent);
 
             /*!
              * \brief Sets a value indicating whether the player is playing during the next deal.
-             * \param a value indicating whether the player is playing during the next deal.
+             * \param isPlaying A value indicating whether the player is playing during the next deal.
              */
             void SetIsPlaying(bool isPlaying);
 
@@ -124,6 +124,18 @@ namespace Backend
              * \param dealResult The change in score to push.
              */
             void PushDealResult(int dealResult);
+
+            /*!
+             * \brief Sets a value indicating whether the player played in the last persisted deal.
+             * \param participated A value indicating whether the player played in the last persisted deal.
+             */
+            void SetParticipatedInDeal(bool participated);
+
+            /*!
+             * \brief Sets the input in the last deal, if any.
+             * \param input The input in the last deal, if any.
+             */
+            void SetInputInDeal(std::wstring input);
 
             /*!
              * \brief Gets the number of recorded deals for this player.

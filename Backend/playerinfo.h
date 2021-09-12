@@ -35,7 +35,9 @@ namespace Backend
         bool hasPlayed;
         bool isPresent;
         bool isPlaying;
+        bool participatedInLastDeal;
         std::vector<int> dealResults;
+        std::vector<std::wstring> dealInput;
 
     public:
         /*!
@@ -73,6 +75,24 @@ namespace Backend
          * \return A number indicating the current score of the player.
          */
         int CurrentScore() const;
+
+        /*!
+         * \brief Gets a value indicating whether the player played in the last persisted deal.
+         * \return A value indicating whether the player played in the last persisted deal.
+         */
+        bool ParticipatedInLastDeal() const;
+
+        /*!
+         * \brief Gets the total change in points in the last deal.
+         * \return The total change in points in the last deal.
+         */
+        int ScoreInLastDeal() const;
+
+        /*!
+         * \brief Gets the input in the last deal, if any.
+         * \return The input in the last deal, if any.
+         */
+        std::wstring InputInLastDeal() const;
     };
 }
 

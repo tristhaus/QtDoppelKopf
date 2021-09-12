@@ -101,6 +101,8 @@ void MainWindow::UpdateDisplay()
         ui->scores[index]->setText(QString().setNum(playerInfo->CurrentScore()));
         ui->actuals[index]->setEnabled(playerInfo->IsPlaying());
         ui->actuals[index]->clear();
+
+        ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString("%1").arg(playerInfo->ScoreInLastDeal()) : QString(""));
     }
 }
 
