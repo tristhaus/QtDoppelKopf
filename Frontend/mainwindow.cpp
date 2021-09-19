@@ -104,6 +104,8 @@ void MainWindow::UpdateDisplay()
 
         ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString("%1").arg(playerInfo->ScoreInLastDeal()) : QString(""));
     }
+
+    ui->resetButton->setEnabled(this->gameInfo.CanPopLastDeal());
 }
 
 void MainWindow::ShowPlayerSelection(bool calledOnStartup)
@@ -310,5 +312,20 @@ void MainWindow::OnCommitPressed()
 
 void MainWindow::OnResetPressed()
 {
-    this->ShowNotImplementedMessageBox();
+    auto playerInfos = this->gameInfo.PlayerInfos();
+
+    std::vector<std::wstring> resetActuals;
+    std::transform(playerInfos.begin(),
+                   playerInfos.end(),
+                   std::back_inserter(resetActuals),
+                   [](std::shared_ptr<Backend::PlayerInfo> info){ return info->InputInLastDeal(); });
+
+    this->gameInfo.PopLastDeal();
+
+    this->UpdateDisplay();
+
+    for (unsigned int index = 0; index < resetActuals.size(); ++index)
+    {
+        this->ui->actuals[index]->setText(QString::fromStdWString(resetActuals[index]));
+    }
 }

@@ -23,7 +23,8 @@
 namespace Backend
 {
     GameInfo::GameInfo()
-        : DealsRecorded(0u)
+        : dealsRecorded(0u),
+          poppableGames(0u)
     {
     }
 
@@ -81,6 +82,7 @@ namespace Backend
         }
 
         this->SortAndSetPlayerInfos(players);
+        this->poppableGames = 0u;
 
         this->SetDealer(dealer);
 
@@ -133,6 +135,34 @@ namespace Backend
         this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
 
         this->ApplyScheme();
+
+        ++(this->poppableGames);
+    }
+
+    bool GameInfo::CanPopLastDeal()
+    {
+        return poppableGames > 0;
+    }
+
+    void GameInfo::PopLastDeal()
+    {
+        if(!this->CanPopLastDeal())
+        {
+            return;
+        }
+
+        --(this->poppableGames);
+
+        auto playerInfosIt = this->playerInfos.begin();
+        auto playerInfosEnd = this->playerInfos.end();
+        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        {
+            (*playerInfosIt)->PopLastDealResult();
+        }
+
+        this->currentDealerIndex = (this->currentDealerIndex - 1 + this->numberOfPresentPlayers) % this->numberOfPresentPlayers;
+
+        this->ApplyScheme();
     }
 
     void GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)
@@ -148,7 +178,7 @@ namespace Backend
             if(nameToPlayerInfo.count(*playersIt) == 0)
             {
                 auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt);
-                while(newPlayerInfo->NumberOfRecordedDeals() < this->DealsRecorded)
+                while(newPlayerInfo->NumberOfRecordedDeals() < this->dealsRecorded)
                 {
                     newPlayerInfo->PushDealResult(0);
                     newPlayerInfo->SetParticipatedInDeal(false);
@@ -172,12 +202,14 @@ namespace Backend
                         players.end(),
                         [&](std::wstring player){ return player == (*playerInfosIt)->Name(); });
 
-            if( playerIt == players.end() && (*playerInfosIt)->HasPlayed())
+            if(playerIt == players.end() && (*playerInfosIt)->HasPlayed())
             {
                 (*playerInfosIt)->SetIsPresent(false);
                 (*playerInfosIt)->SetIsPlaying(false);
                 newInfos.push_back(*playerInfosIt);
             }
+
+            (*playerInfosIt)->DropPreviousDealInformation();
         }
 
         this->playerInfos = newInfos;
@@ -313,6 +345,19 @@ namespace Backend
     void GameInfo::PlayerInfoInternal::PushDealResult(int dealResult)
     {
         this->dealResults.push_back(dealResult);
+    }
+
+    void GameInfo::PlayerInfoInternal::PopLastDealResult()
+    {
+        this->dealResults.pop_back();
+        this->dealInput.pop_back();
+
+        this->SetParticipatedInDeal((!this->dealResults.empty() && this->dealResults.back() != 0) || !(this)->InputInLastDeal().empty());
+    }
+
+    void GameInfo::PlayerInfoInternal::DropPreviousDealInformation()
+    {
+        this->dealInput.clear();
     }
 
     void GameInfo::PlayerInfoInternal::SetParticipatedInDeal(bool participated)

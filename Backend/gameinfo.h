@@ -36,12 +36,13 @@ namespace Backend
     {
     private:
         class PlayerInfoInternal;
-        unsigned int DealsRecorded;
+        unsigned int dealsRecorded;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         std::map<std::wstring, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
         unsigned int numberOfPresentPlayers;
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;
+        unsigned int poppableGames;
 
     public:
         /*!
@@ -84,6 +85,17 @@ namespace Backend
          */
         void PushDeal(std::vector<std::pair<std::wstring, int>> changes);
 
+        /*!
+         * \brief Gets a value indicating whether the last deal can be popped off.
+         * \return A value indicating whether the last deal can be popped off.
+         */
+        bool CanPopLastDeal();
+
+        /*!
+         * \brief Removes the last deal from the collection of deals.
+         */
+        void PopLastDeal();
+
     private:
         void SortAndSetPlayerInfos(std::vector<std::wstring> players);
         void SetDealer(std::wstring dealer);
@@ -124,6 +136,17 @@ namespace Backend
              * \param dealResult The change in score to push.
              */
             void PushDealResult(int dealResult);
+
+            /*!
+             * \brief Removes the last deal result from the collection.
+             */
+            void PopLastDealResult();
+
+            /*!
+             * \brief Removes information regarding previous deals,
+             *        disabling the popping of old results.
+             */
+            void DropPreviousDealInformation();
 
             /*!
              * \brief Sets a value indicating whether the player played in the last persisted deal.

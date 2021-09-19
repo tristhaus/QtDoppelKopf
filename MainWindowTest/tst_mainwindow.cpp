@@ -46,6 +46,7 @@ private slots:
     void SetDataShallBeDisplayed();
     void OneCommittedGameShallBeDisplayed();
     void TwoCommittedGamesShallBeDisplayed();
+    void TwoCommittedAndTwoPoppedGameShallBeDisplayed();
 #endif
 };
 
@@ -395,7 +396,7 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     mw.ui->actuals[4]->setText(QString("-3"));
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
-        // Assert
+    // Assert
     QVERIFY2(mw.ui->names[0]->text().compare(QString("A")) == 0, "incorrect player name 0");
     QVERIFY2(mw.ui->names[1]->text().compare(QString("B")) == 0, "incorrect player name 1");
     QVERIFY2(mw.ui->names[2]->text().compare(QString("C")) == 0, "incorrect player name 2");
@@ -437,6 +438,168 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), "actuals 3 not empty");
     QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+}
+
+void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
+{
+    // Arrange
+    std::vector<std::wstring> players
+    {
+        L"A",
+        L"B",
+        L"C",
+        L"D",
+        L"E",
+        L"F"
+    };
+
+    std::wstring dealer(L"C");
+    std::set<unsigned int> sitOutScheme
+    {
+        3
+    };
+
+    MainWindow mw(false);
+
+    QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
+    QSignalSpy resetButtonSpy(mw.ui->resetButton, &QPushButton::clicked);
+
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    // Act, Assert
+    bool isEnabled1 = mw.ui->resetButton->isEnabled();
+
+    mw.ui->actuals[0]->setText(QString("2"));
+    mw.ui->actuals[3]->setText(QString("2"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    bool isEnabled2 = mw.ui->resetButton->isEnabled();
+
+    mw.ui->actuals[2]->setText(QString("-3"));
+    mw.ui->actuals[4]->setText(QString("-3"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    bool isEnabled3 = mw.ui->resetButton->isEnabled();
+
+    QVERIFY2(mw.ui->names[0]->text().compare(QString("A")) == 0, "incorrect player name 0");
+    QVERIFY2(mw.ui->names[1]->text().compare(QString("B")) == 0, "incorrect player name 1");
+    QVERIFY2(mw.ui->names[2]->text().compare(QString("C")) == 0, "incorrect player name 2");
+    QVERIFY2(mw.ui->names[3]->text().compare(QString("D")) == 0, "incorrect player name 3");
+    QVERIFY2(mw.ui->names[4]->text().compare(QString("E")) == 0, "incorrect player name 4");
+    QVERIFY2(mw.ui->names[5]->text().compare(QString("F")) == 0, "incorrect player name 5");
+
+    QVERIFY2(mw.ui->actuals[0]->isEnabled() == true, "incorrect state actuals 0");
+    QVERIFY2(mw.ui->actuals[1]->isEnabled() == false, "incorrect state actuals 1");
+    QVERIFY2(mw.ui->actuals[2]->isEnabled() == true, "incorrect state actuals 2");
+    QVERIFY2(mw.ui->actuals[3]->isEnabled() == true, "incorrect state actuals 3");
+    QVERIFY2(mw.ui->actuals[4]->isEnabled() == false, "incorrect state actuals 4");
+    QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, "incorrect state actuals 5");
+
+    QVERIFY2(mw.ui->scores[0]->text().compare(QString("2")) == 0, "incorrect scores 0");
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString("1")) == 0, "incorrect scores 1");
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString("-3")) == 0, "incorrect scores 2");
+    QVERIFY2(mw.ui->scores[3]->text().compare(QString("2")) == 0, "incorrect scores 3");
+    QVERIFY2(mw.ui->scores[4]->text().compare(QString("-5")) == 0, "incorrect scores 4");
+    QVERIFY2(mw.ui->scores[5]->text().compare(QString("3")) == 0, "incorrect scores 5");
+
+    QVERIFY2(mw.ui->lastGames[0]->text().compare(QString("")) == 0, "incorrect last games 0");
+    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString("3")) == 0, "incorrect last games 1");
+    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString("-3")) == 0, "incorrect last games 2");
+    QVERIFY2(mw.ui->lastGames[3]->text().compare(QString("")) == 0, "incorrect last games 3");
+    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString("-3")) == 0, "incorrect last games 4");
+    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString("3")) == 0, "incorrect last games 5");
+
+    QVERIFY2(mw.ui->actuals[0]->text().isEmpty(), "actuals 0 not empty");
+    QVERIFY2(mw.ui->actuals[1]->text().isEmpty(), "actuals 1 not empty");
+    QVERIFY2(mw.ui->actuals[2]->text().isEmpty(), "actuals 2 not empty");
+    QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), "actuals 3 not empty");
+    QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
+    QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+
+    QVERIFY2(isEnabled1 == false, "reset button wrong enabled state");
+    QVERIFY2(isEnabled2, "reset button wrong enabled state");
+    QVERIFY2(isEnabled3, "reset button wrong enabled state");
+
+    QTest::mouseClick(mw.ui->resetButton, Qt::LeftButton);
+    bool isEnabled4 = mw.ui->resetButton->isEnabled();
+
+    QVERIFY2(mw.ui->names[0]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 0");
+    QVERIFY2(mw.ui->names[1]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 1");
+    QVERIFY2(mw.ui->names[2]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 2");
+    QVERIFY2(mw.ui->names[3]->styleSheet().compare(ExpectedDealerNamesStyleSheet) == 0, "incorrect dealer state name 3");
+    QVERIFY2(mw.ui->names[4]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 4");
+    QVERIFY2(mw.ui->names[5]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 5");
+
+    QVERIFY2(mw.ui->actuals[0]->isEnabled() == false, "incorrect state actuals 0");
+    QVERIFY2(mw.ui->actuals[1]->isEnabled() == true, "incorrect state actuals 1");
+    QVERIFY2(mw.ui->actuals[2]->isEnabled() == true, "incorrect state actuals 2");
+    QVERIFY2(mw.ui->actuals[3]->isEnabled() == false, "incorrect state actuals 3");
+    QVERIFY2(mw.ui->actuals[4]->isEnabled() == true, "incorrect state actuals 4");
+    QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, "incorrect state actuals 5");
+
+    QVERIFY2(mw.ui->scores[0]->text().compare(QString("2")) == 0, "incorrect scores 0");
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString("-2")) == 0, "incorrect scores 1");
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString("0")) == 0, "incorrect scores 2");
+    QVERIFY2(mw.ui->scores[3]->text().compare(QString("2")) == 0, "incorrect scores 3");
+    QVERIFY2(mw.ui->scores[4]->text().compare(QString("-2")) == 0, "incorrect scores 4");
+    QVERIFY2(mw.ui->scores[5]->text().compare(QString("0")) == 0, "incorrect scores 5");
+
+    QVERIFY2(mw.ui->lastGames[0]->text().compare(QString("2")) == 0, "incorrect last games 0");
+    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString("-2")) == 0, "incorrect last games 1");
+    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString("")) == 0, "incorrect last games 2");
+    QVERIFY2(mw.ui->lastGames[3]->text().compare(QString("2")) == 0, "incorrect last games 3");
+    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString("-2")) == 0, "incorrect last games 4");
+    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString("")) == 0, "incorrect last games 5");
+
+    QVERIFY2(mw.ui->actuals[0]->text().isEmpty(), "actuals 0 not empty");
+    QVERIFY2(mw.ui->actuals[1]->text().isEmpty(), "actuals 1 not empty");
+    QVERIFY2(mw.ui->actuals[4]->text().compare(QString("-3")) == 0, "actuals 2 wrong content");
+    QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), "actuals 3 not empty");
+    QVERIFY2(mw.ui->actuals[4]->text().compare(QString("-3")) == 0, "actuals 4 wrong content");
+    QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+
+    QVERIFY2(isEnabled4, "reset button wrong enabled state");
+
+    QTest::mouseClick(mw.ui->resetButton, Qt::LeftButton);
+    bool isEnabled5 = mw.ui->resetButton->isEnabled();
+
+    QVERIFY2(mw.ui->names[0]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 0");
+    QVERIFY2(mw.ui->names[1]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 1");
+    QVERIFY2(mw.ui->names[2]->styleSheet().compare(ExpectedDealerNamesStyleSheet) == 0, "incorrect dealer state name 2");
+    QVERIFY2(mw.ui->names[3]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 3");
+    QVERIFY2(mw.ui->names[4]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 4");
+    QVERIFY2(mw.ui->names[5]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 5");
+
+    QVERIFY2(mw.ui->actuals[0]->isEnabled() == true, "incorrect state actuals 0");
+    QVERIFY2(mw.ui->actuals[1]->isEnabled() == true, "incorrect state actuals 1");
+    QVERIFY2(mw.ui->actuals[2]->isEnabled() == false, "incorrect state actuals 2");
+    QVERIFY2(mw.ui->actuals[3]->isEnabled() == true, "incorrect state actuals 3");
+    QVERIFY2(mw.ui->actuals[4]->isEnabled() == true, "incorrect state actuals 4");
+    QVERIFY2(mw.ui->actuals[5]->isEnabled() == false, "incorrect state actuals 5");
+
+    QVERIFY2(mw.ui->scores[0]->text().compare(QString("0")) == 0, "incorrect scores 0");
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString("0")) == 0, "incorrect scores 1");
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString("0")) == 0, "incorrect scores 2");
+    QVERIFY2(mw.ui->scores[3]->text().compare(QString("0")) == 0, "incorrect scores 3");
+    QVERIFY2(mw.ui->scores[4]->text().compare(QString("0")) == 0, "incorrect scores 4");
+    QVERIFY2(mw.ui->scores[5]->text().compare(QString("0")) == 0, "incorrect scores 5");
+
+    QVERIFY2(mw.ui->lastGames[0]->text().compare(QString("")) == 0, "incorrect last games 0");
+    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString("")) == 0, "incorrect last games 1");
+    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString("")) == 0, "incorrect last games 2");
+    QVERIFY2(mw.ui->lastGames[3]->text().compare(QString("")) == 0, "incorrect last games 3");
+    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString("")) == 0, "incorrect last games 4");
+    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString("")) == 0, "incorrect last games 5");
+
+    QVERIFY2(mw.ui->actuals[0]->text().compare(QString("2")) == 0, "actuals 0 wrong content");
+    QVERIFY2(mw.ui->actuals[1]->text().isEmpty(), "actuals 1 not empty");
+    QVERIFY2(mw.ui->actuals[2]->text().isEmpty(), "actuals 2 not empty");
+    QVERIFY2(mw.ui->actuals[3]->text().compare(QString("2")) == 0, "actuals 3 wrong content");
+    QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
+    QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+
+    QVERIFY2(isEnabled5 == false, "reset button wrong enabled state");
 }
 
 #endif // _USE_LONG_TEST
