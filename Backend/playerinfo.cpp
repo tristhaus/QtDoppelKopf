@@ -21,12 +21,13 @@
 
 namespace Backend
 {
-    PlayerInfo::PlayerInfo(std::wstring name)
+    PlayerInfo::PlayerInfo(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor)
         : name(name),
           hasPlayed(false),
           isPresent(false),
           isPlaying(false),
-          participatedInLastDeal(false)
+          participatedInLastDeal(false),
+          multiplierAccessor(multiplierAccessor)
     {
     }
 
@@ -52,7 +53,13 @@ namespace Backend
 
     int PlayerInfo::CurrentScore() const
     {
-        return std::reduce(dealResults.begin(), dealResults.end());
+        int retval = 0;
+        for(unsigned int index = 0; index < this->dealResults.size(); ++index)
+        {
+            retval += dealResults[index] * this->multiplierAccessor(index);
+        }
+
+        return retval;
     }
 
     bool PlayerInfo::ParticipatedInLastDeal() const
@@ -62,7 +69,7 @@ namespace Backend
 
     int PlayerInfo::ScoreInLastDeal() const
     {
-        return this->dealResults.back();
+        return this->dealResults.back() * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size()) - 1);
     }
 
     std::wstring PlayerInfo::InputInLastDeal() const

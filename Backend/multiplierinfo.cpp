@@ -66,10 +66,13 @@ void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
 void Backend::MultiplierInfo::ResetTo(const std::vector<EventInfo> events)
 {
     this->effective.clear();
+    dealIndex = 0;
 
     for (auto event : events) {
         this->PushDeal(event);
     }
+
+    dealIndex = static_cast<unsigned int>(events.size());
 }
 
 unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int index) const

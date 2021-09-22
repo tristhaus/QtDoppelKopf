@@ -25,6 +25,8 @@
 #include <map>
 #include <string>
 #include "playerinfo.h"
+#include "eventinfo.h"
+#include "multiplierinfo.h"
 
 namespace Backend
 {
@@ -43,6 +45,8 @@ namespace Backend
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;
         unsigned int poppableGames;
+        std::vector<EventInfo> events;
+        MultiplierInfo multiplierInfo;
 
     public:
         /*!
@@ -82,8 +86,9 @@ namespace Backend
         /*!
          * \brief Pushes a game.
          * \param changes Collection of player names and (positive/negative) points awarded.
+         * \param events The number of multiplier events in the deal.
          */
-        void PushDeal(std::vector<std::pair<std::wstring, int>> changes);
+        void PushDeal(std::vector<std::pair<std::wstring, int>> changes, unsigned int numberOfEvents);
 
         /*!
          * \brief Gets a value indicating whether the last deal can be popped off.
@@ -95,6 +100,18 @@ namespace Backend
          * \brief Removes the last deal from the collection of deals.
          */
         void PopLastDeal();
+
+        /*!
+         * \brief Gets the future levels of multiplication (which are the indices of the vector returned).
+         * \return A vector containing counts for single, double ... etc. level of multiplication.
+         */
+        std::vector<unsigned int> MultiplierPreview() const;
+
+        /*!
+         * \brief Gets the number of events in the last deal.
+         * \return The number of events in the last deal.
+         */
+        unsigned int LastNumberOfEvents() const;
 
     private:
         void SortAndSetPlayerInfos(std::vector<std::wstring> players);
@@ -111,7 +128,7 @@ namespace Backend
              * \brief Initializes a new instance from the given name.
              * \param The unique name of the player.
              */
-            PlayerInfoInternal(std::wstring name);
+            PlayerInfoInternal(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor);
 
             /*!
              * \brief Sets a value indicating whether the player has participated in any deal.

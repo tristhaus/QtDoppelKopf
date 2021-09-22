@@ -305,7 +305,9 @@ void MainWindow::OnCommitPressed()
         return;
     }
 
-    this->gameInfo.PushDeal(changes);
+    auto numberOfEvents = static_cast<unsigned int>(ui->spinBox->value());
+
+    this->gameInfo.PushDeal(changes, numberOfEvents);
 
     this->UpdateDisplay();
 }

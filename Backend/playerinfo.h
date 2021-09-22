@@ -21,6 +21,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace Backend
 {
@@ -38,13 +39,14 @@ namespace Backend
         bool participatedInLastDeal;
         std::vector<int> dealResults;
         std::vector<std::wstring> dealInput;
+        std::function<unsigned short(unsigned int)> multiplierAccessor;
 
     public:
         /*!
          * \brief Initializes a new instance from the given name.
          * \param The unique name of the player.
          */
-        PlayerInfo(std::wstring name);
+        PlayerInfo(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor);
 
         /*!
          * \brief Gets the name of the player.

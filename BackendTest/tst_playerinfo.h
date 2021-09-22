@@ -50,7 +50,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
                           std::make_pair<std::wstring, int>(L"C", 2),
                           std::make_pair<std::wstring, int>(L"D", -2),
                           std::make_pair<std::wstring, int>(L"E", 2)
-                      });
+                      }, 0u);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -75,7 +75,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
                           std::make_pair<std::wstring, int>(L"C", 1),
                           std::make_pair<std::wstring, int>(L"D", 1),
                           std::make_pair<std::wstring, int>(L"E", 1)
-                      });
+                      }, 0u);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -100,7 +100,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
                           std::make_pair<std::wstring, int>(L"B", -2),
                           std::make_pair<std::wstring, int>(L"D", 6),
                           std::make_pair<std::wstring, int>(L"E", -2)
-                      });
+                      }, 0u);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-4, playerInfos[1]->CurrentScore());
@@ -139,7 +139,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
                       {
                           std::make_pair<std::wstring, int>(L"B", -2),
                           std::make_pair<std::wstring, int>(L"D", -2),
-                      });
+                      }, 0u);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -163,7 +163,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
                           std::make_pair<std::wstring, int>(L"C", 1),
                           std::make_pair<std::wstring, int>(L"D", 1),
                           std::make_pair<std::wstring, int>(L"E", 1)
-                      });
+                      }, 0u);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -185,7 +185,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"D", 6),
-                      });
+                      }, 0u);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-4, playerInfos[1]->CurrentScore());
@@ -207,7 +207,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"E", -9),
-                      });
+                      }, 0u);
 
     EXPECT_EQ(-2, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[1]->CurrentScore());
@@ -238,7 +238,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"B", 0),
-                      });
+                      }, 0u);
 
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
 
@@ -249,7 +249,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
                          {
                              std::make_pair<std::wstring, int>(L"B", -2),
                              std::make_pair<std::wstring, int>(L"C", 2)
-                         });
+                         }, 0u);
         }
         catch( const std::exception& e )
         {
@@ -265,7 +265,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
                          {
                              std::make_pair<std::wstring, int>(L"B", 1),
                              std::make_pair<std::wstring, int>(L"C", 2)
-                         });
+                         }, 0u);
         }
         catch( const std::exception& e )
         {
@@ -284,7 +284,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
                              std::make_pair<std::wstring, int>(L"A", 2),
                              std::make_pair<std::wstring, int>(L"D", 2),
                              std::make_pair<std::wstring, int>(L"E", 2)
-                         });
+                         }, 0u);
         }
         catch( const std::exception& e )
         {

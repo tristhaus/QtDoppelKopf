@@ -90,7 +90,8 @@ namespace Backend
         this->SetAndApplyScheme(sitOutScheme);
     }
 
-    void GameInfo::PushDeal(std::vector<std::pair<std::wstring, int>> changes)
+    void GameInfo::PushDeal(std::vector<std::pair<std::wstring, int>> changes,
+                            unsigned int numberOfEvents)
     {
         auto actualChanges = this->AutoCompleteDeal(changes);
 
@@ -134,6 +135,8 @@ namespace Backend
         }
 
         this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
+        this->events.push_back( { NumberOfEvents(numberOfEvents), Players(numberOfPresentPlayers) } );
+        this->multiplierInfo.PushDeal(this->events.back());
 
         this->ApplyScheme();
 
@@ -163,7 +166,20 @@ namespace Backend
 
         this->currentDealerIndex = (this->currentDealerIndex - 1 + this->numberOfPresentPlayers) % this->numberOfPresentPlayers;
 
+        this->events.pop_back();
+        this->multiplierInfo.ResetTo(this->events);
+
         this->ApplyScheme();
+    }
+
+    std::vector<unsigned int> GameInfo::MultiplierPreview() const
+    {
+        return this->multiplierInfo.GetPreview();
+    }
+
+    unsigned int GameInfo::LastNumberOfEvents() const
+    {
+        return !this->events.empty() ? this->events.back().number.Value() : 0u;
     }
 
     void GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)
@@ -178,7 +194,7 @@ namespace Backend
         {
             if(nameToPlayerInfo.count(*playersIt) == 0)
             {
-                auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt);
+                auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt, [&](unsigned int index){ return this->multiplierInfo.GetMultiplier(index); });
                 while(newPlayerInfo->NumberOfRecordedDeals() < this->dealsRecorded)
                 {
                     newPlayerInfo->PushDealResult(0);
@@ -323,8 +339,8 @@ namespace Backend
         return newChanges;
     }
 
-    GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name)
-        : PlayerInfo(name)
+    GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor)
+        : PlayerInfo(name, multiplierAccessor)
     {
     }
 
