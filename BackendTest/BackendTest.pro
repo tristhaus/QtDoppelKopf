@@ -29,6 +29,7 @@ CONFIG -= app_bundle
 
 HEADERS += \
     tst_gameinfo.h \
+    tst_multiplierinfo.h \
     tst_playerinfo.h
 
 SOURCES += \

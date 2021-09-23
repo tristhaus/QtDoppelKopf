@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <numeric>
 #include "gameinfo.h"
+#include "eventinfo.h"
 
 namespace Backend
 {

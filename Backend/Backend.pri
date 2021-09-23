@@ -17,9 +17,12 @@
 #
 
 HEADERS += \
+    $$PWD/eventinfo.h \
     $$PWD/gameinfo.h \
+    $$PWD/multiplierinfo.h \
     $$PWD/playerinfo.h
 
 SOURCES += \
     $$PWD/gameinfo.cpp \
+    $$PWD/multiplierinfo.cpp \
     $$PWD/playerinfo.cpp
