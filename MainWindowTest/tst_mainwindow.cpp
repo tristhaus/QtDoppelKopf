@@ -47,6 +47,7 @@ private slots:
     void OneCommittedGameShallBeDisplayed();
     void TwoCommittedGamesShallBeDisplayed();
     void TwoCommittedAndTwoPoppedGameShallBeDisplayed();
+    void AllLevelsOfMultipliersShallCorrectlyBeDisplayed();
 #endif
 };
 
@@ -284,6 +285,9 @@ void FrontendTest::SetDataShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), "actuals 3 not empty");
     QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+
+    QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 }
 
 void FrontendTest::OneCommittedGameShallBeDisplayed()
@@ -359,6 +363,9 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), "actuals 3 not empty");
     QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+
+    QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 }
 
 void FrontendTest::TwoCommittedGamesShallBeDisplayed()
@@ -438,6 +445,9 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), "actuals 3 not empty");
     QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+
+    QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 }
 
 void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
@@ -472,12 +482,16 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
 
     mw.ui->actuals[0]->setText(QString("2"));
     mw.ui->actuals[3]->setText(QString("2"));
+    mw.ui->spinBox->setValue(1);
+
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
     bool isEnabled2 = mw.ui->resetButton->isEnabled();
 
     mw.ui->actuals[2]->setText(QString("-3"));
     mw.ui->actuals[4]->setText(QString("-3"));
+    mw.ui->spinBox->setValue(2);
+
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
     bool isEnabled3 = mw.ui->resetButton->isEnabled();
@@ -497,18 +511,18 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, "incorrect state actuals 5");
 
     QVERIFY2(mw.ui->scores[0]->text().compare(QString("2")) == 0, "incorrect scores 0");
-    QVERIFY2(mw.ui->scores[1]->text().compare(QString("1")) == 0, "incorrect scores 1");
-    QVERIFY2(mw.ui->scores[2]->text().compare(QString("-3")) == 0, "incorrect scores 2");
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString("4")) == 0, "incorrect scores 1");
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString("-6")) == 0, "incorrect scores 2");
     QVERIFY2(mw.ui->scores[3]->text().compare(QString("2")) == 0, "incorrect scores 3");
-    QVERIFY2(mw.ui->scores[4]->text().compare(QString("-5")) == 0, "incorrect scores 4");
-    QVERIFY2(mw.ui->scores[5]->text().compare(QString("3")) == 0, "incorrect scores 5");
+    QVERIFY2(mw.ui->scores[4]->text().compare(QString("-8")) == 0, "incorrect scores 4");
+    QVERIFY2(mw.ui->scores[5]->text().compare(QString("6")) == 0, "incorrect scores 5");
 
     QVERIFY2(mw.ui->lastGames[0]->text().compare(QString("")) == 0, "incorrect last games 0");
-    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString("3")) == 0, "incorrect last games 1");
-    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString("-3")) == 0, "incorrect last games 2");
+    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString("6")) == 0, "incorrect last games 1");
+    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString("-6")) == 0, "incorrect last games 2");
     QVERIFY2(mw.ui->lastGames[3]->text().compare(QString("")) == 0, "incorrect last games 3");
-    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString("-3")) == 0, "incorrect last games 4");
-    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString("3")) == 0, "incorrect last games 5");
+    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString("-6")) == 0, "incorrect last games 4");
+    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString("6")) == 0, "incorrect last games 5");
 
     QVERIFY2(mw.ui->actuals[0]->text().isEmpty(), "actuals 0 not empty");
     QVERIFY2(mw.ui->actuals[1]->text().isEmpty(), "actuals 1 not empty");
@@ -516,6 +530,9 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), "actuals 3 not empty");
     QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
+
+    QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Dreifachbock (5:1:0)")) == 0, "multiplier label incorrect");
 
     QVERIFY2(isEnabled1 == false, "reset button wrong enabled state");
     QVERIFY2(isEnabled2, "reset button wrong enabled state");
@@ -559,6 +576,9 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[4]->text().compare(QString("-3")) == 0, "actuals 4 wrong content");
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
+    QVERIFY2(mw.ui->spinBox->value() == 2, "events spinbox not set to correct value");
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Bock (6)")) == 0, "multiplier label incorrect");
+
     QVERIFY2(isEnabled4, "reset button wrong enabled state");
 
     QTest::mouseClick(mw.ui->resetButton, Qt::LeftButton);
@@ -599,7 +619,61 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), "actuals 4 not empty");
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
+    QVERIFY2(mw.ui->spinBox->value() == 1, "events spinbox not set to correct value");
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
+
     QVERIFY2(isEnabled5 == false, "reset button wrong enabled state");
+}
+
+void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
+{
+    // Arrange
+    std::vector<std::wstring> players
+    {
+        L"A",
+        L"B",
+        L"C",
+        L"D",
+        L"E"
+    };
+
+    std::wstring dealer(L"C");
+    std::set<unsigned int> sitOutScheme;
+
+    MainWindow mw(false);
+
+    QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
+
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    // Act, Assert
+
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
+
+    mw.ui->actuals[0]->setText(QString("2"));
+    mw.ui->actuals[3]->setText(QString("2"));
+    mw.ui->spinBox->setValue(1);
+
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Bock (5)")) == 0, "multiplier label incorrect");
+
+    mw.ui->actuals[2]->setText(QString("-3"));
+    mw.ui->actuals[4]->setText(QString("-3"));
+    mw.ui->spinBox->setValue(1);
+
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Doppelbock (4:1)")) == 0, "multiplier label incorrect");
+
+    mw.ui->actuals[2]->setText(QString("-3"));
+    mw.ui->actuals[4]->setText(QString("-3"));
+    mw.ui->spinBox->setValue(1);
+
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    QVERIFY2(mw.ui->multiplier->text().compare(QString("Dreifachbock (3:1:1)")) == 0, "multiplier label incorrect");
 }
 
 #endif // _USE_LONG_TEST

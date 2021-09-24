@@ -50,6 +50,7 @@ private:
     void ShowPlayerSelection(bool calledOnStartup);
     std::vector<std::pair<QString, bool>> GetDefaultPlayers();
     void ShowNotImplementedMessageBox();
+    QString DetermineMultiplierText() const;
 
 private slots:
     void OnChangePlayerPressed();

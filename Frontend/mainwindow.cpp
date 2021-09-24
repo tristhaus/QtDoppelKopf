@@ -1,4 +1,4 @@
-/*
+﻿/*
  * This file is part of QtDoppelKopf.
  *
  * QtDoppelKopf is free software: you can redistribute it and/or modify
@@ -104,6 +104,9 @@ void MainWindow::UpdateDisplay()
 
         ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString("%1").arg(playerInfo->ScoreInLastDeal()) : QString(""));
     }
+
+    ui->spinBox->setValue(0);
+    ui->multiplier->setText(this->DetermineMultiplierText());
 
     ui->resetButton->setEnabled(this->gameInfo.CanPopLastDeal());
 }
@@ -253,9 +256,6 @@ QString MainWindow::DetermineMultiplierText() const
     {
         return QString("Normalspiel");
     }
->>>>>>> 415e674 (i hate strings and the c preproc)
-=======
->>>>>>> be4fbf6 (Add "not implemented" message boxes to all main window buttons)
 }
 
 void MainWindow::OnChangePlayerPressed()
@@ -322,6 +322,8 @@ void MainWindow::OnResetPressed()
                    std::back_inserter(resetActuals),
                    [](std::shared_ptr<Backend::PlayerInfo> info){ return info->InputInLastDeal(); });
 
+    auto numberOfEvents = this->gameInfo.LastNumberOfEvents();
+
     this->gameInfo.PopLastDeal();
 
     this->UpdateDisplay();
@@ -330,4 +332,6 @@ void MainWindow::OnResetPressed()
     {
         this->ui->actuals[index]->setText(QString::fromStdWString(resetActuals[index]));
     }
+
+    this->ui->spinBox->setValue(static_cast<int>(numberOfEvents));
 }
