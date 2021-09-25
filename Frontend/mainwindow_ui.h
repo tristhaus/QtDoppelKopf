@@ -47,6 +47,8 @@ public:
     const unsigned int maxNumberOfPlayers = 8;
 
 private:
+    const QString ScoreStylesheet = "QLabel { font-weight: bold ; font-size: 12pt }";
+
     QWidget *centralwidget;
     QVBoxLayout *verticalLayout;
 
@@ -286,6 +288,7 @@ public:
 
         spielstandLabel = new QLabel(centralwidget);
         spielstandLabel->setObjectName(QString::fromUtf8("spielstandLabel"));
+        spielstandLabel->setStyleSheet(ScoreStylesheet);
 
         namesLayout->addWidget(spielstandLabel, 5, 0, 1, 1);
 
@@ -304,6 +307,7 @@ public:
         {
             QLabel * score = new QLabel(centralwidget);
             score->setObjectName(QString::fromUtf8("scores%1").arg(i));
+            score->setStyleSheet(ScoreStylesheet);
             namesLayout->addWidget(score, 5, i+1, 1, 1);
             scores.push_back(score);
 
