@@ -16,14 +16,17 @@
  *
  */
 
-#include "../Frontend/mainwindow.h"
+#ifndef CASHCALCULATION_H
+#define CASHCALCULATION_H
 
-#include <QApplication>
-
-int main(int argc, char *argv[])
+namespace Backend
 {
-    QApplication a(argc, argv);
-    MainWindow w(8u);
-    w.show();
-    return a.exec();
+    /*!
+     * \brief Calculates the due balance in Euro cents based on the given point difference.
+     * \param pointDifference The point difference to convert.
+     * \return The due balance in Euro cents.
+     */
+    unsigned int CalculateCashCents(unsigned int pointDifference);
 }
+
+#endif // CASHCALCULATION_H

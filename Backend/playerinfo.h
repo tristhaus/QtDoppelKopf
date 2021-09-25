@@ -40,13 +40,18 @@ namespace Backend
         std::vector<int> dealResults;
         std::vector<std::wstring> dealInput;
         std::function<unsigned short(unsigned int)> multiplierAccessor;
+        std::function<int()> maxCurrentScoreAccessor;
 
     public:
         /*!
          * \brief Initializes a new instance from the given name.
-         * \param The unique name of the player.
+         * \param name The unique name of the player.
+         * \param multiplierAccessor A function to obtain the multiplier for the indexed game.
+         * \param maxCurrentScoreAccessor A function to obtain the maximum current score among the players.
          */
-        PlayerInfo(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor);
+        PlayerInfo(std::wstring name,
+                   std::function<unsigned short(unsigned int)> multiplierAccessor,
+                   std::function<int()> maxCurrentScoreAccessor);
 
         /*!
          * \brief Gets the name of the player.
@@ -95,6 +100,12 @@ namespace Backend
          * \return The input in the last deal, if any.
          */
         std::wstring InputInLastDeal() const;
+
+        /*!
+         * \brief Gets the due balance in Euro cent.
+         * \return The due balance in Euro cent.
+         */
+        unsigned int CashCents() const;
     };
 }
 

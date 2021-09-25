@@ -17,17 +17,21 @@
  */
 
 #include "playerinfo.h"
+#include "cashcalculation.h"
 #include <numeric>
 
 namespace Backend
 {
-    PlayerInfo::PlayerInfo(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor)
+    PlayerInfo::PlayerInfo(std::wstring name,
+                           std::function<unsigned short(unsigned int)> multiplierAccessor,
+                           std::function<int()> maxCurrentScoreAccessor)
         : name(name),
           hasPlayed(false),
           isPresent(false),
           isPlaying(false),
           participatedInLastDeal(false),
-          multiplierAccessor(multiplierAccessor)
+          multiplierAccessor(multiplierAccessor),
+          maxCurrentScoreAccessor(maxCurrentScoreAccessor)
     {
     }
 
@@ -75,5 +79,10 @@ namespace Backend
     std::wstring PlayerInfo::InputInLastDeal() const
     {
         return !this->dealInput.empty() ? this->dealInput.back() : std::wstring(L"");
+    }
+
+    unsigned int PlayerInfo::CashCents() const
+    {
+        return CalculateCashCents(this->maxCurrentScoreAccessor() - this->CurrentScore());
     }
 }

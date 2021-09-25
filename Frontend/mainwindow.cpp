@@ -22,9 +22,10 @@
 
 #include <QMessageBox>
 
-MainWindow::MainWindow(bool showPlayerSelection, QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(const unsigned int maxPlayers, bool showPlayerSelection, QWidget *parent)
+    : QMainWindow(parent),
+      MaxPlayers(maxPlayers),
+      ui(new Ui::MainWindow(MaxPlayers))
 {
     ui->setupUi(this);
 
@@ -52,7 +53,7 @@ void MainWindow::UpdateDisplay()
     auto dealer = this->gameInfo.Dealer();
 
     // set visibility
-    for(unsigned int index = 0; index < ui->maxNumberOfPlayers; ++index)
+    for(unsigned int index = 0; index < this->MaxPlayers; ++index)
     {
         bool visible = false;
 
@@ -103,10 +104,18 @@ void MainWindow::UpdateDisplay()
         ui->actuals[index]->clear();
 
         ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString("%1").arg(playerInfo->ScoreInLastDeal()) : QString(""));
+
+        ui->cashs[index]->setText(QString("%1,%2").arg(playerInfo->CashCents()/100).arg(playerInfo->CashCents()%100, 2, 10, QLatin1Char('0')));
     }
 
     ui->spinBox->setValue(0);
     ui->multiplier->setText(this->DetermineMultiplierText());
+
+    ui->totalCash->setText(QString("%1,%2 (inkl. %3,%4 pro Abwesender)")
+                           .arg(gameInfo.TotalCashCents()/100)
+                           .arg(gameInfo.TotalCashCents()%100, 2, 10, QLatin1Char('0'))
+                           .arg(gameInfo.AbsentPlayerCashCents()/100)
+                           .arg(gameInfo.AbsentPlayerCashCents()%100, 2, 10, QLatin1Char('0')));
 
     ui->resetButton->setEnabled(this->gameInfo.CanPopLastDeal());
 }
@@ -140,7 +149,7 @@ void MainWindow::ShowPlayerSelection(bool calledOnStartup)
 
     currentDealer = currentPlayers[this->dealerIndex].first;
 
-    Ui::PlayerSelection ps(ui->maxNumberOfPlayers, currentPlayers, currentDealer, currentSitOutScheme, this);
+    Ui::PlayerSelection ps(this->MaxPlayers, currentPlayers, currentDealer, currentSitOutScheme, this);
     ps.setModal(true);
     ps.show();
     int dialogCode = ps.exec();
@@ -282,7 +291,7 @@ void MainWindow::OnCommitPressed()
 {
     std::vector<std::pair<std::wstring, int>> changes;
 
-    for (unsigned int index = 0; index < ui->maxNumberOfPlayers; ++index)
+    for (unsigned int index = 0; index < this->MaxPlayers; ++index)
     {
         auto & actual = ui->actuals[index];
 

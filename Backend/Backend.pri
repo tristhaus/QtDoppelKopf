@@ -17,12 +17,14 @@
 #
 
 HEADERS += \
+    $$PWD/cashcalculation.h \
     $$PWD/eventinfo.h \
     $$PWD/gameinfo.h \
     $$PWD/multiplierinfo.h \
     $$PWD/playerinfo.h
 
 SOURCES += \
+    $$PWD/cashcalculation.cpp \
     $$PWD/gameinfo.cpp \
     $$PWD/multiplierinfo.cpp \
     $$PWD/playerinfo.cpp

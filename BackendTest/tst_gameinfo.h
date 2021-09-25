@@ -422,6 +422,12 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
 
     EXPECT_EQ(1, gameInfo.LastNumberOfEvents());
 
+    EXPECT_EQ(0, playerInfos[0]->CashCents());
+    EXPECT_EQ(0, playerInfos[1]->CashCents());
+    EXPECT_EQ(1, playerInfos[2]->CashCents());
+    EXPECT_EQ(1, playerInfos[3]->CashCents());
+    EXPECT_EQ(2, gameInfo.TotalCashCents());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"A", 3),
@@ -441,6 +447,12 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
 
     EXPECT_EQ(2, gameInfo.LastNumberOfEvents());
 
+    EXPECT_EQ(0, playerInfos[0]->CashCents());
+    EXPECT_EQ(6, playerInfos[1]->CashCents());
+    EXPECT_EQ(1, playerInfos[2]->CashCents());
+    EXPECT_EQ(7, playerInfos[3]->CashCents());
+    EXPECT_EQ(14 + 4*3, gameInfo.TotalCashCents());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"C", 2),
@@ -459,6 +471,12 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
     EXPECT_EQ(2, preview3[2]);
 
     EXPECT_EQ(0, gameInfo.LastNumberOfEvents());
+
+    EXPECT_EQ(15, playerInfos[0]->CashCents());
+    EXPECT_EQ(21, playerInfos[1]->CashCents());
+    EXPECT_EQ( 0, playerInfos[2]->CashCents());
+    EXPECT_EQ( 6, playerInfos[3]->CashCents());
+    EXPECT_EQ(42 + 4*10, gameInfo.TotalCashCents());
 }
 
 TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
@@ -653,6 +671,14 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ(0, preview1[1]);
     EXPECT_EQ(0, preview1[2]);
 
+    EXPECT_EQ( 0, playerInfos[0]->CashCents());
+    EXPECT_EQ( 0, playerInfos[1]->CashCents());
+    EXPECT_EQ( 0, playerInfos[2]->CashCents());
+    EXPECT_EQ( 0, playerInfos[3]->CashCents());
+    EXPECT_EQ( 1, playerInfos[4]->CashCents());
+    EXPECT_EQ( 1, playerInfos[5]->CashCents());
+    EXPECT_EQ( 2, gameInfo.TotalCashCents());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"A", 2),
@@ -670,6 +696,14 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ(0, preview2[0]);
     EXPECT_EQ(1, preview2[1]);
     EXPECT_EQ(5, preview2[2]);
+
+    EXPECT_EQ( 0, playerInfos[0]->CashCents());
+    EXPECT_EQ( 2, playerInfos[1]->CashCents());
+    EXPECT_EQ( 0, playerInfos[2]->CashCents());
+    EXPECT_EQ( 4, playerInfos[3]->CashCents());
+    EXPECT_EQ( 3, playerInfos[4]->CashCents());
+    EXPECT_EQ( 5, playerInfos[5]->CashCents());
+    EXPECT_EQ(14 + 2*2, gameInfo.TotalCashCents());
 
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
@@ -689,6 +723,14 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ(1, preview3[1]);
     EXPECT_EQ(4, preview3[2]);
 
+    EXPECT_EQ( 0, playerInfos[0]->CashCents());
+    EXPECT_EQ( 1, playerInfos[1]->CashCents());
+    EXPECT_EQ( 7, playerInfos[2]->CashCents());
+    EXPECT_EQ(20, playerInfos[3]->CashCents());
+    EXPECT_EQ(18, playerInfos[4]->CashCents());
+    EXPECT_EQ(12, playerInfos[5]->CashCents());
+    EXPECT_EQ(58 + 2*10, gameInfo.TotalCashCents());
+
     gameInfo.PopLastDeal();
 
     EXPECT_EQ( 4, playerInfos[0]->CurrentScore());
@@ -702,6 +744,14 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ(0, preview4[0]);
     EXPECT_EQ(1, preview4[1]);
     EXPECT_EQ(5, preview4[2]);
+
+    EXPECT_EQ( 0, playerInfos[0]->CashCents());
+    EXPECT_EQ( 2, playerInfos[1]->CashCents());
+    EXPECT_EQ( 0, playerInfos[2]->CashCents());
+    EXPECT_EQ( 4, playerInfos[3]->CashCents());
+    EXPECT_EQ( 3, playerInfos[4]->CashCents());
+    EXPECT_EQ( 5, playerInfos[5]->CashCents());
+    EXPECT_EQ(14 + 2*2, gameInfo.TotalCashCents());
 }
 
 #endif // TST_GAMEINFO_H

@@ -43,10 +43,14 @@ class Ui_MainWindow
     friend MainWindow;
     friend FrontendTest;
 
-public:
-    const unsigned int maxNumberOfPlayers = 8;
+protected:
+    Ui_MainWindow(const unsigned int maxPlayers)
+        : maxNumberOfPlayers(maxPlayers)
+    {
+    }
 
 private:
+    const unsigned int maxNumberOfPlayers;
     const QString ScoreStylesheet = "QLabel { font-weight: bold ; font-size: 12pt }";
 
     QWidget *centralwidget;
@@ -514,7 +518,14 @@ public:
 };
 
 namespace Ui {
-    class MainWindow: public Ui_MainWindow {};
+    class MainWindow: public Ui_MainWindow
+    {
+    public:
+        MainWindow(const unsigned int maxPlayers)
+            : Ui_MainWindow(maxPlayers)
+        {
+        }
+    };
 } // namespace Ui
 
 QT_END_NAMESPACE

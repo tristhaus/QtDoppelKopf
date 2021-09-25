@@ -64,7 +64,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
     try
     {
         // Act
-        MainWindow mw(false);
+        MainWindow mw(8u, false);
 
         // Assert
         QVERIFY2(mw.ui->centralwidget, "not created central widget");
@@ -244,7 +244,7 @@ void FrontendTest::SetDataShallBeDisplayed()
         3
     };
 
-    MainWindow mw(false);
+    MainWindow mw(8u, false);
 
     // Act
     mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
@@ -288,6 +288,15 @@ void FrontendTest::SetDataShallBeDisplayed()
 
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
     QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
+
+    QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
+    QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,00")) == 0, "incorrect cashs 1");
+    QVERIFY2(mw.ui->cashs[2]->text().compare(QString("0,00")) == 0, "incorrect cashs 2");
+    QVERIFY2(mw.ui->cashs[3]->text().compare(QString("0,00")) == 0, "incorrect cashs 3");
+    QVERIFY2(mw.ui->cashs[4]->text().compare(QString("0,00")) == 0, "incorrect cashs 4");
+    QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
+
+    QVERIFY2(mw.ui->totalCash->text().compare(QString("0,00 (inkl. 0,00 pro Abwesender)")) == 0, "incorrect totalCash");
 }
 
 void FrontendTest::OneCommittedGameShallBeDisplayed()
@@ -309,7 +318,7 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
         3
     };
 
-    MainWindow mw(false);
+    MainWindow mw(8u, false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -366,6 +375,15 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
 
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
     QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
+
+    QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
+    QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,02")) == 0, "incorrect cashs 1");
+    QVERIFY2(mw.ui->cashs[2]->text().compare(QString("0,01")) == 0, "incorrect cashs 2");
+    QVERIFY2(mw.ui->cashs[3]->text().compare(QString("0,00")) == 0, "incorrect cashs 3");
+    QVERIFY2(mw.ui->cashs[4]->text().compare(QString("0,02")) == 0, "incorrect cashs 4");
+    QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,01")) == 0, "incorrect cashs 5");
+
+    QVERIFY2(mw.ui->totalCash->text().compare(QString("0,08 (inkl. 0,01 pro Abwesender)")) == 0, "incorrect totalCash");
 }
 
 void FrontendTest::TwoCommittedGamesShallBeDisplayed()
@@ -387,7 +405,7 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
         3
     };
 
-    MainWindow mw(false);
+    MainWindow mw(8u, false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -448,6 +466,15 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
 
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
     QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
+
+    QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
+    QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,01")) == 0, "incorrect cashs 1");
+    QVERIFY2(mw.ui->cashs[2]->text().compare(QString("0,03")) == 0, "incorrect cashs 2");
+    QVERIFY2(mw.ui->cashs[3]->text().compare(QString("0,00")) == 0, "incorrect cashs 3");
+    QVERIFY2(mw.ui->cashs[4]->text().compare(QString("0,04")) == 0, "incorrect cashs 4");
+    QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
+
+    QVERIFY2(mw.ui->totalCash->text().compare(QString("0,10 (inkl. 0,01 pro Abwesender)")) == 0, "incorrect totalCash");
 }
 
 void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
@@ -469,7 +496,7 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
         3
     };
 
-    MainWindow mw(false);
+    MainWindow mw(8u, false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
     QSignalSpy resetButtonSpy(mw.ui->resetButton, &QPushButton::clicked);
@@ -534,6 +561,15 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
     QVERIFY2(mw.ui->multiplier->text().compare(QString("Dreifachbock (5:1:0)")) == 0, "multiplier label incorrect");
 
+    QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,02")) == 0, "incorrect cashs 0");
+    QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,01")) == 0, "incorrect cashs 1");
+    QVERIFY2(mw.ui->cashs[2]->text().compare(QString("0,06")) == 0, "incorrect cashs 2");
+    QVERIFY2(mw.ui->cashs[3]->text().compare(QString("0,02")) == 0, "incorrect cashs 3");
+    QVERIFY2(mw.ui->cashs[4]->text().compare(QString("0,07")) == 0, "incorrect cashs 4");
+    QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
+
+    QVERIFY2(mw.ui->totalCash->text().compare(QString("0,24 (inkl. 0,03 pro Abwesender)")) == 0, "incorrect totalCash");
+
     QVERIFY2(isEnabled1 == false, "reset button wrong enabled state");
     QVERIFY2(isEnabled2, "reset button wrong enabled state");
     QVERIFY2(isEnabled3, "reset button wrong enabled state");
@@ -579,6 +615,15 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->spinBox->value() == 2, "events spinbox not set to correct value");
     QVERIFY2(mw.ui->multiplier->text().compare(QString("Bock (6)")) == 0, "multiplier label incorrect");
 
+    QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
+    QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,02")) == 0, "incorrect cashs 1");
+    QVERIFY2(mw.ui->cashs[2]->text().compare(QString("0,01")) == 0, "incorrect cashs 2");
+    QVERIFY2(mw.ui->cashs[3]->text().compare(QString("0,00")) == 0, "incorrect cashs 3");
+    QVERIFY2(mw.ui->cashs[4]->text().compare(QString("0,02")) == 0, "incorrect cashs 4");
+    QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,01")) == 0, "incorrect cashs 5");
+
+    QVERIFY2(mw.ui->totalCash->text().compare(QString("0,08 (inkl. 0,01 pro Abwesender)")) == 0, "incorrect totalCash");
+
     QVERIFY2(isEnabled4, "reset button wrong enabled state");
 
     QTest::mouseClick(mw.ui->resetButton, Qt::LeftButton);
@@ -622,6 +667,15 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->spinBox->value() == 1, "events spinbox not set to correct value");
     QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 
+    QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
+    QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,00")) == 0, "incorrect cashs 1");
+    QVERIFY2(mw.ui->cashs[2]->text().compare(QString("0,00")) == 0, "incorrect cashs 2");
+    QVERIFY2(mw.ui->cashs[3]->text().compare(QString("0,00")) == 0, "incorrect cashs 3");
+    QVERIFY2(mw.ui->cashs[4]->text().compare(QString("0,00")) == 0, "incorrect cashs 4");
+    QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
+
+    QVERIFY2(mw.ui->totalCash->text().compare(QString("0,00 (inkl. 0,00 pro Abwesender)")) == 0, "incorrect totalCash");
+
     QVERIFY2(isEnabled5 == false, "reset button wrong enabled state");
 }
 
@@ -640,7 +694,7 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
     std::wstring dealer(L"C");
     std::set<unsigned int> sitOutScheme;
 
-    MainWindow mw(false);
+    MainWindow mw(8u, false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 

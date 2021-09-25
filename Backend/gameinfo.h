@@ -38,6 +38,7 @@ namespace Backend
     {
     private:
         class PlayerInfoInternal;
+        const unsigned int MaxPlayers;
         unsigned int dealsRecorded;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         std::map<std::wstring, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
@@ -52,7 +53,7 @@ namespace Backend
         /*!
          * \brief Initializes a new instance.
          */
-        GameInfo();
+        GameInfo(const unsigned int maxPlayers = 8u);
 
         /*!
          * \brief Provides access to the player information.
@@ -113,12 +114,25 @@ namespace Backend
          */
         unsigned int LastNumberOfEvents() const;
 
+        /*!
+         * \brief Gets the total cash from all players who played in Euro cents.
+         * \return The total cash from all players who played in Euro cents.
+         */
+        unsigned int TotalCashCents() const;
+
+        /*!
+         * \brief Gets the cash for an absent player in Euro cents;
+         * \return The cash for an absent player in Euro cents;
+         */
+        unsigned int AbsentPlayerCashCents() const;
+
     private:
         void SortAndSetPlayerInfos(std::vector<std::wstring> players);
         void SetDealer(std::wstring dealer);
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
         void ApplyScheme();
         std::vector<std::pair<std::wstring, int>> AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges);
+        int MaximumCurrentScore() const;
 
     private:
         class PlayerInfoInternal : public PlayerInfo
@@ -127,8 +141,12 @@ namespace Backend
             /*!
              * \brief Initializes a new instance from the given name.
              * \param The unique name of the player.
+             * \param multiplierAccessor A function to obtain the multiplier for the indexed game.
+             * \param maxCurrentScoreAccessor A function to obtain the maximum current score among the players.
              */
-            PlayerInfoInternal(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor);
+            PlayerInfoInternal(std::wstring name,
+                               std::function<unsigned short(unsigned int)> multiplierAccessor,
+                               std::function<int()> maxCurrentScoreAccessor);
 
             /*!
              * \brief Sets a value indicating whether the player has participated in any deal.

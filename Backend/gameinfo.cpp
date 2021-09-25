@@ -20,11 +20,13 @@
 #include <numeric>
 #include "gameinfo.h"
 #include "eventinfo.h"
+#include "cashcalculation.h"
 
 namespace Backend
 {
-    GameInfo::GameInfo()
-        : dealsRecorded(0u),
+    GameInfo::GameInfo(const unsigned int maxPlayers)
+        : MaxPlayers(maxPlayers),
+          dealsRecorded(0u),
           poppableGames(0u)
     {
     }
@@ -182,6 +184,21 @@ namespace Backend
         return !this->events.empty() ? this->events.back().number.Value() : 0u;
     }
 
+    unsigned int GameInfo::TotalCashCents() const
+    {
+        auto sum = std::accumulate(this->playerInfos.begin(),
+                                  this->playerInfos.end(),
+                                  0,
+                                  [](int s, std::shared_ptr<PlayerInfoInternal> p){ s += p->CashCents(); return s; });
+        sum += (MaxPlayers - static_cast<int>(this->playerInfos.size())) * this->AbsentPlayerCashCents();
+        return sum;
+    }
+
+    unsigned int GameInfo::AbsentPlayerCashCents() const
+    {
+        return CalculateCashCents(this->MaximumCurrentScore());
+    }
+
     void GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)
     {
         this->numberOfPresentPlayers = static_cast<unsigned int>(players.size());
@@ -194,7 +211,9 @@ namespace Backend
         {
             if(nameToPlayerInfo.count(*playersIt) == 0)
             {
-                auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt, [&](unsigned int index){ return this->multiplierInfo.GetMultiplier(index); });
+                auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt,
+                                                                          [&](unsigned int index){ return this->multiplierInfo.GetMultiplier(index); },
+                                                                          [&](){ return this->MaximumCurrentScore(); });
                 while(newPlayerInfo->NumberOfRecordedDeals() < this->dealsRecorded)
                 {
                     newPlayerInfo->PushDealResult(0);
@@ -339,8 +358,17 @@ namespace Backend
         return newChanges;
     }
 
-    GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name, std::function<unsigned short(unsigned int)> multiplierAccessor)
-        : PlayerInfo(name, multiplierAccessor)
+    int GameInfo::MaximumCurrentScore() const
+    {
+        return (*std::max_element(this->playerInfos.begin(),
+                                  this->playerInfos.end(),
+                                  [](const std::shared_ptr<PlayerInfoInternal> p1, const std::shared_ptr<PlayerInfoInternal> p2){ return p1->CurrentScore() < p2->CurrentScore(); }))->CurrentScore();
+    }
+
+    GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name,
+                                                     std::function<unsigned short(unsigned int)> multiplierAccessor,
+                                                     std::function<int()> maxCurrentScoreAccessor)
+        : PlayerInfo(name, multiplierAccessor, maxCurrentScoreAccessor)
     {
     }
 

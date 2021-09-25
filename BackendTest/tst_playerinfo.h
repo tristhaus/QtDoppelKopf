@@ -23,7 +23,7 @@
 #include "../Backend/gameinfo.h"
 #include "../Backend/playerinfo.h"
 
-TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
+TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
 {
     // Arrange
     Backend::GameInfo gameInfo;
@@ -58,6 +58,12 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
     EXPECT_EQ(-2, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 2, playerInfos[4]->CurrentScore());
 
+    EXPECT_EQ( 1, playerInfos[0]->CashCents());
+    EXPECT_EQ( 2, playerInfos[1]->CashCents());
+    EXPECT_EQ( 0, playerInfos[2]->CashCents());
+    EXPECT_EQ( 2, playerInfos[3]->CashCents());
+    EXPECT_EQ( 0, playerInfos[4]->CashCents());
+
     EXPECT_FALSE(playerInfos[0]->ParticipatedInLastDeal());
     EXPECT_TRUE(playerInfos[1]->ParticipatedInLastDeal());
     EXPECT_TRUE(playerInfos[2]->ParticipatedInLastDeal());
@@ -83,6 +89,12 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 3, playerInfos[4]->CurrentScore());
 
+    EXPECT_EQ( 3, playerInfos[0]->CashCents());
+    EXPECT_EQ( 2, playerInfos[1]->CashCents());
+    EXPECT_EQ( 0, playerInfos[2]->CashCents());
+    EXPECT_EQ( 2, playerInfos[3]->CashCents());
+    EXPECT_EQ( 0, playerInfos[4]->CashCents());
+
     EXPECT_TRUE(playerInfos[0]->ParticipatedInLastDeal());
     EXPECT_FALSE(playerInfos[1]->ParticipatedInLastDeal());
     EXPECT_TRUE(playerInfos[2]->ParticipatedInLastDeal());
@@ -107,6 +119,12 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScores)
     EXPECT_EQ( 3, playerInfos[2]->CurrentScore());
     EXPECT_EQ( 5, playerInfos[3]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[4]->CurrentScore());
+
+    EXPECT_EQ( 5, playerInfos[0]->CashCents());
+    EXPECT_EQ( 4, playerInfos[1]->CashCents());
+    EXPECT_EQ( 1, playerInfos[2]->CashCents());
+    EXPECT_EQ( 0, playerInfos[3]->CashCents());
+    EXPECT_EQ( 2, playerInfos[4]->CashCents());
 
     EXPECT_TRUE(playerInfos[0]->ParticipatedInLastDeal());
     EXPECT_TRUE(playerInfos[1]->ParticipatedInLastDeal());

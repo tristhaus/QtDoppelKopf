@@ -16,14 +16,12 @@
  *
  */
 
-#include "../Frontend/mainwindow.h"
+#include "cashcalculation.h"
 
-#include <QApplication>
-
-int main(int argc, char *argv[])
+unsigned int Backend::CalculateCashCents(unsigned int pointDifference)
 {
-    QApplication a(argc, argv);
-    MainWindow w(8u);
-    w.show();
-    return a.exec();
+    const unsigned int PointToCentConversionNumerator = 1;
+    const unsigned int PointToCentConversionDenominator = 2;
+
+    return pointDifference * PointToCentConversionNumerator / PointToCentConversionDenominator;
 }

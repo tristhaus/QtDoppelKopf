@@ -38,11 +38,12 @@ class MainWindow : public QMainWindow
 private:
     const QString StandardNamesStylesheet = "QLabel { }";
     const QString DealerNamesStylesheet = "QLabel { border: 3px solid orange ; border-radius : 6px }";
+    const unsigned int MaxPlayers;
     Ui::MainWindow *ui;
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo = Backend::GameInfo(this->MaxPlayers);
     unsigned int dealerIndex;
 public:
-    MainWindow(bool showPlayerSelection = true, QWidget *parent = nullptr);
+    MainWindow(unsigned int maxPlayers, bool showPlayerSelection = true, QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
