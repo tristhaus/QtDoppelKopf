@@ -106,6 +106,10 @@ void MainWindow::UpdateDisplay()
         ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString("%1").arg(playerInfo->ScoreInLastDeal()) : QString(""));
 
         ui->cashs[index]->setText(QString("%1,%2").arg(playerInfo->CashCents()/100).arg(playerInfo->CashCents()%100, 2, 10, QLatin1Char('0')));
+
+        ui->numberWons[index]->setText(QString().setNum(playerInfo->NumberGamesWon()));
+        ui->numberLosts[index]->setText(QString().setNum(playerInfo->NumberGamesLost()));
+        ui->numberPlayeds[index]->setText(QString().setNum(playerInfo->NumberGames()));
     }
 
     ui->spinBox->setValue(0);

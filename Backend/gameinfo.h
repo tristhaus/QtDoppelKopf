@@ -168,9 +168,10 @@ namespace Backend
 
             /*!
              * \brief Adds a result of a deal to the player.
+             * \param hasPlayedInDeal Value indicating whether the player played in the deal.
              * \param dealResult The change in score to push.
              */
-            void PushDealResult(int dealResult);
+            void PushDealResult(bool hasPlayedInDeal, int dealResult);
 
             /*!
              * \brief Removes the last deal result from the collection.
@@ -182,12 +183,6 @@ namespace Backend
              *        disabling the popping of old results.
              */
             void DropPreviousDealInformation();
-
-            /*!
-             * \brief Sets a value indicating whether the player played in the last persisted deal.
-             * \param participated A value indicating whether the player played in the last persisted deal.
-             */
-            void SetParticipatedInDeal(bool participated);
 
             /*!
              * \brief Sets the input in the last deal, if any.

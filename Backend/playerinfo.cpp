@@ -19,6 +19,7 @@
 #include "playerinfo.h"
 #include "cashcalculation.h"
 #include <numeric>
+#include <algorithm>
 
 namespace Backend
 {
@@ -29,7 +30,6 @@ namespace Backend
           hasPlayed(false),
           isPresent(false),
           isPlaying(false),
-          participatedInLastDeal(false),
           multiplierAccessor(multiplierAccessor),
           maxCurrentScoreAccessor(maxCurrentScoreAccessor)
     {
@@ -60,7 +60,7 @@ namespace Backend
         int retval = 0;
         for(unsigned int index = 0; index < this->dealResults.size(); ++index)
         {
-            retval += dealResults[index] * this->multiplierAccessor(index);
+            retval += dealResults[index].second * this->multiplierAccessor(index);
         }
 
         return retval;
@@ -68,12 +68,12 @@ namespace Backend
 
     bool PlayerInfo::ParticipatedInLastDeal() const
     {
-        return this->participatedInLastDeal;
+        return !this->dealResults.empty() ? this->dealResults.back().first : false;
     }
 
     int PlayerInfo::ScoreInLastDeal() const
     {
-        return this->dealResults.back() * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size()) - 1);
+        return this->dealResults.back().second * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size()) - 1);
     }
 
     std::wstring PlayerInfo::InputInLastDeal() const
@@ -84,5 +84,20 @@ namespace Backend
     unsigned int PlayerInfo::CashCents() const
     {
         return CalculateCashCents(this->maxCurrentScoreAccessor() - this->CurrentScore());
+    }
+
+    unsigned int PlayerInfo::NumberGamesWon() const
+    {
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](std::pair<bool, int> item){ return item.first && item.second > 0; }));
+    }
+
+    unsigned int PlayerInfo::NumberGamesLost() const
+    {
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](std::pair<bool, int> item){ return item.first && item.second < 0; }));
+    }
+
+    unsigned int PlayerInfo::NumberGames() const
+    {
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](std::pair<bool, int> item){ return item.first; }));
     }
 }

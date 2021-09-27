@@ -108,8 +108,7 @@ namespace Backend
                 throw std::exception("found change for player not playing");
             }
 
-            player->PushDealResult(changesIt->second);
-            player->SetParticipatedInDeal(true);
+            player->PushDealResult(true, changesIt->second);
 
             player->SetHasPlayed(true);
 
@@ -130,8 +129,7 @@ namespace Backend
         {
             if(!(*playerInfosIt)->IsPlaying())
             {
-                (*playerInfosIt)->PushDealResult(0);
-                (*playerInfosIt)->SetParticipatedInDeal(false);
+                (*playerInfosIt)->PushDealResult(false, 0);
                 (*playerInfosIt)->SetInputInDeal(std::wstring(L""));
             }
         }
@@ -216,8 +214,7 @@ namespace Backend
                                                                           [&](){ return this->MaximumCurrentScore(); });
                 while(newPlayerInfo->NumberOfRecordedDeals() < this->dealsRecorded)
                 {
-                    newPlayerInfo->PushDealResult(0);
-                    newPlayerInfo->SetParticipatedInDeal(false);
+                    newPlayerInfo->PushDealResult(false, 0);
                 }
 
                 nameToPlayerInfo[*playersIt] = newPlayerInfo;
@@ -387,27 +384,20 @@ namespace Backend
         this->isPlaying = isPlaying;
     }
 
-    void GameInfo::PlayerInfoInternal::PushDealResult(int dealResult)
+    void GameInfo::PlayerInfoInternal::PushDealResult(bool hasPlayedInDeal, int dealResult)
     {
-        this->dealResults.push_back(dealResult);
+        this->dealResults.push_back(std::make_pair(hasPlayedInDeal, dealResult));
     }
 
     void GameInfo::PlayerInfoInternal::PopLastDealResult()
     {
         this->dealResults.pop_back();
         this->dealInput.pop_back();
-
-        this->SetParticipatedInDeal((!this->dealResults.empty() && this->dealResults.back() != 0) || !(this)->InputInLastDeal().empty());
     }
 
     void GameInfo::PlayerInfoInternal::DropPreviousDealInformation()
     {
         this->dealInput.clear();
-    }
-
-    void GameInfo::PlayerInfoInternal::SetParticipatedInDeal(bool participated)
-    {
-        this->participatedInLastDeal = participated;
     }
 
     void GameInfo::PlayerInfoInternal::SetInputInDeal(std::wstring input)

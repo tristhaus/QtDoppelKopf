@@ -635,7 +635,6 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
     EXPECT_STREQ( L"", playerInfos[3]->InputInLastDeal().c_str());
 }
 
-
 TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
 {
     // Arrange
@@ -752,6 +751,84 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ( 3, playerInfos[4]->CashCents());
     EXPECT_EQ( 5, playerInfos[5]->CashCents());
     EXPECT_EQ(14 + 2*2, gameInfo.TotalCashCents());
+}
+
+TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
+{
+    // Arrange
+    Backend::GameInfo gameInfo;
+    std::set<unsigned int> sitOutScheme {};
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"D", L"E"}, L"A", sitOutScheme);
+
+    // Act
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          /* A */
+                          std::make_pair<std::wstring, int>(L"B", -1),
+                          std::make_pair<std::wstring, int>(L"C", -1),
+                          std::make_pair<std::wstring, int>(L"D",  1),
+                          std::make_pair<std::wstring, int>(L"E",  1)
+                      }, 0u);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"A",  3),
+                          /* B */
+                          std::make_pair<std::wstring, int>(L"C", -1),
+                          std::make_pair<std::wstring, int>(L"D", -1),
+                          std::make_pair<std::wstring, int>(L"E", -1)
+                      }, 1u);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"A",  2),
+                          std::make_pair<std::wstring, int>(L"B",  2),
+                          /* C */
+                          std::make_pair<std::wstring, int>(L"D",  2),
+                          std::make_pair<std::wstring, int>(L"E", -6)
+                      }, 0u);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"A",  3),
+                          std::make_pair<std::wstring, int>(L"B", -3),
+                          std::make_pair<std::wstring, int>(L"C",  3),
+                          /* D */
+                          std::make_pair<std::wstring, int>(L"E", -3)
+                      }, 0u);
+
+    // Assert
+    auto playerInfos = gameInfo.PlayerInfos();
+
+    EXPECT_STREQ(L"A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ(L"B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ(L"C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ(L"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ(L"E", playerInfos[4]->Name().c_str());
+
+    EXPECT_EQ( 13, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( -3, playerInfos[1]->CurrentScore());
+    EXPECT_EQ(  4, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(  4, playerInfos[3]->CurrentScore());
+    EXPECT_EQ(-18, playerInfos[4]->CurrentScore());
+
+    EXPECT_EQ(3, playerInfos[0]->NumberGamesWon());
+    EXPECT_EQ(1, playerInfos[1]->NumberGamesWon());
+    EXPECT_EQ(1, playerInfos[2]->NumberGamesWon());
+    EXPECT_EQ(2, playerInfos[3]->NumberGamesWon());
+    EXPECT_EQ(1, playerInfos[4]->NumberGamesWon());
+
+    EXPECT_EQ(0, playerInfos[0]->NumberGamesLost());
+    EXPECT_EQ(2, playerInfos[1]->NumberGamesLost());
+    EXPECT_EQ(2, playerInfos[2]->NumberGamesLost());
+    EXPECT_EQ(1, playerInfos[3]->NumberGamesLost());
+    EXPECT_EQ(3, playerInfos[4]->NumberGamesLost());
+
+    EXPECT_EQ(3, playerInfos[0]->NumberGames());
+    EXPECT_EQ(3, playerInfos[1]->NumberGames());
+    EXPECT_EQ(3, playerInfos[2]->NumberGames());
+    EXPECT_EQ(3, playerInfos[3]->NumberGames());
+    EXPECT_EQ(4, playerInfos[4]->NumberGames());
 }
 
 #endif // TST_GAMEINFO_H

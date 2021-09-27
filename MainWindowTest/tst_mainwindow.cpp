@@ -48,6 +48,7 @@ private slots:
     void TwoCommittedGamesShallBeDisplayed();
     void TwoCommittedAndTwoPoppedGameShallBeDisplayed();
     void AllLevelsOfMultipliersShallCorrectlyBeDisplayed();
+    void StatisticsShallCorrectlyBeDisplayed();
 #endif
 };
 
@@ -728,6 +729,86 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
     QVERIFY2(mw.ui->multiplier->text().compare(QString("Dreifachbock (3:1:1)")) == 0, "multiplier label incorrect");
+}
+
+void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
+{
+    // Arrange
+    std::vector<std::wstring> players
+    {
+        L"A",
+        L"B",
+        L"C",
+        L"D",
+        L"E"
+    };
+
+    std::wstring dealer(L"A");
+    std::set<unsigned int> sitOutScheme {};
+
+    MainWindow mw(8u, false);
+
+    QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
+
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    // Act
+    mw.ui->actuals[1]->setText(QString("-1"));
+    mw.ui->actuals[2]->setText(QString("-1"));
+    mw.ui->actuals[3]->setText(QString("1"));
+    mw.ui->actuals[4]->setText(QString("1"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    mw.ui->actuals[0]->setText(QString("3"));
+    mw.ui->actuals[2]->setText(QString("-1"));
+    mw.ui->actuals[3]->setText(QString("-1"));
+    mw.ui->actuals[4]->setText(QString("-1"));
+    mw.ui->spinBox->setValue(1);
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    mw.ui->actuals[0]->setText(QString("2"));
+    mw.ui->actuals[1]->setText(QString("2"));
+    mw.ui->actuals[3]->setText(QString("2"));
+    mw.ui->actuals[4]->setText(QString("-6"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    mw.ui->actuals[0]->setText(QString("3"));
+    mw.ui->actuals[1]->setText(QString("-3"));
+    mw.ui->actuals[2]->setText(QString("3"));
+    mw.ui->actuals[4]->setText(QString("-3"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    // Assert
+    QVERIFY2(mw.ui->names[0]->text().compare(QString("A")) == 0, "incorrect player name 0");
+    QVERIFY2(mw.ui->names[1]->text().compare(QString("B")) == 0, "incorrect player name 1");
+    QVERIFY2(mw.ui->names[2]->text().compare(QString("C")) == 0, "incorrect player name 2");
+    QVERIFY2(mw.ui->names[3]->text().compare(QString("D")) == 0, "incorrect player name 3");
+    QVERIFY2(mw.ui->names[4]->text().compare(QString("E")) == 0, "incorrect player name 4");
+
+    QVERIFY2(mw.ui->scores[0]->text().compare(QString("13")) == 0, "incorrect score 0");
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString("-3")) == 0, "incorrect score 1");
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString("4")) == 0, "incorrect score 2");
+    QVERIFY2(mw.ui->scores[3]->text().compare(QString("4")) == 0, "incorrect score 3");
+    QVERIFY2(mw.ui->scores[4]->text().compare(QString("-18")) == 0, "incorrect score 4");
+
+    QVERIFY2(mw.ui->numberWons[0]->text().compare(QString("3")) == 0, "incorrect number wons 0");
+    QVERIFY2(mw.ui->numberWons[1]->text().compare(QString("1")) == 0, "incorrect number wons 1");
+    QVERIFY2(mw.ui->numberWons[2]->text().compare(QString("1")) == 0, "incorrect number wons 2");
+    QVERIFY2(mw.ui->numberWons[3]->text().compare(QString("2")) == 0, "incorrect number wons 3");
+    QVERIFY2(mw.ui->numberWons[4]->text().compare(QString("1")) == 0, "incorrect number wons 4");
+
+    QVERIFY2(mw.ui->numberLosts[0]->text().compare(QString("0")) == 0, "incorrect number losts 0");
+    QVERIFY2(mw.ui->numberLosts[1]->text().compare(QString("2")) == 0, "incorrect number losts 1");
+    QVERIFY2(mw.ui->numberLosts[2]->text().compare(QString("2")) == 0, "incorrect number losts 2");
+    QVERIFY2(mw.ui->numberLosts[3]->text().compare(QString("1")) == 0, "incorrect number losts 3");
+    QVERIFY2(mw.ui->numberLosts[4]->text().compare(QString("3")) == 0, "incorrect number losts 4");
+
+    QVERIFY2(mw.ui->numberPlayeds[0]->text().compare(QString("3")) == 0, "incorrect number playeds 0");
+    QVERIFY2(mw.ui->numberPlayeds[1]->text().compare(QString("3")) == 0, "incorrect number playeds 1");
+    QVERIFY2(mw.ui->numberPlayeds[2]->text().compare(QString("3")) == 0, "incorrect number playeds 2");
+    QVERIFY2(mw.ui->numberPlayeds[3]->text().compare(QString("3")) == 0, "incorrect number playeds 3");
+    QVERIFY2(mw.ui->numberPlayeds[4]->text().compare(QString("4")) == 0, "incorrect number playeds 4");
 }
 
 #endif // _USE_LONG_TEST

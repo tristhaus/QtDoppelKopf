@@ -36,8 +36,8 @@ namespace Backend
         bool hasPlayed;
         bool isPresent;
         bool isPlaying;
-        bool participatedInLastDeal;
-        std::vector<int> dealResults;
+        // hasPlayedInDeal, result
+        std::vector<std::pair<bool, int>> dealResults;
         std::vector<std::wstring> dealInput;
         std::function<unsigned short(unsigned int)> multiplierAccessor;
         std::function<int()> maxCurrentScoreAccessor;
@@ -106,6 +106,24 @@ namespace Backend
          * \return The due balance in Euro cent.
          */
         unsigned int CashCents() const;
+
+        /*!
+         * \brief Gets the number of won games.
+         * \return The number of won games.
+         */
+        unsigned int NumberGamesWon() const;
+
+        /*!
+         * \brief Gets the number of lost games.
+         * \return The number of lost games.
+         */
+        unsigned int NumberGamesLost() const;
+
+        /*!
+         * \brief Gets the number of games.
+         * \return The number of games.
+         */
+        unsigned int NumberGames() const;
     };
 }
 
