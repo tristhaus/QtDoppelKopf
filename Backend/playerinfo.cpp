@@ -100,4 +100,37 @@ namespace Backend
     {
         return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](std::pair<bool, int> item){ return item.first; }));
     }
+
+    int PlayerInfo::MaxSingleWin() const
+    {
+        int retval = 0;
+        for(unsigned int index = 0; index < this->dealResults.size(); ++index)
+        {
+            retval = std::max(retval, dealResults[index].second * this->multiplierAccessor(index));
+        }
+
+        return retval;
+    }
+
+    int PlayerInfo::MaxSingleLoss() const
+    {
+        int retval = 0;
+        for(unsigned int index = 0; index < this->dealResults.size(); ++index)
+        {
+            retval = std::min(retval, dealResults[index].second * this->multiplierAccessor(index));
+        }
+
+        return retval;
+    }
+
+    int PlayerInfo::UnmultipliedScore() const
+    {
+        int sum = 0;
+
+        std::for_each(this->dealResults.begin(),
+                      this->dealResults.end(),
+                      [&sum](std::pair<bool, int> item) { sum += item.second; } );
+
+        return sum;
+    }
 }

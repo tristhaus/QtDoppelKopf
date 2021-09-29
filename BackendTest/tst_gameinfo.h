@@ -829,6 +829,24 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
     EXPECT_EQ(3, playerInfos[2]->NumberGames());
     EXPECT_EQ(3, playerInfos[3]->NumberGames());
     EXPECT_EQ(4, playerInfos[4]->NumberGames());
+
+    EXPECT_EQ(6, playerInfos[0]->MaxSingleWin());
+    EXPECT_EQ(4, playerInfos[1]->MaxSingleWin());
+    EXPECT_EQ(6, playerInfos[2]->MaxSingleWin());
+    EXPECT_EQ(4, playerInfos[3]->MaxSingleWin());
+    EXPECT_EQ(1, playerInfos[4]->MaxSingleWin());
+
+    EXPECT_EQ(  0, playerInfos[0]->MaxSingleLoss());
+    EXPECT_EQ( -6, playerInfos[1]->MaxSingleLoss());
+    EXPECT_EQ( -1, playerInfos[2]->MaxSingleLoss());
+    EXPECT_EQ( -1, playerInfos[3]->MaxSingleLoss());
+    EXPECT_EQ(-12, playerInfos[4]->MaxSingleLoss());
+
+    EXPECT_EQ( 8, playerInfos[0]->UnmultipliedScore());
+    EXPECT_EQ(-2, playerInfos[1]->UnmultipliedScore());
+    EXPECT_EQ( 1, playerInfos[2]->UnmultipliedScore());
+    EXPECT_EQ( 2, playerInfos[3]->UnmultipliedScore());
+    EXPECT_EQ(-9, playerInfos[4]->UnmultipliedScore());
 }
 
 #endif // TST_GAMEINFO_H

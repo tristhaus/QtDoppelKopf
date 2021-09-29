@@ -809,6 +809,24 @@ void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
     QVERIFY2(mw.ui->numberPlayeds[2]->text().compare(QString("3")) == 0, "incorrect number playeds 2");
     QVERIFY2(mw.ui->numberPlayeds[3]->text().compare(QString("3")) == 0, "incorrect number playeds 3");
     QVERIFY2(mw.ui->numberPlayeds[4]->text().compare(QString("4")) == 0, "incorrect number playeds 4");
+
+    QVERIFY2(mw.ui->maxSingleWins[0]->text().compare(QString("6")) == 0, "incorrect max single win 0");
+    QVERIFY2(mw.ui->maxSingleWins[1]->text().compare(QString("4")) == 0, "incorrect max single win 1");
+    QVERIFY2(mw.ui->maxSingleWins[2]->text().compare(QString("6")) == 0, "incorrect max single win 2");
+    QVERIFY2(mw.ui->maxSingleWins[3]->text().compare(QString("4")) == 0, "incorrect max single win 3");
+    QVERIFY2(mw.ui->maxSingleWins[4]->text().compare(QString("1")) == 0, "incorrect max single win 4");
+
+    QVERIFY2(mw.ui->maxSingleLosss[0]->text().compare(QString("0")) == 0, "incorrect max single loss 0");
+    QVERIFY2(mw.ui->maxSingleLosss[1]->text().compare(QString("-6")) == 0, "incorrect max single loss 1");
+    QVERIFY2(mw.ui->maxSingleLosss[2]->text().compare(QString("-1")) == 0, "incorrect max single loss 2");
+    QVERIFY2(mw.ui->maxSingleLosss[3]->text().compare(QString("-1")) == 0, "incorrect max single loss 3");
+    QVERIFY2(mw.ui->maxSingleLosss[4]->text().compare(QString("-12")) == 0, "incorrect max single loss 4");
+
+    QVERIFY2(mw.ui->unmultipliedScores[0]->text().compare(QString("8")) == 0, "incorrect unmultiplied scores 0");
+    QVERIFY2(mw.ui->unmultipliedScores[1]->text().compare(QString("-2")) == 0, "incorrect unmultiplied scores 1");
+    QVERIFY2(mw.ui->unmultipliedScores[2]->text().compare(QString("1")) == 0, "incorrect unmultiplied scores 2");
+    QVERIFY2(mw.ui->unmultipliedScores[3]->text().compare(QString("2")) == 0, "incorrect unmultiplied scores 3");
+    QVERIFY2(mw.ui->unmultipliedScores[4]->text().compare(QString("-9")) == 0, "incorrect unmultiplied scores 4");
 }
 
 #endif // _USE_LONG_TEST

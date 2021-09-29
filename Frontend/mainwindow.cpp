@@ -110,6 +110,9 @@ void MainWindow::UpdateDisplay()
         ui->numberWons[index]->setText(QString().setNum(playerInfo->NumberGamesWon()));
         ui->numberLosts[index]->setText(QString().setNum(playerInfo->NumberGamesLost()));
         ui->numberPlayeds[index]->setText(QString().setNum(playerInfo->NumberGames()));
+        ui->maxSingleWins[index]->setText(QString().setNum(playerInfo->MaxSingleWin()));
+        ui->maxSingleLosss[index]->setText(QString().setNum(playerInfo->MaxSingleLoss()));
+        ui->unmultipliedScores[index]->setText(QString().setNum(playerInfo->UnmultipliedScore()));
     }
 
     ui->spinBox->setValue(0);

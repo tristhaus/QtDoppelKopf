@@ -124,6 +124,24 @@ namespace Backend
          * \return The number of games.
          */
         unsigned int NumberGames() const;
+
+        /*!
+         * \brief Gets the points of the maximal single win.
+         * \return The points of the maximal single win.
+         */
+        int MaxSingleWin() const;
+
+        /*!
+         * \brief Gets the points of the maximal single loss.
+         * \return The points of the maximal single loss.
+         */
+        int MaxSingleLoss() const;
+
+        /*!
+         * \brief Gets the score without applying the multiplier.
+         * \return The score without applying the multiplier.
+         */
+        int UnmultipliedScore() const;
     };
 }
 
