@@ -386,12 +386,19 @@ namespace Backend
 
     void GameInfo::PlayerInfoInternal::PushDealResult(bool hasPlayedInDeal, int dealResult)
     {
+        if(!hasPlayedInDeal)
+        {
+            dealResult = 0;
+        }
+
+        this->multipliedResults.push_back(dealResult * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size())));
         this->dealResults.push_back(std::make_pair(hasPlayedInDeal, dealResult));
     }
 
     void GameInfo::PlayerInfoInternal::PopLastDealResult()
     {
         this->dealResults.pop_back();
+        this->multipliedResults.pop_back();
         this->dealInput.pop_back();
     }
 

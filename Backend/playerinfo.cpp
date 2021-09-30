@@ -37,33 +37,27 @@ namespace Backend
 
     std::wstring PlayerInfo::Name() const
     {
-        return name;
+        return this->name;
     }
 
     bool PlayerInfo::HasPlayed() const
     {
-        return hasPlayed;
+        return this->hasPlayed;
     }
 
     bool PlayerInfo::IsPresent() const
     {
-        return isPresent;
+        return this->isPresent;
     }
 
     bool PlayerInfo::IsPlaying() const
     {
-        return isPlaying;
+        return this->isPlaying;
     }
 
     int PlayerInfo::CurrentScore() const
     {
-        int retval = 0;
-        for(unsigned int index = 0; index < this->dealResults.size(); ++index)
-        {
-            retval += dealResults[index].second * this->multiplierAccessor(index);
-        }
-
-        return retval;
+        return std::reduce(this->multipliedResults.begin(), this->multipliedResults.end());
     }
 
     bool PlayerInfo::ParticipatedInLastDeal() const
@@ -73,7 +67,7 @@ namespace Backend
 
     int PlayerInfo::ScoreInLastDeal() const
     {
-        return this->dealResults.back().second * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size()) - 1);
+        return this->multipliedResults.back();
     }
 
     std::wstring PlayerInfo::InputInLastDeal() const
@@ -103,24 +97,22 @@ namespace Backend
 
     int PlayerInfo::MaxSingleWin() const
     {
-        int retval = 0;
-        for(unsigned int index = 0; index < this->dealResults.size(); ++index)
+        if(this->multipliedResults.empty())
         {
-            retval = std::max(retval, dealResults[index].second * this->multiplierAccessor(index));
+            return 0;
         }
 
-        return retval;
+        return std::max(0, *std::max_element(this->multipliedResults.begin(), this->multipliedResults.end()));
     }
 
     int PlayerInfo::MaxSingleLoss() const
     {
-        int retval = 0;
-        for(unsigned int index = 0; index < this->dealResults.size(); ++index)
+        if(this->multipliedResults.empty())
         {
-            retval = std::min(retval, dealResults[index].second * this->multiplierAccessor(index));
+            return 0;
         }
 
-        return retval;
+        return std::min(0, *std::min_element(this->multipliedResults.begin(), this->multipliedResults.end()));
     }
 
     int PlayerInfo::UnmultipliedScore() const

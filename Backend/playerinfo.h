@@ -38,6 +38,7 @@ namespace Backend
         bool isPlaying;
         // hasPlayedInDeal, result
         std::vector<std::pair<bool, int>> dealResults;
+        std::vector<int> multipliedResults;
         std::vector<std::wstring> dealInput;
         std::function<unsigned short(unsigned int)> multiplierAccessor;
         std::function<int()> maxCurrentScoreAccessor;
