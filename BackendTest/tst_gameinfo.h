@@ -830,6 +830,24 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
     EXPECT_EQ(3, playerInfos[3]->NumberGames());
     EXPECT_EQ(4, playerInfos[4]->NumberGames());
 
+    EXPECT_EQ(1, playerInfos[0]->SolosWon());
+    EXPECT_EQ(0, playerInfos[1]->SolosWon());
+    EXPECT_EQ(0, playerInfos[2]->SolosWon());
+    EXPECT_EQ(0, playerInfos[3]->SolosWon());
+    EXPECT_EQ(0, playerInfos[4]->SolosWon());
+
+    EXPECT_EQ(0, playerInfos[0]->SolosLost());
+    EXPECT_EQ(0, playerInfos[1]->SolosLost());
+    EXPECT_EQ(0, playerInfos[2]->SolosLost());
+    EXPECT_EQ(0, playerInfos[3]->SolosLost());
+    EXPECT_EQ(1, playerInfos[4]->SolosLost());
+
+    EXPECT_EQ(  3, playerInfos[0]->TotalSoloPoints());
+    EXPECT_EQ(  0, playerInfos[1]->TotalSoloPoints());
+    EXPECT_EQ(  0, playerInfos[2]->TotalSoloPoints());
+    EXPECT_EQ(  0, playerInfos[3]->TotalSoloPoints());
+    EXPECT_EQ(-12, playerInfos[4]->TotalSoloPoints());
+
     EXPECT_EQ(6, playerInfos[0]->MaxSingleWin());
     EXPECT_EQ(4, playerInfos[1]->MaxSingleWin());
     EXPECT_EQ(6, playerInfos[2]->MaxSingleWin());

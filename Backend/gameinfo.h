@@ -132,6 +132,7 @@ namespace Backend
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
         void ApplyScheme();
         std::vector<std::pair<std::wstring, int>> AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges);
+        std::wstring FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes);
         int MaximumCurrentScore() const;
 
     private:
@@ -169,9 +170,10 @@ namespace Backend
             /*!
              * \brief Adds a result of a deal to the player.
              * \param hasPlayedInDeal Value indicating whether the player played in the deal.
-             * \param dealResult The change in score to push.
+             * \param unmultipliedScore The change in score to push.
+             * \param playedSolo Value indicating whether the player played solo.
              */
-            void PushDealResult(bool hasPlayedInDeal, int dealResult);
+            void PushDealResult(bool hasPlayedInDeal, int unmultipliedScore, bool playedSolo);
 
             /*!
              * \brief Removes the last deal result from the collection.

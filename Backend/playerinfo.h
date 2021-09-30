@@ -32,12 +32,26 @@ namespace Backend
     class PlayerInfo
     {
     protected:
+        class DealResult
+        {
+        public:
+            DealResult(bool hasPlayedInDeal, int unmultipliedScore, bool playedSolo)
+                : HasPlayedInDeal(hasPlayedInDeal),
+                  UnmultipliedScore(unmultipliedScore),
+                  PlayedSolo(playedSolo)
+            {
+            }
+
+            const bool HasPlayedInDeal;
+            const int UnmultipliedScore;
+            const bool PlayedSolo;
+        };
+
         std::wstring name;
         bool hasPlayed;
         bool isPresent;
         bool isPlaying;
-        // hasPlayedInDeal, result
-        std::vector<std::pair<bool, int>> dealResults;
+        std::vector<DealResult> dealResults;
         std::vector<int> multipliedResults;
         std::vector<std::wstring> dealInput;
         std::function<unsigned short(unsigned int)> multiplierAccessor;
@@ -125,6 +139,24 @@ namespace Backend
          * \return The number of games.
          */
         unsigned int NumberGames() const;
+
+        /*!
+         * \brief Gets the number of solos won.
+         * \return The number of solos won.
+         */
+        unsigned int SolosWon() const;
+
+        /*!
+         * \brief Gets the number of solos lost.
+         * \return The number of solos lost.
+         */
+        unsigned int SolosLost() const;
+
+        /*!
+         * \brief Gets the sum of points collected from played solos.
+         * \return The sum of points collected from played solos.
+         */
+        int TotalSoloPoints() const;
 
         /*!
          * \brief Gets the points of the maximal single win.

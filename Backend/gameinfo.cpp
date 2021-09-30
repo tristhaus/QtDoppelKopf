@@ -97,6 +97,8 @@ namespace Backend
     {
         auto actualChanges = this->AutoCompleteDeal(changes);
 
+        std::wstring soloPlayer = this->FindSoloPlayer(actualChanges);
+
         auto changesIt = actualChanges.begin();
         auto changesEnd = actualChanges.end();
         for(; changesIt != changesEnd; ++changesIt)
@@ -108,7 +110,7 @@ namespace Backend
                 throw std::exception("found change for player not playing");
             }
 
-            player->PushDealResult(true, changesIt->second);
+            player->PushDealResult(true, changesIt->second, player->Name().compare(soloPlayer) == 0);
 
             player->SetHasPlayed(true);
 
@@ -129,7 +131,7 @@ namespace Backend
         {
             if(!(*playerInfosIt)->IsPlaying())
             {
-                (*playerInfosIt)->PushDealResult(false, 0);
+                (*playerInfosIt)->PushDealResult(false, 0, false);
                 (*playerInfosIt)->SetInputInDeal(std::wstring(L""));
             }
         }
@@ -214,7 +216,7 @@ namespace Backend
                                                                           [&](){ return this->MaximumCurrentScore(); });
                 while(newPlayerInfo->NumberOfRecordedDeals() < this->dealsRecorded)
                 {
-                    newPlayerInfo->PushDealResult(false, 0);
+                    newPlayerInfo->PushDealResult(false, 0, false);
                 }
 
                 nameToPlayerInfo[*playersIt] = newPlayerInfo;
@@ -355,6 +357,42 @@ namespace Backend
         return newChanges;
     }
 
+    std::wstring GameInfo::FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes)
+    {
+        std::wstring losingPlayer;
+        std::wstring winningPlayer;
+
+        unsigned int losers = 0;
+        unsigned int winners = 0;
+
+        for (auto & change : changes)
+        {
+            if(change.second < 0)
+            {
+                ++losers;
+                losingPlayer = change.first;
+            }
+            else
+            {
+                ++winners;
+                winningPlayer = change.first;
+            }
+        }
+
+        if(losers == 3 && winners == 1)
+        {
+            return winningPlayer;
+        }
+        else if(winners == 3 && losers == 1)
+        {
+            return losingPlayer;
+        }
+        else
+        {
+            return std::wstring();
+        }
+    }
+
     int GameInfo::MaximumCurrentScore() const
     {
         return (*std::max_element(this->playerInfos.begin(),
@@ -384,15 +422,15 @@ namespace Backend
         this->isPlaying = isPlaying;
     }
 
-    void GameInfo::PlayerInfoInternal::PushDealResult(bool hasPlayedInDeal, int dealResult)
+    void GameInfo::PlayerInfoInternal::PushDealResult(bool hasPlayedInDeal, int unmultipliedScore, bool playedSolo)
     {
         if(!hasPlayedInDeal)
         {
-            dealResult = 0;
+            unmultipliedScore = 0;
         }
 
-        this->multipliedResults.push_back(dealResult * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size())));
-        this->dealResults.push_back(std::make_pair(hasPlayedInDeal, dealResult));
+        this->multipliedResults.push_back(unmultipliedScore * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size())));
+        this->dealResults.push_back(DealResult(hasPlayedInDeal, unmultipliedScore, playedSolo));
     }
 
     void GameInfo::PlayerInfoInternal::PopLastDealResult()

@@ -810,6 +810,24 @@ void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
     QVERIFY2(mw.ui->numberPlayeds[3]->text().compare(QString("3")) == 0, "incorrect number playeds 3");
     QVERIFY2(mw.ui->numberPlayeds[4]->text().compare(QString("4")) == 0, "incorrect number playeds 4");
 
+    QVERIFY2(mw.ui->numberSoloWons[0]->text().compare(QString("1")) == 0, "incorrect number solo wons 0");
+    QVERIFY2(mw.ui->numberSoloWons[1]->text().compare(QString("0")) == 0, "incorrect number solo wons 1");
+    QVERIFY2(mw.ui->numberSoloWons[2]->text().compare(QString("0")) == 0, "incorrect number solo wons 2");
+    QVERIFY2(mw.ui->numberSoloWons[3]->text().compare(QString("0")) == 0, "incorrect number solo wons 3");
+    QVERIFY2(mw.ui->numberSoloWons[4]->text().compare(QString("0")) == 0, "incorrect number solo wons 4");
+
+    QVERIFY2(mw.ui->numberSoloLosts[0]->text().compare(QString("0")) == 0, "incorrect number solo losts 0");
+    QVERIFY2(mw.ui->numberSoloLosts[1]->text().compare(QString("0")) == 0, "incorrect number solo losts 1");
+    QVERIFY2(mw.ui->numberSoloLosts[2]->text().compare(QString("0")) == 0, "incorrect number solo losts 2");
+    QVERIFY2(mw.ui->numberSoloLosts[3]->text().compare(QString("0")) == 0, "incorrect number solo losts 3");
+    QVERIFY2(mw.ui->numberSoloLosts[4]->text().compare(QString("1")) == 0, "incorrect number solo losts 4");
+
+    QVERIFY2(mw.ui->pointsSolos[0]->text().compare(QString("3")) == 0, "incorrect points solos 0");
+    QVERIFY2(mw.ui->pointsSolos[1]->text().compare(QString("0")) == 0, "incorrect points solos 1");
+    QVERIFY2(mw.ui->pointsSolos[2]->text().compare(QString("0")) == 0, "incorrect points solos 2");
+    QVERIFY2(mw.ui->pointsSolos[3]->text().compare(QString("0")) == 0, "incorrect points solos 3");
+    QVERIFY2(mw.ui->pointsSolos[4]->text().compare(QString("-12")) == 0, "incorrect points solos 4");
+
     QVERIFY2(mw.ui->maxSingleWins[0]->text().compare(QString("6")) == 0, "incorrect max single win 0");
     QVERIFY2(mw.ui->maxSingleWins[1]->text().compare(QString("4")) == 0, "incorrect max single win 1");
     QVERIFY2(mw.ui->maxSingleWins[2]->text().compare(QString("6")) == 0, "incorrect max single win 2");

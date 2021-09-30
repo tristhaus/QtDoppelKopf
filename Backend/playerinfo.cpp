@@ -62,7 +62,7 @@ namespace Backend
 
     bool PlayerInfo::ParticipatedInLastDeal() const
     {
-        return !this->dealResults.empty() ? this->dealResults.back().first : false;
+        return !this->dealResults.empty() ? this->dealResults.back().HasPlayedInDeal : false;
     }
 
     int PlayerInfo::ScoreInLastDeal() const
@@ -82,17 +82,52 @@ namespace Backend
 
     unsigned int PlayerInfo::NumberGamesWon() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](std::pair<bool, int> item){ return item.first && item.second > 0; }));
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](DealResult item){ return item.HasPlayedInDeal && item.UnmultipliedScore > 0; }));
     }
 
     unsigned int PlayerInfo::NumberGamesLost() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](std::pair<bool, int> item){ return item.first && item.second < 0; }));
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](DealResult item){ return item.HasPlayedInDeal && item.UnmultipliedScore < 0; }));
     }
 
     unsigned int PlayerInfo::NumberGames() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](std::pair<bool, int> item){ return item.first; }));
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](DealResult item){ return item.HasPlayedInDeal; }));
+    }
+
+    unsigned int PlayerInfo::SolosWon() const
+    {
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(),
+                                                       this->dealResults.end(),
+                                                       [](DealResult item)
+                                                       {
+                                                          return item.HasPlayedInDeal && item.PlayedSolo && item.UnmultipliedScore > 0;
+                                                       }));
+    }
+
+    unsigned int PlayerInfo::SolosLost() const
+    {
+        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(),
+                                                       this->dealResults.end(),
+                                                       [](DealResult item)
+                                                       {
+                                                          return item.HasPlayedInDeal && item.PlayedSolo && item.UnmultipliedScore < 0;
+                                                       }));
+    }
+
+    int PlayerInfo::TotalSoloPoints() const
+    {
+        int sum = 0;
+
+        for (unsigned int index = 0; index < this->dealResults.size(); ++index)
+        {
+            if(this->dealResults[index].PlayedSolo)
+            {
+                sum += this->multipliedResults[index];
+            }
+        }
+
+        return sum;
     }
 
     int PlayerInfo::MaxSingleWin() const
@@ -121,7 +156,7 @@ namespace Backend
 
         std::for_each(this->dealResults.begin(),
                       this->dealResults.end(),
-                      [&sum](std::pair<bool, int> item) { sum += item.second; } );
+                      [&sum](DealResult item) { sum += item.UnmultipliedScore; } );
 
         return sum;
     }

@@ -110,6 +110,9 @@ void MainWindow::UpdateDisplay()
         ui->numberWons[index]->setText(QString().setNum(playerInfo->NumberGamesWon()));
         ui->numberLosts[index]->setText(QString().setNum(playerInfo->NumberGamesLost()));
         ui->numberPlayeds[index]->setText(QString().setNum(playerInfo->NumberGames()));
+        ui->numberSoloWons[index]->setText(QString().setNum(playerInfo->SolosWon()));
+        ui->numberSoloLosts[index]->setText(QString().setNum(playerInfo->SolosLost()));
+        ui->pointsSolos[index]->setText(QString().setNum(playerInfo->TotalSoloPoints()));
         ui->maxSingleWins[index]->setText(QString().setNum(playerInfo->MaxSingleWin()));
         ui->maxSingleLosss[index]->setText(QString().setNum(playerInfo->MaxSingleLoss()));
         ui->unmultipliedScores[index]->setText(QString().setNum(playerInfo->UnmultipliedScore()));
