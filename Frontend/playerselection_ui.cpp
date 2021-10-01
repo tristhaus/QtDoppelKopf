@@ -79,12 +79,12 @@ void Ui::PlayerSelection::SetupUi()
 
     for(unsigned int index = 0; index < maxNumberOfPlayers; ++index)
     {
-        dialogNames.push_back(new QLineEdit(this));
-        dialogNames[index]->setObjectName(QString::fromUtf8("dialognames%1").arg(index));
-        playerNamesGridLayout->addWidget(dialogNames[index], index, 1, 1, 1);
         dealerButtons.push_back(new QRadioButton(this));
         dealerButtons[index]->setObjectName(QString::fromUtf8("dealerbuttons%1").arg(index));
         playerNamesGridLayout->addWidget(dealerButtons[index], index, 0, 1, 1);
+        dialogNames.push_back(new QLineEdit(this));
+        dialogNames[index]->setObjectName(QString::fromUtf8("dialognames%1").arg(index));
+        playerNamesGridLayout->addWidget(dialogNames[index], index, 1, 1, 1);
 
         bool needed = index < static_cast<unsigned int>(dialogNumberOfPresentPlayers->value());
         dialogNames[index]->setVisible(needed);

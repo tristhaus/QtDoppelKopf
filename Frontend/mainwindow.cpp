@@ -40,11 +40,20 @@ MainWindow::MainWindow(const unsigned int maxPlayers, bool showPlayerSelection, 
     {
         this->ShowPlayerSelection(true);
     }
+
+    this->DisableNotImplementedButtons();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::DisableNotImplementedButtons()
+{
+    this->ui->loadButton->setDisabled(true);
+    this->ui->saveButton->setDisabled(true);
+    this->ui->mandatorySoloButton->setDisabled(true);
 }
 
 void MainWindow::UpdateDisplay()

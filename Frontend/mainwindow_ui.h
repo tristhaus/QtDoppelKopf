@@ -225,11 +225,13 @@ public:
         for(unsigned int i=0u; i < maxNumberOfPlayers; ++i)
         {
             QLabel * name = new QLabel(centralwidget);
+            name->setAlignment(Qt::AlignCenter);
             name->setObjectName(QString::fromUtf8("names%1").arg(i));
             namesLayout->addWidget(name, 1, i+1, 1, 1);
             names.push_back(name);
 
             QLabel * lastGame = new QLabel(centralwidget);
+            lastGame->setAlignment(Qt::AlignCenter);
             lastGame->setObjectName(QString::fromUtf8("lastGames%1").arg(i));
             namesLayout->addWidget(lastGame, 2, i+1, 1, 1);
             lastGames.push_back(lastGame);
@@ -310,12 +312,14 @@ public:
         for(unsigned int i=0u; i < maxNumberOfPlayers; ++i)
         {
             QLabel * score = new QLabel(centralwidget);
+            score->setAlignment(Qt::AlignCenter);
             score->setObjectName(QString::fromUtf8("scores%1").arg(i));
             score->setStyleSheet(ScoreStylesheet);
             namesLayout->addWidget(score, 5, i+1, 1, 1);
             scores.push_back(score);
 
             QLabel * cash = new QLabel(centralwidget);
+            cash->setAlignment(Qt::AlignCenter);
             cash->setObjectName(QString::fromUtf8("cashs%1").arg(i));
             namesLayout->addWidget(cash, 7, i+1, 1, 1);
             cashs.push_back(cash);
@@ -393,46 +397,55 @@ public:
             statisticNames.push_back(statisticName);
 
             QLabel * numberWon = new QLabel(statisticsBox);
+            numberWon->setAlignment(Qt::AlignCenter);
             numberWon->setObjectName(QString::fromUtf8("numberWons%1").arg(i));
             gridLayout->addWidget(numberWon, i+1, 1, 1, 1);
             numberWons.push_back(numberWon);
 
             QLabel * numberLost = new QLabel(statisticsBox);
+            numberLost->setAlignment(Qt::AlignCenter);
             numberLost->setObjectName(QString::fromUtf8("numberLosts%1").arg(i));
             gridLayout->addWidget(numberLost, i+1, 2, 1, 1);
             numberLosts.push_back(numberLost);
 
             QLabel * numberPlayed = new QLabel(statisticsBox);
+            numberPlayed->setAlignment(Qt::AlignCenter);
             numberPlayed->setObjectName(QString::fromUtf8("numberPlayeds%1").arg(i));
             gridLayout->addWidget(numberPlayed, i+1, 3, 1, 1);
             numberPlayeds.push_back(numberPlayed);
 
             QLabel * numberSoloWon = new QLabel(statisticsBox);
+            numberSoloWon->setAlignment(Qt::AlignCenter);
             numberSoloWon->setObjectName(QString::fromUtf8("numberSoloWons%1").arg(i));
             gridLayout->addWidget(numberSoloWon, i+1, 4, 1, 1);
             numberSoloWons.push_back(numberSoloWon);
 
             QLabel * numberSoloLost = new QLabel(statisticsBox);
+            numberSoloLost->setAlignment(Qt::AlignCenter);
             numberSoloLost->setObjectName(QString::fromUtf8("numberSoloLosts%1").arg(i));
             gridLayout->addWidget(numberSoloLost, i+1, 5, 1, 1);
             numberSoloLosts.push_back(numberSoloLost);
 
             QLabel * pointsSolo = new QLabel(statisticsBox);
+            pointsSolo->setAlignment(Qt::AlignCenter);
             pointsSolo->setObjectName(QString::fromUtf8("pointsSolos%1").arg(i));
             gridLayout->addWidget(pointsSolo, i+1, 6, 1, 1);
             pointsSolos.push_back(pointsSolo);
 
             QLabel * maxSingleWin = new QLabel(statisticsBox);
+            maxSingleWin->setAlignment(Qt::AlignCenter);
             maxSingleWin->setObjectName(QString::fromUtf8("maxSingleWins%1").arg(i));
             gridLayout->addWidget(maxSingleWin, i+1, 7, 1, 1);
             maxSingleWins.push_back(maxSingleWin);
 
             QLabel * maxSingleLoss = new QLabel(statisticsBox);
+            maxSingleLoss->setAlignment(Qt::AlignCenter);
             maxSingleLoss->setObjectName(QString::fromUtf8("maxSingleLosss%1").arg(i));
             gridLayout->addWidget(maxSingleLoss, i+1, 8, 1, 1);
             maxSingleLosss.push_back(maxSingleLoss);
 
             QLabel * unmultipliedScore = new QLabel(statisticsBox);
+            unmultipliedScore->setAlignment(Qt::AlignCenter);
             unmultipliedScore->setObjectName(QString::fromUtf8("unmultipliedScores%1").arg(i));
             gridLayout->addWidget(unmultipliedScore, i+1, 9, 1, 1);
             unmultipliedScores.push_back(unmultipliedScore);

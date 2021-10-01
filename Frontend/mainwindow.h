@@ -47,6 +47,7 @@ public:
     ~MainWindow();
 
 private:
+    void DisableNotImplementedButtons();
     void UpdateDisplay();
     void ShowPlayerSelection(bool calledOnStartup);
     std::vector<std::pair<QString, bool>> GetDefaultPlayers();
