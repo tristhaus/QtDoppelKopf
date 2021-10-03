@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="256"
+   height="256"
+   viewBox="0 0 67.733332 67.733335"
+   version="1.1"
+   id="svg8"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="drawing.svg"
+   inkscape:export-filename="C:\Users\Tobias\Desktop\drawing.png"
+   inkscape:export-xdpi="6"
+   inkscape:export-ydpi="6">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="145.85767"
+     inkscape:cy="118.31877"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-229.26665)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:36.18990707px;line-height:1.25;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';letter-spacing:0px;word-spacing:0px;fill:#e80014;fill-opacity:1;stroke:none;stroke-width:0.90474766"
+       x="35.462498"
+       y="292.53522"
+       id="text833"><tspan
+         sodipodi:role="line"
+         id="tspan831"
+         x="35.462498"
+         y="292.53522"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';fill:#e80014;fill-opacity:1;stroke-width:0.90474766">K</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:36.18990707px;line-height:1.25;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';letter-spacing:0px;word-spacing:0px;fill:#e80014;fill-opacity:1;stroke:none;stroke-width:0.90474766"
+       x="2.9990661"
+       y="292.64124"
+       id="text837"><tspan
+         sodipodi:role="line"
+         id="tspan835"
+         x="2.9990661"
+         y="292.64124"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';fill:#e80014;fill-opacity:1;stroke-width:0.90474766">♦</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:36.18990707px;line-height:1.25;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.90474766"
+       x="35.462498"
+       y="260.89505"
+       id="text829"><tspan
+         sodipodi:role="line"
+         id="tspan827"
+         x="35.462498"
+         y="260.89505"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';stroke-width:0.90474766">D</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:36.18990707px;line-height:1.25;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.90474766"
+       x="2.9902308"
+       y="261.00104"
+       id="text841"><tspan
+         sodipodi:role="line"
+         id="tspan839"
+         x="2.9902308"
+         y="261.00104"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Lucida Sans';-inkscape-font-specification:'Lucida Sans';stroke-width:0.90474766">♣</tspan></text>
+  </g>
+</svg>
