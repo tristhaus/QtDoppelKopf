@@ -49,6 +49,7 @@ private slots:
     void TwoCommittedAndTwoPoppedGameShallBeDisplayed();
     void AllLevelsOfMultipliersShallCorrectlyBeDisplayed();
     void StatisticsShallCorrectlyBeDisplayed();
+    void ScoreHistoryPlotShallWorkCorrectly();
 #endif
 };
 
@@ -69,7 +70,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
 
         // Assert
         QVERIFY2(mw.ui->centralwidget, "not created central widget");
-        QVERIFY2(mw.ui->verticalLayout, "not created vertical layout");
+        QVERIFY2(mw.ui->leftVerticalLayout, "not created vertical layout");
 
         QVERIFY2(mw.ui->topMenu, "not created top menu");
         QVERIFY2(mw.ui->topMenuLayout, "not created top menu layout");
@@ -133,7 +134,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(mw.ui->totalCash, "not created total cash label");
 
         QVERIFY2(mw.ui->statisticsBox, "not created statistics box");
-        QVERIFY2(mw.ui->gridLayout, "not created grid layout");
+        QVERIFY2(mw.ui->statisticsGridLayout, "not created grid layout");
 
         QVERIFY2(mw.ui->gewonnenLabel, "not created gewonnen label");
         QVERIFY2(mw.ui->verlorenLabel, "not created verloren label");
@@ -215,12 +216,42 @@ void FrontendTest::ConstructionShallWorkCompletely()
             QVERIFY2(mw.ui->unmultipliedScores[i], "unmultiplied scores label not created");
         }
 
+        QVERIFY2(mw.ui->playerHistorySelectionWidget, "not created player history selection widget");
+        QVERIFY2(mw.ui->playerHistoryGridLayout, "not created player history grid layout");
+
+        QVERIFY2(mw.ui->playerHistorySelectionLayouts.size() > 0, "there must be playerHistorySelectionLayouts labels");
+        QVERIFY2(mw.ui->playerHistorySelectionLayouts.size() == mw.ui->names.size(), "sizes do not match: playerHistorySelectionLayouts, names");
+        for(size_t i = 0; i < mw.ui->playerHistorySelectionLayouts.size(); ++i)
+        {
+            QVERIFY2(mw.ui->playerHistorySelectionLayouts[i], "player history selection layout not created");
+        }
+
+        QVERIFY2(mw.ui->playerHistorySelectionCheckboxes.size() > 0, "there must be playerHistorySelectionCheckboxes labels");
+        QVERIFY2(mw.ui->playerHistorySelectionCheckboxes.size() == mw.ui->names.size(), "sizes do not match: playerHistorySelectionCheckboxes, names");
+        for(size_t i = 0; i < mw.ui->playerHistorySelectionCheckboxes.size(); ++i)
+        {
+            QVERIFY2(mw.ui->playerHistorySelectionCheckboxes[i], "player history selection checkbox not created");
+        }
+
+        QVERIFY2(mw.ui->playerHistorySelectionLabels.size() > 0, "there must be playerHistorySelectionLabels labels");
+        QVERIFY2(mw.ui->playerHistorySelectionLabels.size() == mw.ui->names.size(), "sizes do not match: playerHistorySelectionLabels, names");
+        for(size_t i = 0; i < mw.ui->playerHistorySelectionLabels.size(); ++i)
+        {
+            QVERIFY2(mw.ui->playerHistorySelectionLabels[i], "player history selection label not created");
+        }
+
+        QVERIFY2(mw.ui->plotPlayerHistory, "not created player history plot");
+
         QVERIFY2(mw.StandardNamesStylesheet.compare(ExpectedStandardNamesStyleSheet) == 0, "unexpected content of standard names style sheet");
         QVERIFY2(mw.DealerNamesStylesheet.compare(ExpectedDealerNamesStyleSheet) == 0, "unexpected content of dealer names style sheet");
     }
     catch (std::exception & ex)
     {
         QFAIL(ex.what());
+    }
+    catch (...)
+    {
+        QFAIL("unknown exception");
     }
 }
 
@@ -845,6 +876,61 @@ void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
     QVERIFY2(mw.ui->unmultipliedScores[2]->text().compare(QString("1")) == 0, "incorrect unmultiplied scores 2");
     QVERIFY2(mw.ui->unmultipliedScores[3]->text().compare(QString("2")) == 0, "incorrect unmultiplied scores 3");
     QVERIFY2(mw.ui->unmultipliedScores[4]->text().compare(QString("-9")) == 0, "incorrect unmultiplied scores 4");
+}
+
+void FrontendTest::ScoreHistoryPlotShallWorkCorrectly()
+{
+    // Arrange
+    std::vector<std::wstring> players
+    {
+        L"A",
+        L"B",
+        L"C",
+        L"D",
+        L"E"
+    };
+
+    std::wstring dealer(L"A");
+    std::set<unsigned int> sitOutScheme {};
+
+    MainWindow mw(8u, false);
+
+    QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
+
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    // Act
+    mw.ui->actuals[1]->setText(QString("-1"));
+    mw.ui->actuals[2]->setText(QString("-1"));
+    mw.ui->actuals[3]->setText(QString("1"));
+    mw.ui->actuals[4]->setText(QString("1"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    mw.ui->actuals[0]->setText(QString("3"));
+    mw.ui->actuals[2]->setText(QString("-1"));
+    mw.ui->actuals[3]->setText(QString("-1"));
+    mw.ui->actuals[4]->setText(QString("-1"));
+    mw.ui->spinBox->setValue(1);
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    // Act, Assert
+    QVERIFY2(mw.ui->plotPlayerHistory->graphCount() == 5, "incorrect graph count A");
+
+    mw.ui->playerHistorySelectionCheckboxes[2]->setChecked(false);
+
+    QVERIFY2(mw.ui->plotPlayerHistory->graphCount() == 4, "incorrect graph count B");
+
+    mw.ui->playerHistorySelectionCheckboxes[2]->setChecked(true);
+    mw.ui->playerHistorySelectionCheckboxes[0]->setChecked(false);
+    mw.ui->playerHistorySelectionCheckboxes[1]->setChecked(false);
+
+    QVERIFY2(mw.ui->plotPlayerHistory->graphCount() == 3, "incorrect graph count C");
+
+    mw.ui->playerHistorySelectionCheckboxes[0]->setChecked(true);
+    mw.ui->playerHistorySelectionCheckboxes[1]->setChecked(true);
+
+    QVERIFY2(mw.ui->plotPlayerHistory->graphCount() == 5, "incorrect graph count D");
 }
 
 #endif // _USE_LONG_TEST

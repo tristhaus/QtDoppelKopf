@@ -39,6 +39,7 @@ private:
     const QString StandardNamesStylesheet = "QLabel { }";
     const QString DealerNamesStylesheet = "QLabel { border: 3px solid orange ; border-radius : 6px }";
     const unsigned int MaxPlayers;
+    std::vector<QColor> htmlColors;
     Ui::MainWindow *ui;
     Backend::GameInfo gameInfo = Backend::GameInfo(this->MaxPlayers);
     unsigned int dealerIndex;
@@ -53,6 +54,8 @@ private:
     std::vector<std::pair<QString, bool>> GetDefaultPlayers();
     void ShowNotImplementedMessageBox();
     QString DetermineMultiplierText() const;
+    std::map<QString, std::pair<std::vector<int>,std::vector<int>>> GetHistoricData();
+    void RedrawPlayerHistory();
 
 private slots:
     void OnChangePlayerPressed();
@@ -61,5 +64,6 @@ private slots:
     void OnMandatorySoloPressed();
     void OnCommitPressed();
     void OnResetPressed();
+    void OnHistoryPlayerSelected();
 };
 #endif // MAINWINDOW_H

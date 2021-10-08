@@ -32,6 +32,7 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include "qcustomplot.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -54,7 +55,13 @@ private:
     const QString ScoreStylesheet = "QLabel { font-weight: bold ; font-size: 12pt }";
 
     QWidget *centralwidget;
-    QVBoxLayout *verticalLayout;
+    QHBoxLayout *centralLayout;
+
+    QWidget *leftwidget;
+    QVBoxLayout *leftVerticalLayout;
+
+    QWidget *rightwidget;
+    QVBoxLayout *rightVerticalLayout;
 
     QWidget *topMenu;
     QGridLayout *topMenuLayout;
@@ -96,7 +103,7 @@ private:
     QLabel *totalCash;
 
     QGroupBox *statisticsBox;
-    QGridLayout *gridLayout;
+    QGridLayout *statisticsGridLayout;
 
     QLabel *gewonnenLabel;
     QLabel *verlorenLabel;
@@ -119,39 +126,57 @@ private:
     std::vector<QLabel*> maxSingleLosss;
     std::vector<QLabel*> unmultipliedScores;
 
+    QWidget *playerHistorySelectionWidget;
+    QGridLayout *playerHistoryGridLayout;
+    std::vector<QHBoxLayout*> playerHistorySelectionLayouts;
+    std::vector<QCheckBox*> playerHistorySelectionCheckboxes;
+    std::vector<QLabel*> playerHistorySelectionLabels;
+    QCustomPlot *plotPlayerHistory;
+
 public:
     void setupUi(QMainWindow *MainWindow)
     {
+        const int leftLabelsMaxWidth = 80;
+        const int leftMainMaxWidth = 75;
+
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(600, 600);
+        MainWindow->resize(1200, 800);
 
-        QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        sizePolicy.setHorizontalStretch(0);
-        sizePolicy.setVerticalStretch(0);
+        QSizePolicy sizePolicyExpExp(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        sizePolicyExpExp.setHorizontalStretch(0);
+        sizePolicyExpExp.setVerticalStretch(0);
 
-        QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Fixed);
-        sizePolicy1.setHorizontalStretch(0);
-        sizePolicy1.setVerticalStretch(0);
+        QSizePolicy sizePolicyPreFix(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        sizePolicyPreFix.setHorizontalStretch(0);
+        sizePolicyPreFix.setVerticalStretch(0);
 
-        QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Preferred);
-        sizePolicy2.setHorizontalStretch(0);
-        sizePolicy2.setVerticalStretch(0);
+        QSizePolicy sizePolicyFixPre(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        sizePolicyFixPre.setHorizontalStretch(0);
+        sizePolicyFixPre.setVerticalStretch(0);
 
-        QSizePolicy sizePolicy3(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        sizePolicy3.setHorizontalStretch(0);
-        sizePolicy3.setVerticalStretch(0);
+        QSizePolicy sizePolicyFixFix(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        sizePolicyFixFix.setHorizontalStretch(0);
+        sizePolicyFixFix.setVerticalStretch(0);
 
-        QSizePolicy sizePolicy4(QSizePolicy::Minimum, QSizePolicy::Minimum);
-        sizePolicy4.setHorizontalStretch(0);
-        sizePolicy4.setVerticalStretch(0);
+        QSizePolicy sizePolicyMinMin(QSizePolicy::Minimum, QSizePolicy::Minimum);
+        sizePolicyMinMin.setHorizontalStretch(0);
+        sizePolicyMinMin.setVerticalStretch(0);
 
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
-        sizePolicy.setHeightForWidth(centralwidget->sizePolicy().hasHeightForWidth());
-        centralwidget->setSizePolicy(sizePolicy);
-        verticalLayout = new QVBoxLayout(centralwidget);
-        verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
+        sizePolicyExpExp.setHeightForWidth(centralwidget->sizePolicy().hasHeightForWidth());
+        centralwidget->setSizePolicy(sizePolicyExpExp);
+
+        centralLayout = new QHBoxLayout(centralwidget);
+        centralLayout->setObjectName(QString::fromUtf8("centralLayout"));
+
+        leftwidget = new QWidget(centralwidget);
+        leftwidget->setObjectName(QString::fromUtf8("leftwidget"));
+        centralLayout->addWidget(leftwidget);
+
+        leftVerticalLayout = new QVBoxLayout(leftwidget);
+        leftVerticalLayout->setObjectName(QString::fromUtf8("leftVerticalLayout"));
 
         namesLayout = new QGridLayout();
         namesLayout->setObjectName(QString::fromUtf8("namesLayout"));
@@ -162,8 +187,8 @@ public:
         topMenu = new QWidget(centralwidget);
         topMenu->setObjectName(QString::fromUtf8("topMenu"));
         topMenu->setEnabled(true);
-        sizePolicy1.setHeightForWidth(topMenu->sizePolicy().hasHeightForWidth());
-        topMenu->setSizePolicy(sizePolicy1);
+        sizePolicyPreFix.setHeightForWidth(topMenu->sizePolicy().hasHeightForWidth());
+        topMenu->setSizePolicy(sizePolicyPreFix);
         topMenuLayout = new QGridLayout(topMenu);
         topMenuLayout->setObjectName(QString::fromUtf8("gridLayout_2"));
         topMenuLayout->setContentsMargins(6, 6, 6, 6);
@@ -175,7 +200,7 @@ public:
 
         saveButton = new QPushButton(topMenu);
         saveButton->setObjectName(QString::fromUtf8("saveButton"));
-        saveButton->setSizePolicy(sizePolicy4);
+        saveButton->setSizePolicy(sizePolicyMinMin);
 
         topMenuLayout->addWidget(saveButton, 0, 2, 1, 1);
 
@@ -193,11 +218,11 @@ public:
 
         topMenuLayout->addItem(topMenuSpacer, 0, 3, 1, 1);
 
-        sizePolicy4.setHeightForWidth(saveButton->sizePolicy().hasHeightForWidth());
-        sizePolicy4.setHeightForWidth(changePlayersButton->sizePolicy().hasHeightForWidth());
-        changePlayersButton->setSizePolicy(sizePolicy4);
-        sizePolicy4.setHeightForWidth(loadButton->sizePolicy().hasHeightForWidth());
-        loadButton->setSizePolicy(sizePolicy4);
+        sizePolicyMinMin.setHeightForWidth(saveButton->sizePolicy().hasHeightForWidth());
+        sizePolicyMinMin.setHeightForWidth(changePlayersButton->sizePolicy().hasHeightForWidth());
+        changePlayersButton->setSizePolicy(sizePolicyMinMin);
+        sizePolicyMinMin.setHeightForWidth(loadButton->sizePolicy().hasHeightForWidth());
+        loadButton->setSizePolicy(sizePolicyMinMin);
 
         namesLayout->addWidget(topMenu, 0, 0, 1, 9);
 
@@ -205,20 +230,21 @@ public:
 
         namenLabel = new QLabel(centralwidget);
         namenLabel->setObjectName(QString::fromUtf8("namenLabel"));
-        namenLabel->setSizePolicy(sizePolicy1);
-        sizePolicy1.setHeightForWidth(namenLabel->sizePolicy().hasHeightForWidth());
+        namenLabel->setSizePolicy(sizePolicyPreFix);
+        sizePolicyPreFix.setHeightForWidth(namenLabel->sizePolicy().hasHeightForWidth());
 
         namesLayout->addWidget(namenLabel, 1, 0, 1, 1);
 
         letztesLabel = new QLabel(centralwidget);
         letztesLabel->setObjectName(QString::fromUtf8("letztesLabel"));
-        sizePolicy1.setHeightForWidth(letztesLabel->sizePolicy().hasHeightForWidth());
-        letztesLabel->setSizePolicy(sizePolicy1);
+        sizePolicyPreFix.setHeightForWidth(letztesLabel->sizePolicy().hasHeightForWidth());
+        letztesLabel->setSizePolicy(sizePolicyPreFix);
 
         namesLayout->addWidget(letztesLabel, 2, 0, 1, 1);
 
         aktuellesLabel = new QLabel(centralwidget);
         aktuellesLabel->setObjectName(QString::fromUtf8("aktuellesLabel"));
+        aktuellesLabel->setMaximumWidth(leftLabelsMaxWidth);
 
         namesLayout->addWidget(aktuellesLabel, 3, 0, 1, 1);
 
@@ -238,6 +264,7 @@ public:
 
             QLineEdit * actual = new QLineEdit(centralwidget);
             actual->setObjectName(QString::fromUtf8("actuals%1").arg(i));
+            actual->setMaximumWidth(leftMainMaxWidth);
             namesLayout->addWidget(actual, 3, i+1, 1, 1);
             actuals.push_back(actual);
         }
@@ -251,15 +278,15 @@ public:
 
         bockereignisseLabel = new QLabel(controlWidget);
         bockereignisseLabel->setObjectName(QString::fromUtf8("bockereignisseLabel"));
-        sizePolicy2.setHeightForWidth(bockereignisseLabel->sizePolicy().hasHeightForWidth());
-        bockereignisseLabel->setSizePolicy(sizePolicy2);
+        sizePolicyFixPre.setHeightForWidth(bockereignisseLabel->sizePolicy().hasHeightForWidth());
+        bockereignisseLabel->setSizePolicy(sizePolicyFixPre);
 
         horizontalLayout->addWidget(bockereignisseLabel);
 
         spinBox = new QSpinBox(controlWidget);
         spinBox->setObjectName(QString::fromUtf8("spinBox"));
-        sizePolicy3.setHeightForWidth(spinBox->sizePolicy().hasHeightForWidth());
-        spinBox->setSizePolicy(sizePolicy3);
+        sizePolicyFixFix.setHeightForWidth(spinBox->sizePolicy().hasHeightForWidth());
+        spinBox->setSizePolicy(sizePolicyFixFix);
         spinBox->setMaximum(9);
         spinBox->setMinimum(0);
 
@@ -304,8 +331,8 @@ public:
 
         zuZahlenLabel = new QLabel(centralwidget);
         zuZahlenLabel->setObjectName(QString::fromUtf8("zuZahlenLabel"));
-        sizePolicy1.setHeightForWidth(zuZahlenLabel->sizePolicy().hasHeightForWidth());
-        zuZahlenLabel->setSizePolicy(sizePolicy1);
+        sizePolicyPreFix.setHeightForWidth(zuZahlenLabel->sizePolicy().hasHeightForWidth());
+        zuZahlenLabel->setSizePolicy(sizePolicyPreFix);
 
         namesLayout->addWidget(zuZahlenLabel, 7, 0, 1, 1);
 
@@ -335,123 +362,171 @@ public:
 
         namesLayout->addWidget(kassenstandLabel, 8, 0, 1, 3);
 
-        verticalLayout->addLayout(namesLayout);
+        leftVerticalLayout->addLayout(namesLayout);
 
         // ---- STATISTICS SECTION IN A BOX ----
 
         statisticsBox = new QGroupBox(centralwidget);
         statisticsBox->setObjectName(QString::fromUtf8("statisticsBox"));
-        gridLayout = new QGridLayout(statisticsBox);
-        gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+        statisticsGridLayout = new QGridLayout(statisticsBox);
+        statisticsGridLayout->setObjectName(QString::fromUtf8("statisticsGridLayout"));
 
         gewonnenLabel = new QLabel(statisticsBox);
         gewonnenLabel->setObjectName(QString::fromUtf8("gewonnenLabel"));
 
-        gridLayout->addWidget(gewonnenLabel, 0, 1, 1, 1);
+        statisticsGridLayout->addWidget(gewonnenLabel, 0, 1, 1, 1);
 
         verlorenLabel = new QLabel(statisticsBox);
         verlorenLabel->setObjectName(QString::fromUtf8("verlorenLabel"));
 
-        gridLayout->addWidget(verlorenLabel, 0, 2, 1, 1);
+        statisticsGridLayout->addWidget(verlorenLabel, 0, 2, 1, 1);
 
         anzahlSpieleLabel = new QLabel(statisticsBox);
         anzahlSpieleLabel->setObjectName(QString::fromUtf8("anzahlSpieleLabel"));
 
-        gridLayout->addWidget(anzahlSpieleLabel, 0, 3, 1, 1);
+        statisticsGridLayout->addWidget(anzahlSpieleLabel, 0, 3, 1, 1);
 
         soloGewonnenLabel = new QLabel(statisticsBox);
         soloGewonnenLabel->setObjectName(QString::fromUtf8("soloGewonnenLabel"));
 
-        gridLayout->addWidget(soloGewonnenLabel, 0, 4, 1, 1);
+        statisticsGridLayout->addWidget(soloGewonnenLabel, 0, 4, 1, 1);
 
         soloVerlorenLabel = new QLabel(statisticsBox);
         soloVerlorenLabel->setObjectName(QString::fromUtf8("soloVerlorenLabel"));
 
-        gridLayout->addWidget(soloVerlorenLabel, 0, 5, 1, 1);
+        statisticsGridLayout->addWidget(soloVerlorenLabel, 0, 5, 1, 1);
 
         soloPunkteLabel = new QLabel(statisticsBox);
         soloPunkteLabel->setObjectName(QString::fromUtf8("soloPunkteLabel"));
 
-        gridLayout->addWidget(soloPunkteLabel, 0, 6, 1, 1);
+        statisticsGridLayout->addWidget(soloPunkteLabel, 0, 6, 1, 1);
 
         groessterGewinnLabel = new QLabel(statisticsBox);
         groessterGewinnLabel->setObjectName(QString::fromUtf8("groessterGewinnLabel"));
 
-        gridLayout->addWidget(groessterGewinnLabel, 0, 7, 1, 1);
+        statisticsGridLayout->addWidget(groessterGewinnLabel, 0, 7, 1, 1);
 
         groessterVerlustLabel = new QLabel(statisticsBox);
         groessterVerlustLabel->setObjectName(QString::fromUtf8("groessterVerlustLabel"));
 
-        gridLayout->addWidget(groessterVerlustLabel, 0, 8, 1, 1);
+        statisticsGridLayout->addWidget(groessterVerlustLabel, 0, 8, 1, 1);
 
         ohneBockLabel = new QLabel(statisticsBox);
         ohneBockLabel->setObjectName(QString::fromUtf8("ohneBockLabel"));
 
-        gridLayout->addWidget(ohneBockLabel, 0, 9, 1, 1);
+        statisticsGridLayout->addWidget(ohneBockLabel, 0, 9, 1, 1);
 
         for(unsigned int i=0u; i < maxNumberOfPlayers; ++i)
         {
             QLabel * statisticName = new QLabel(statisticsBox);
             statisticName->setObjectName(QString::fromUtf8("statisticNames%1").arg(i));
-            gridLayout->addWidget(statisticName, i+1, 0, 1, 1);
+            statisticsGridLayout->addWidget(statisticName, i+1, 0, 1, 1);
             statisticNames.push_back(statisticName);
 
             QLabel * numberWon = new QLabel(statisticsBox);
             numberWon->setAlignment(Qt::AlignCenter);
             numberWon->setObjectName(QString::fromUtf8("numberWons%1").arg(i));
-            gridLayout->addWidget(numberWon, i+1, 1, 1, 1);
+            statisticsGridLayout->addWidget(numberWon, i+1, 1, 1, 1);
             numberWons.push_back(numberWon);
 
             QLabel * numberLost = new QLabel(statisticsBox);
             numberLost->setAlignment(Qt::AlignCenter);
             numberLost->setObjectName(QString::fromUtf8("numberLosts%1").arg(i));
-            gridLayout->addWidget(numberLost, i+1, 2, 1, 1);
+            statisticsGridLayout->addWidget(numberLost, i+1, 2, 1, 1);
             numberLosts.push_back(numberLost);
 
             QLabel * numberPlayed = new QLabel(statisticsBox);
             numberPlayed->setAlignment(Qt::AlignCenter);
             numberPlayed->setObjectName(QString::fromUtf8("numberPlayeds%1").arg(i));
-            gridLayout->addWidget(numberPlayed, i+1, 3, 1, 1);
+            statisticsGridLayout->addWidget(numberPlayed, i+1, 3, 1, 1);
             numberPlayeds.push_back(numberPlayed);
 
             QLabel * numberSoloWon = new QLabel(statisticsBox);
             numberSoloWon->setAlignment(Qt::AlignCenter);
             numberSoloWon->setObjectName(QString::fromUtf8("numberSoloWons%1").arg(i));
-            gridLayout->addWidget(numberSoloWon, i+1, 4, 1, 1);
+            statisticsGridLayout->addWidget(numberSoloWon, i+1, 4, 1, 1);
             numberSoloWons.push_back(numberSoloWon);
 
             QLabel * numberSoloLost = new QLabel(statisticsBox);
             numberSoloLost->setAlignment(Qt::AlignCenter);
             numberSoloLost->setObjectName(QString::fromUtf8("numberSoloLosts%1").arg(i));
-            gridLayout->addWidget(numberSoloLost, i+1, 5, 1, 1);
+            statisticsGridLayout->addWidget(numberSoloLost, i+1, 5, 1, 1);
             numberSoloLosts.push_back(numberSoloLost);
 
             QLabel * pointsSolo = new QLabel(statisticsBox);
             pointsSolo->setAlignment(Qt::AlignCenter);
             pointsSolo->setObjectName(QString::fromUtf8("pointsSolos%1").arg(i));
-            gridLayout->addWidget(pointsSolo, i+1, 6, 1, 1);
+            statisticsGridLayout->addWidget(pointsSolo, i+1, 6, 1, 1);
             pointsSolos.push_back(pointsSolo);
 
             QLabel * maxSingleWin = new QLabel(statisticsBox);
             maxSingleWin->setAlignment(Qt::AlignCenter);
             maxSingleWin->setObjectName(QString::fromUtf8("maxSingleWins%1").arg(i));
-            gridLayout->addWidget(maxSingleWin, i+1, 7, 1, 1);
+            statisticsGridLayout->addWidget(maxSingleWin, i+1, 7, 1, 1);
             maxSingleWins.push_back(maxSingleWin);
 
             QLabel * maxSingleLoss = new QLabel(statisticsBox);
             maxSingleLoss->setAlignment(Qt::AlignCenter);
             maxSingleLoss->setObjectName(QString::fromUtf8("maxSingleLosss%1").arg(i));
-            gridLayout->addWidget(maxSingleLoss, i+1, 8, 1, 1);
+            statisticsGridLayout->addWidget(maxSingleLoss, i+1, 8, 1, 1);
             maxSingleLosss.push_back(maxSingleLoss);
 
             QLabel * unmultipliedScore = new QLabel(statisticsBox);
             unmultipliedScore->setAlignment(Qt::AlignCenter);
             unmultipliedScore->setObjectName(QString::fromUtf8("unmultipliedScores%1").arg(i));
-            gridLayout->addWidget(unmultipliedScore, i+1, 9, 1, 1);
+            statisticsGridLayout->addWidget(unmultipliedScore, i+1, 9, 1, 1);
             unmultipliedScores.push_back(unmultipliedScore);
         }
 
-        verticalLayout->addWidget(statisticsBox);
+        leftVerticalLayout->addWidget(statisticsBox);
+
+        rightwidget = new QWidget(centralwidget);
+        rightwidget->setObjectName(QString::fromUtf8("rightwidget"));
+        centralLayout->addWidget(rightwidget);
+
+        rightVerticalLayout = new QVBoxLayout(rightwidget);
+        rightVerticalLayout->setObjectName(QString::fromUtf8("rightVerticalLayout"));
+
+        playerHistorySelectionWidget = new QWidget(rightwidget);
+        playerHistorySelectionWidget->setObjectName(QString::fromUtf8("playerHistorySelectionWidget"));
+        playerHistoryGridLayout = new QGridLayout(playerHistorySelectionWidget);
+
+        unsigned int breaker = (maxNumberOfPlayers - maxNumberOfPlayers / 2);
+        if(breaker < 2)
+        {
+            breaker = 2;
+        }
+
+        for(unsigned int i=0u; i < maxNumberOfPlayers; ++i)
+        {
+            int row = i < breaker ? 0 : 1;
+
+            QHBoxLayout * layout = new QHBoxLayout(/*playerHistoryGridLayout later*/);
+            layout->setObjectName(QString::fromUtf8("playerHistorySelectionLayout%1").arg(i));
+            playerHistorySelectionLayouts.push_back(layout);
+
+            QCheckBox * checkBox = new QCheckBox(playerHistorySelectionWidget);
+            checkBox->setObjectName(QString::fromUtf8("playerHistorySelectionCheckbox%1").arg(i));
+            checkBox->setChecked(true);
+            layout->addWidget(checkBox);
+            playerHistorySelectionCheckboxes.push_back(checkBox);
+
+            QLabel * label = new QLabel(QString::fromUtf8("<b>!HTML</b>!Player"));
+            label->setObjectName(QString::fromUtf8("playerHistorySelectionLabel%1").arg(i));
+            layout->addWidget(label);
+            playerHistorySelectionLabels.push_back(label);
+
+            layout->addStretch(4);
+
+            playerHistoryGridLayout->addLayout(layout, row, i%breaker, 1, 1);
+        }
+
+        rightVerticalLayout->addWidget(playerHistorySelectionWidget);
+
+        plotPlayerHistory = new QCustomPlot(rightwidget);
+        plotPlayerHistory->setObjectName(QString::fromUtf8("plotPlayerHistory"));
+        plotPlayerHistory->setSizePolicy(sizePolicyExpExp);
+        rightVerticalLayout->addWidget(plotPlayerHistory);
 
         MainWindow->setCentralWidget(centralwidget);
 
@@ -467,6 +542,12 @@ public:
         QWidget::setTabOrder(changePlayersButton, loadButton);
         QWidget::setTabOrder(loadButton, saveButton);
         QWidget::setTabOrder(saveButton, mandatorySoloButton);
+        QWidget::setTabOrder(saveButton, playerHistorySelectionCheckboxes[0]);
+
+        for(unsigned int i=0u; i < maxNumberOfPlayers - 1; ++i)
+        {
+            QWidget::setTabOrder(playerHistorySelectionCheckboxes[i], playerHistorySelectionCheckboxes[i+1]);
+        }
 
         retranslateUi(MainWindow);
 

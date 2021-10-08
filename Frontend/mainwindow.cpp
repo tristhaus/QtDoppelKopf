@@ -27,6 +27,19 @@ MainWindow::MainWindow(const unsigned int maxPlayers, bool showPlayerSelection, 
       MaxPlayers(maxPlayers),
       ui(new Ui::MainWindow(MaxPlayers))
 {
+    assert(maxPlayers <= 8);
+    this->htmlColors = std::vector<QColor>
+    {
+        QColor(0x7b, 0x1f, 0xa2),
+        QColor(0x00, 0x00, 0x00),
+        QColor(0xfb, 0x8c, 0x00),
+        QColor(0x00, 0x89, 0x7b),
+        QColor(0x39, 0x49, 0xab),
+        QColor(0xe5, 0x39, 0x35),
+        QColor(0x79, 0x55, 0x48),
+        QColor(0x21, 0x96, 0xf3)
+    };
+
     ui->setupUi(this);
 
     connect(this->ui->changePlayersButton, &QAbstractButton::pressed, this, &MainWindow::OnChangePlayerPressed);
@@ -35,6 +48,11 @@ MainWindow::MainWindow(const unsigned int maxPlayers, bool showPlayerSelection, 
     connect(this->ui->mandatorySoloButton, &QAbstractButton::pressed, this, &MainWindow::OnMandatorySoloPressed);
     connect(this->ui->commitButton, &QAbstractButton::pressed, this, &MainWindow::OnCommitPressed);
     connect(this->ui->resetButton, &QAbstractButton::pressed, this, &MainWindow::OnResetPressed);
+
+    for(unsigned int i = 0; i < MaxPlayers; ++i)
+    {
+        connect(this->ui->playerHistorySelectionCheckboxes[i], &QCheckBox::stateChanged, this, &MainWindow::OnHistoryPlayerSelected);
+    }
 
     if(showPlayerSelection)
     {
@@ -88,6 +106,9 @@ void MainWindow::UpdateDisplay()
         ui->maxSingleWins[index]->setVisible(visible);
         ui->maxSingleLosss[index]->setVisible(visible);
         ui->unmultipliedScores[index]->setVisible(visible);
+
+        ui->playerHistorySelectionCheckboxes[index]->setVisible(visible);
+        ui->playerHistorySelectionLabels[index]->setVisible(visible);
     }
 
     // set data
@@ -125,6 +146,12 @@ void MainWindow::UpdateDisplay()
         ui->maxSingleWins[index]->setText(QString().setNum(playerInfo->MaxSingleWin()));
         ui->maxSingleLosss[index]->setText(QString().setNum(playerInfo->MaxSingleLoss()));
         ui->unmultipliedScores[index]->setText(QString().setNum(playerInfo->UnmultipliedScore()));
+
+        ui->playerHistorySelectionLabels[index]->setText(QString::asprintf("<font color=\"#%02x%02x%02x\">■</font> %s",
+                                                                           this->htmlColors[index].red(),
+                                                                           this->htmlColors[index].green(),
+                                                                           this->htmlColors[index].blue(),
+                                                                           name.toStdString().c_str()));
     }
 
     ui->spinBox->setValue(0);
@@ -137,6 +164,8 @@ void MainWindow::UpdateDisplay()
                            .arg(gameInfo.AbsentPlayerCashCents()%100, 2, 10, QLatin1Char('0')));
 
     ui->resetButton->setEnabled(this->gameInfo.CanPopLastDeal());
+
+    this->RedrawPlayerHistory();
 }
 
 void MainWindow::ShowPlayerSelection(bool calledOnStartup)
@@ -286,6 +315,57 @@ QString MainWindow::DetermineMultiplierText() const
     }
 }
 
+void MainWindow::RedrawPlayerHistory()
+{
+    ui->plotPlayerHistory->clearGraphs();
+
+    auto players = this->gameInfo.PlayerInfos();
+    auto map = this->GetHistoricData();
+
+    for(unsigned int i = 0; i < players.size(); ++i)
+    {
+        if(ui->playerHistorySelectionCheckboxes[i]->isChecked())
+        {
+            auto name = QString::fromStdWString(players[i]->Name());
+            auto data = map[name];
+
+            QVector<double> dataX(data.first.begin(), data.first.end());
+            QVector<double> dataY(data.second.begin(), data.second.end());
+
+            auto * qcpGraph = ui->plotPlayerHistory->addGraph();
+            qcpGraph->addData(dataX, dataY, true);
+
+            auto pen = QPen(this->htmlColors[i]);
+            pen.setWidth(3);
+            qcpGraph->setPen(pen);
+        }
+    }
+
+    auto x = static_cast<unsigned int>(map.begin()->second.first.size());
+    x = std::max(x, 50u);
+    ui->plotPlayerHistory->xAxis->setRange(x - 50u, x);
+    ui->plotPlayerHistory->yAxis->rescale();
+
+    ui->plotPlayerHistory->replot();
+}
+
+std::map<QString, std::pair<std::vector<int>, std::vector<int>>> MainWindow::GetHistoricData()
+{
+    std::map<QString, std::pair<std::vector<int>, std::vector<int>>> map;
+
+    auto players = this->gameInfo.PlayerInfos();
+
+    std::vector<int> x(players[0]->ScoreHistory().size());
+    std::iota(x.begin(), x.end(), 1);
+
+    for (auto & player : players)
+    {
+        map[QString::fromStdWString(player->Name())] = std::make_pair(x, player->ScoreHistory());
+    }
+
+    return map;
+}
+
 void MainWindow::OnChangePlayerPressed()
 {
     this->ShowPlayerSelection(false);
@@ -362,4 +442,9 @@ void MainWindow::OnResetPressed()
     }
 
     this->ui->spinBox->setValue(static_cast<int>(numberOfEvents));
+}
+
+void MainWindow::OnHistoryPlayerSelected()
+{
+    this->RedrawPlayerHistory();
 }
