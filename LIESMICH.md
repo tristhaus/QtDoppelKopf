@@ -29,6 +29,8 @@ Graphische Nutzeroberfläche gebaut mit [Qt](https://doc.qt.io/).
 
 Icon (Farbsymbole und Buchstaben) von tristhaus.
 
+[QCustomPlot](https://www.qcustomplot.com/) Bibliothek (Version 2.1.0) von Emanuel Eichhammer genutzt unter der [GPL v3](https://www.gnu.org/licenses/gpl-3.0.html).
+
 GoogleTest genutzt unter folgenden Bedingungen:
 
 ```

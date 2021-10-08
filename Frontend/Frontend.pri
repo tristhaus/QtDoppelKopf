@@ -18,11 +18,14 @@
 
 SOURCES += \
     $$PWD/mainwindow.cpp \
-    $$PWD/playerselection_ui.cpp
+    $$PWD/playerselection_ui.cpp \
+    $$PWD/qcustomplot.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
     $$PWD/mainwindow_ui.h \
-    $$PWD/playerselection_ui.h
+    $$PWD/playerselection_ui.h \
+    $$PWD/qcustomplot.h
+
 
 FORMS +=
