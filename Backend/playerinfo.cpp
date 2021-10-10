@@ -57,7 +57,7 @@ namespace Backend
 
     int PlayerInfo::CurrentScore() const
     {
-        return std::reduce(this->multipliedResults.begin(), this->multipliedResults.end());
+        return this->accumulatedMultipliedResults.empty() ? 0 : this->accumulatedMultipliedResults.back();
     }
 
     bool PlayerInfo::ParticipatedInLastDeal() const
@@ -159,5 +159,10 @@ namespace Backend
                       [&sum](DealResult item) { sum += item.UnmultipliedScore; } );
 
         return sum;
+    }
+
+    std::vector<int> PlayerInfo::ScoreHistory() const
+    {
+        return this->accumulatedMultipliedResults;
     }
 }

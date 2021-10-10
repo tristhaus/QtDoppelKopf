@@ -430,6 +430,7 @@ namespace Backend
         }
 
         this->multipliedResults.push_back(unmultipliedScore * this->multiplierAccessor(static_cast<unsigned int>(this->dealResults.size())));
+        this->accumulatedMultipliedResults.push_back(this->CurrentScore() + this->multipliedResults.back());
         this->dealResults.push_back(DealResult(hasPlayedInDeal, unmultipliedScore, playedSolo));
     }
 
@@ -437,6 +438,7 @@ namespace Backend
     {
         this->dealResults.pop_back();
         this->multipliedResults.pop_back();
+        this->accumulatedMultipliedResults.pop_back();
         this->dealInput.pop_back();
     }
 

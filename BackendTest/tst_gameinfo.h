@@ -19,6 +19,7 @@
 #ifndef TST_GAMEINFO_H
 #define TST_GAMEINFO_H
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "../Backend/gameinfo.h"
 #include <memory>
@@ -730,6 +731,13 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ(12, playerInfos[5]->CashCents());
     EXPECT_EQ(58 + 2*10, gameInfo.TotalCashCents());
 
+    EXPECT_THAT(playerInfos[0]->ScoreHistory(), ::testing::ElementsAre( 0,  4,  20));
+    EXPECT_THAT(playerInfos[1]->ScoreHistory(), ::testing::ElementsAre( 1,  1,  17));
+    EXPECT_THAT(playerInfos[2]->ScoreHistory(), ::testing::ElementsAre( 1,  5,   5));
+    EXPECT_THAT(playerInfos[3]->ScoreHistory(), ::testing::ElementsAre( 0, -4, -20));
+    EXPECT_THAT(playerInfos[4]->ScoreHistory(), ::testing::ElementsAre(-1, -1, -17));
+    EXPECT_THAT(playerInfos[5]->ScoreHistory(), ::testing::ElementsAre(-1, -5,  -5));
+
     gameInfo.PopLastDeal();
 
     EXPECT_EQ( 4, playerInfos[0]->CurrentScore());
@@ -751,6 +759,13 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ( 3, playerInfos[4]->CashCents());
     EXPECT_EQ( 5, playerInfos[5]->CashCents());
     EXPECT_EQ(14 + 2*2, gameInfo.TotalCashCents());
+
+    EXPECT_THAT(playerInfos[0]->ScoreHistory(), ::testing::ElementsAre( 0,  4));
+    EXPECT_THAT(playerInfos[1]->ScoreHistory(), ::testing::ElementsAre( 1,  1));
+    EXPECT_THAT(playerInfos[2]->ScoreHistory(), ::testing::ElementsAre( 1,  5));
+    EXPECT_THAT(playerInfos[3]->ScoreHistory(), ::testing::ElementsAre( 0, -4));
+    EXPECT_THAT(playerInfos[4]->ScoreHistory(), ::testing::ElementsAre(-1, -1));
+    EXPECT_THAT(playerInfos[5]->ScoreHistory(), ::testing::ElementsAre(-1, -5));
 }
 
 TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
@@ -865,6 +880,12 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
     EXPECT_EQ( 1, playerInfos[2]->UnmultipliedScore());
     EXPECT_EQ( 2, playerInfos[3]->UnmultipliedScore());
     EXPECT_EQ(-9, playerInfos[4]->UnmultipliedScore());
+
+    EXPECT_THAT(playerInfos[0]->ScoreHistory(), ::testing::ElementsAre( 0,  3,   7,  13));
+    EXPECT_THAT(playerInfos[1]->ScoreHistory(), ::testing::ElementsAre(-1, -1,   3,  -3));
+    EXPECT_THAT(playerInfos[2]->ScoreHistory(), ::testing::ElementsAre(-1, -2,  -2,   4));
+    EXPECT_THAT(playerInfos[3]->ScoreHistory(), ::testing::ElementsAre( 1,  0,   4,   4));
+    EXPECT_THAT(playerInfos[4]->ScoreHistory(), ::testing::ElementsAre( 1,  0, -12, -18));
 }
 
 #endif // TST_GAMEINFO_H

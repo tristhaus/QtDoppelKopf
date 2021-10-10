@@ -53,6 +53,7 @@ namespace Backend
         bool isPlaying;
         std::vector<DealResult> dealResults;
         std::vector<int> multipliedResults;
+        std::vector<int> accumulatedMultipliedResults;
         std::vector<std::wstring> dealInput;
         std::function<unsigned short(unsigned int)> multiplierAccessor;
         std::function<int()> maxCurrentScoreAccessor;
@@ -175,6 +176,12 @@ namespace Backend
          * \return The score without applying the multiplier.
          */
         int UnmultipliedScore() const;
+
+        /*!
+         * \brief Gets the entire history of scores.
+         * \return The entire history of scores.
+         */
+        std::vector<int> ScoreHistory() const;
     };
 }
 
