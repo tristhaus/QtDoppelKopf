@@ -20,6 +20,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
 #include "../Backend/gameinfo.h"
 #include "../Backend/playerinfo.h"
 
@@ -41,6 +42,7 @@ private:
     const unsigned int MaxPlayers;
     std::vector<QColor> htmlColors;
     Ui::MainWindow *ui;
+    std::unique_ptr<QMessageBox> aboutMessageBox;
     Backend::GameInfo gameInfo = Backend::GameInfo(this->MaxPlayers);
     unsigned int dealerIndex;
 public:
@@ -56,6 +58,7 @@ private:
     QString DetermineMultiplierText() const;
     std::map<QString, std::pair<std::vector<int>,std::vector<int>>> GetHistoricData();
     void RedrawPlayerHistory();
+    void ShowAboutDialog();
 
 private slots:
     void OnChangePlayerPressed();
@@ -65,5 +68,6 @@ private slots:
     void OnCommitPressed();
     void OnResetPressed();
     void OnHistoryPlayerSelected();
+    void OnAboutPressed();
 };
 #endif // MAINWINDOW_H

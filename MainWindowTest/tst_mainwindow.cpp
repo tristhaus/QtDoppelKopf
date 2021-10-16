@@ -50,6 +50,7 @@ private slots:
     void AllLevelsOfMultipliersShallCorrectlyBeDisplayed();
     void StatisticsShallCorrectlyBeDisplayed();
     void ScoreHistoryPlotShallWorkCorrectly();
+    void AboutButtonShallTriggerDialogAndOKShallClose();
 #endif
 };
 
@@ -78,6 +79,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(mw.ui->loadButton, "not created load button");
         QVERIFY2(mw.ui->saveButton, "not created save button");
         QVERIFY2(mw.ui->mandatorySoloButton, "not created mandatory solo button");
+        QVERIFY2(mw.ui->aboutButton, "not created about button");
         QVERIFY2(mw.ui->topMenuSpacer, "not created top menu spacer");
 
         QVERIFY2(mw.ui->namesLayout, "not created names layout");
@@ -931,6 +933,40 @@ void FrontendTest::ScoreHistoryPlotShallWorkCorrectly()
     mw.ui->playerHistorySelectionCheckboxes[1]->setChecked(true);
 
     QVERIFY2(mw.ui->plotPlayerHistory->graphCount() == 5, "incorrect graph count D");
+}
+
+void FrontendTest::AboutButtonShallTriggerDialogAndOKShallClose()
+{
+    // Arrange
+    MainWindow mw(8u, false);
+    auto ui = mw.ui;
+
+    // spy needed such that events actually happen
+    QSignalSpy spyAboutButton(ui->aboutButton, &QAbstractButton::pressed);
+
+    // Act
+    bool aboutMessageBoxFound = false;
+    bool aboutMessageBoxHasOneButton = false;
+    int interval = 1000;
+    QTimer::singleShot(interval, [&]()
+    {
+        aboutMessageBoxFound = mw.aboutMessageBox != nullptr;
+        aboutMessageBoxHasOneButton = mw.aboutMessageBox->buttons().count() == 1 && mw.aboutMessageBox->buttons().first() != nullptr;
+        if(aboutMessageBoxFound && aboutMessageBoxHasOneButton)
+        {
+            QTest::mouseClick(mw.aboutMessageBox->buttons().first(), Qt::LeftButton);
+        }
+    });
+
+    QTest::mouseClick(mw.ui->aboutButton, Qt::LeftButton);
+
+    spyAboutButton.wait();
+
+    // Assert
+    QVERIFY2(aboutMessageBoxFound, "aboutMessageBox not found");
+    QVERIFY2(aboutMessageBoxHasOneButton, "aboutMessageBox does not have exactly one button");
+
+    QVERIFY2(mw.aboutMessageBox == nullptr, "aboutMessageBox still reachable");
 }
 
 #endif // _USE_LONG_TEST

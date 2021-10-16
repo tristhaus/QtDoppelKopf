@@ -48,6 +48,7 @@ MainWindow::MainWindow(const unsigned int maxPlayers, bool showPlayerSelection, 
     connect(this->ui->mandatorySoloButton, &QAbstractButton::pressed, this, &MainWindow::OnMandatorySoloPressed);
     connect(this->ui->commitButton, &QAbstractButton::pressed, this, &MainWindow::OnCommitPressed);
     connect(this->ui->resetButton, &QAbstractButton::pressed, this, &MainWindow::OnResetPressed);
+    connect(this->ui->aboutButton, &QAbstractButton::pressed, this, &MainWindow::OnAboutPressed);
 
     for(unsigned int i = 0; i < MaxPlayers; ++i)
     {
@@ -366,6 +367,25 @@ std::map<QString, std::pair<std::vector<int>, std::vector<int>>> MainWindow::Get
     return map;
 }
 
+void MainWindow::ShowAboutDialog()
+{
+    QString messageBoxTitle = QString::fromUtf8("Über QtDoppelKopf");
+
+    QString messageBoxText = QString::fromUtf8("Ein Programm zum Nachhalten des Spielstandes beim Doppelkopf nach den Hausregeln von Freunden.<br /><br />QtDoppelKopf Copyright (C) 2021 und später, tristhaus<br />Für dieses Programm besteht KEINERLEI GARANTIE.<br />Dies ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen. Siehe beigefügte LICENSE Datei für Details.<br /><br />Graphische Nutzeroberfläche mit <a href=\"https://doc.qt.io/\">Qt</a> gebaut.<br />Icon (Farbsymbole und Buchstaben) von tristhaus.<br /><a href=\"https://www.qcustomplot.com/\">QCustomPlot</a> Bibliothek (Version 2.1.0) von Emanuel Eichhammer benutzt unter der <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GPL v3</a> Lizenz.");
+
+    this->aboutMessageBox = std::make_unique<QMessageBox>(
+                    QMessageBox::Icon::NoIcon,
+                    messageBoxTitle,
+                    messageBoxText);
+
+    this->aboutMessageBox->setTextFormat(Qt::RichText);
+    this->aboutMessageBox->setTextInteractionFlags(Qt::TextBrowserInteraction);
+
+    this->aboutMessageBox->exec();
+
+    this->aboutMessageBox.reset();
+}
+
 void MainWindow::OnChangePlayerPressed()
 {
     this->ShowPlayerSelection(false);
@@ -447,4 +467,9 @@ void MainWindow::OnResetPressed()
 void MainWindow::OnHistoryPlayerSelected()
 {
     this->RedrawPlayerHistory();
+}
+
+void MainWindow::OnAboutPressed()
+{
+    this->ShowAboutDialog();
 }

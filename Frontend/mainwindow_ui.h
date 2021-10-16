@@ -69,6 +69,7 @@ private:
     QPushButton *loadButton;
     QPushButton *saveButton;
     QPushButton *mandatorySoloButton;
+    QPushButton *aboutButton;
     QSpacerItem *topMenuSpacer;
 
     QGridLayout *namesLayout;
@@ -213,6 +214,11 @@ public:
         mandatorySoloButton->setObjectName(QString::fromUtf8("mandatorySoloButton"));
 
         topMenuLayout->addWidget(mandatorySoloButton, 0, 4, 1, 1);
+
+        aboutButton = new QPushButton(topMenu);
+        aboutButton->setObjectName(QString::fromUtf8("aboutoButton"));
+
+        topMenuLayout->addWidget(aboutButton, 0, 5, 1, 1);
 
         topMenuSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -549,6 +555,8 @@ public:
             QWidget::setTabOrder(playerHistorySelectionCheckboxes[i], playerHistorySelectionCheckboxes[i+1]);
         }
 
+        QWidget::setTabOrder(playerHistorySelectionCheckboxes[maxNumberOfPlayers - 1], aboutButton);
+
         retranslateUi(MainWindow);
 
         QMetaObject::connectSlotsByName(MainWindow);
@@ -580,6 +588,7 @@ public:
         loadButton->setText(QCoreApplication::translate("MainWindow", "Laden ...", nullptr));
         saveButton->setText(QCoreApplication::translate("MainWindow", "Speichern ...", nullptr));
         mandatorySoloButton->setText(QCoreApplication::translate("MainWindow", "Pflichtsolorunde", nullptr));
+        aboutButton->setText(QCoreApplication::translate("MainWindow", "Über QtDK", nullptr));
 
         namenLabel->setText(QCoreApplication::translate("MainWindow", "Namen", nullptr));
         letztesLabel->setText(QCoreApplication::translate("MainWindow", "Letztes Spiel", nullptr));
