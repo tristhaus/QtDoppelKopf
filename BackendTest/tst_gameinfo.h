@@ -396,6 +396,7 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
 
     // Act, Assert
     ASSERT_FALSE(gameInfo.CanPopLastDeal());
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::CannotInitiate, gameInfo.MandatorySoloState());
 
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
@@ -429,6 +430,8 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
     EXPECT_EQ(1, playerInfos[3]->CashCents());
     EXPECT_EQ(2, gameInfo.TotalCashCents());
 
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"A", 3),
@@ -454,6 +457,8 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
     EXPECT_EQ(7, playerInfos[3]->CashCents());
     EXPECT_EQ(14 + 4*3, gameInfo.TotalCashCents());
 
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"C", 2),
@@ -478,6 +483,8 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
     EXPECT_EQ( 0, playerInfos[2]->CashCents());
     EXPECT_EQ( 6, playerInfos[3]->CashCents());
     EXPECT_EQ(42 + 4*10, gameInfo.TotalCashCents());
+
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
 }
 
 TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
@@ -489,6 +496,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
 
     // Act, Assert
     ASSERT_FALSE(gameInfo.CanPopLastDeal());
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::CannotInitiate, gameInfo.MandatorySoloState());
 
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
@@ -523,6 +531,8 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
 
     EXPECT_EQ(1, gameInfo.LastNumberOfEvents());
 
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"A", 3),
@@ -549,6 +559,8 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
 
     EXPECT_EQ(2, gameInfo.LastNumberOfEvents());
 
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
     gameInfo.PopLastDeal();
 
     EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
@@ -568,6 +580,8 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
     EXPECT_EQ(0, preview3[2]);
 
     EXPECT_EQ(1, gameInfo.LastNumberOfEvents());
+
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
 }
 
 TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
@@ -579,6 +593,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
 
     // Act, Assert
     ASSERT_FALSE(gameInfo.CanPopLastDeal());
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::CannotInitiate, gameInfo.MandatorySoloState());
 
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
@@ -604,6 +619,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
     EXPECT_STREQ( L"", playerInfos[3]->InputInLastDeal().c_str());
 
     ASSERT_TRUE(gameInfo.CanPopLastDeal());
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
 
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
@@ -622,6 +638,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
     EXPECT_STREQ( L"", playerInfos[3]->InputInLastDeal().c_str());
 
     ASSERT_TRUE(gameInfo.CanPopLastDeal());
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
 
     gameInfo.PopLastDeal();
 
@@ -634,6 +651,8 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
     EXPECT_STREQ(L"1", playerInfos[1]->InputInLastDeal().c_str());
     EXPECT_STREQ( L"", playerInfos[2]->InputInLastDeal().c_str());
     EXPECT_STREQ( L"", playerInfos[3]->InputInLastDeal().c_str());
+
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
 }
 
 TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
@@ -679,6 +698,8 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ( 1, playerInfos[5]->CashCents());
     EXPECT_EQ( 2, gameInfo.TotalCashCents());
 
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
                           std::make_pair<std::wstring, int>(L"A", 2),
@@ -704,6 +725,8 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_EQ( 3, playerInfos[4]->CashCents());
     EXPECT_EQ( 5, playerInfos[5]->CashCents());
     EXPECT_EQ(14 + 2*2, gameInfo.TotalCashCents());
+
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
 
     gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
                       {
@@ -766,6 +789,8 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     EXPECT_THAT(playerInfos[3]->ScoreHistory(), ::testing::ElementsAre( 0, -4));
     EXPECT_THAT(playerInfos[4]->ScoreHistory(), ::testing::ElementsAre(-1, -1));
     EXPECT_THAT(playerInfos[5]->ScoreHistory(), ::testing::ElementsAre(-1, -5));
+
+    ASSERT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
 }
 
 TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
@@ -886,6 +911,230 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
     EXPECT_THAT(playerInfos[2]->ScoreHistory(), ::testing::ElementsAre(-1, -2,  -2,   4));
     EXPECT_THAT(playerInfos[3]->ScoreHistory(), ::testing::ElementsAre( 1,  0,   4,   4));
     EXPECT_THAT(playerInfos[4]->ScoreHistory(), ::testing::ElementsAre( 1,  0, -12, -18));
+}
+
+TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
+{
+    // Arrange
+    Backend::GameInfo gameInfo;
+    std::set<unsigned int> sitOutScheme { };
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
+
+    // Act, Assert
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 1),
+                          std::make_pair<std::wstring, int>(L"C", 1),
+                      }, 1u);
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
+    gameInfo.TriggerMandatorySolo();
+
+    auto playerInfos = gameInfo.PlayerInfos();
+
+    EXPECT_STREQ(L"A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ(L"B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ(L"C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ(L"D", playerInfos[3]->Name().c_str());
+
+    EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Active, gameInfo.MandatorySoloState());
+
+    auto preview1 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(4, preview1[0]);
+    EXPECT_EQ(0, preview1[1]);
+    EXPECT_EQ(0, preview1[2]);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 6),
+                      }, 0u);
+
+    EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 7, playerInfos[1]->CurrentScore());
+    EXPECT_EQ(-1, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-3, playerInfos[3]->CurrentScore());
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Active, gameInfo.MandatorySoloState());
+
+    auto preview2 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(4, preview2[0]);
+    EXPECT_EQ(0, preview2[1]);
+    EXPECT_EQ(0, preview2[2]);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"C", -3),
+                      }, 0u);
+
+    EXPECT_EQ(-2, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 8, playerInfos[1]->CurrentScore());
+    EXPECT_EQ(-4, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-2, playerInfos[3]->CurrentScore());
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Active, gameInfo.MandatorySoloState());
+
+    auto preview3 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(4, preview3[0]);
+    EXPECT_EQ(0, preview3[1]);
+    EXPECT_EQ(0, preview3[2]);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"D", 3),
+                      }, 0u);
+
+    EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 7, playerInfos[1]->CurrentScore());
+    EXPECT_EQ(-5, playerInfos[2]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[3]->CurrentScore());
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Active, gameInfo.MandatorySoloState());
+
+    auto preview4 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(4, preview4[0]);
+    EXPECT_EQ(0, preview4[1]);
+    EXPECT_EQ(0, preview4[2]);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"A", -9),
+                      }, 0u);
+
+    EXPECT_EQ(-12, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 10, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( -2, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(  4, playerInfos[3]->CurrentScore());
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
+    auto preview5 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(4, preview5[0]);
+    EXPECT_EQ(0, preview5[1]);
+    EXPECT_EQ(0, preview5[2]);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 5),
+                          std::make_pair<std::wstring, int>(L"C", 5),
+                      }, 0u);
+
+    EXPECT_EQ(-22, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 20, playerInfos[1]->CurrentScore());
+    EXPECT_EQ(  8, playerInfos[2]->CurrentScore());
+    EXPECT_EQ( -6, playerInfos[3]->CurrentScore());
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
+    auto preview6 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(3, preview6[0]);
+    EXPECT_EQ(0, preview6[1]);
+    EXPECT_EQ(0, preview6[2]);
+}
+
+TEST(BackendTest, GameInfoShallPopMandatorySolo)
+{
+    // Arrange
+    Backend::GameInfo gameInfo;
+    std::set<unsigned int> sitOutScheme { };
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
+
+    // Act, Assert
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 1),
+                          std::make_pair<std::wstring, int>(L"C", 1),
+                      }, 1u);
+
+    auto playerInfos = gameInfo.PlayerInfos();
+
+    EXPECT_STREQ(L"A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ(L"B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ(L"C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ(L"D", playerInfos[3]->Name().c_str());
+
+    EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 1),
+                          std::make_pair<std::wstring, int>(L"C", 1),
+                      }, 0u);
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
+    EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 3, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( 3, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-3, playerInfos[3]->CurrentScore());
+
+    gameInfo.TriggerMandatorySolo();
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Active, gameInfo.MandatorySoloState());
+
+    auto preview1 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(3, preview1[0]);
+    EXPECT_EQ(0, preview1[1]);
+    EXPECT_EQ(0, preview1[2]);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 6),
+                      }, 0u);
+
+    EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 9, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-5, playerInfos[3]->CurrentScore());
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Active, gameInfo.MandatorySoloState());
+
+    auto preview2 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(3, preview2[0]);
+    EXPECT_EQ(0, preview2[1]);
+    EXPECT_EQ(0, preview2[2]);
+
+    gameInfo.PopLastDeal();
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Active, gameInfo.MandatorySoloState());
+
+    auto preview3 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(3, preview3[0]);
+    EXPECT_EQ(0, preview3[1]);
+    EXPECT_EQ(0, preview3[2]);
+
+    gameInfo.PopLastDeal();
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySoloRound::Ready, gameInfo.MandatorySoloState());
+
+    auto preview4 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(4, preview4[0]);
+    EXPECT_EQ(0, preview4[1]);
+    EXPECT_EQ(0, preview4[2]);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"A", 3),
+                          std::make_pair<std::wstring, int>(L"C", 3),
+                      }, 0u);
+
+    EXPECT_EQ( 5, playerInfos[0]->CurrentScore());
+    EXPECT_EQ(-5, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( 7, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-7, playerInfos[3]->CurrentScore());
+
+    auto preview5 = gameInfo.MultiplierPreview();
+    EXPECT_EQ(3, preview5[0]);
+    EXPECT_EQ(0, preview5[1]);
+    EXPECT_EQ(0, preview5[2]);
 }
 
 #endif // TST_GAMEINFO_H

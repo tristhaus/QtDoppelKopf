@@ -36,6 +36,21 @@ namespace Backend
      */
     class GameInfo
     {
+    public:
+        /*!
+         * \brief The MandatorySoloRound enum lists possible states
+         *        of the mandatory solo system:
+         *        Unable to initiate because it is the first deal,
+         *        Ready to initiate a round,
+         *        A round is active.
+         */
+        enum MandatorySoloRound
+        {
+            CannotInitiate,
+            Ready,
+            Active
+        };
+
     private:
         class PlayerInfoInternal;
         const unsigned int MaxPlayers;
@@ -103,6 +118,11 @@ namespace Backend
         void PopLastDeal();
 
         /*!
+         * \brief Begins a round of mandatory solo, which suspends the multiplier.
+         */
+        void TriggerMandatorySolo();
+
+        /*!
          * \brief Gets the future levels of multiplication (which are the indices of the vector returned).
          * \return A vector containing counts for single, double ... etc. level of multiplication.
          */
@@ -125,6 +145,12 @@ namespace Backend
          * \return The cash for an absent player in Euro cents;
          */
         unsigned int AbsentPlayerCashCents() const;
+
+        /*!
+         * \brief Gets the state of the mandatory solo round.
+         * \return The state of the mandatory solo round.
+         */
+        MandatorySoloRound MandatorySoloState() const;
 
     private:
         void SortAndSetPlayerInfos(std::vector<std::wstring> players);

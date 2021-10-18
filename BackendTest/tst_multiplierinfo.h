@@ -28,11 +28,11 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset1)
     Backend::MultiplierInfo mi;
     std::vector<Backend::EventInfo> events
     {
-        { Backend::NumberOfEvents(0u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u) }
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
     };
 
     /* // 4 players throughout
@@ -63,6 +63,16 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset1)
     EXPECT_EQ(3, mi.GetPreview()[0]);
     EXPECT_EQ(1, mi.GetPreview()[1]);
     EXPECT_EQ(0, mi.GetPreview()[2]);
+
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(0));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(1));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(2));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(3));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(4));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(5));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(6));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(7));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(8));
 }
 
 TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset2)
@@ -71,11 +81,11 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset2)
     Backend::MultiplierInfo mi;
     std::vector<Backend::EventInfo> events
     {
-        { Backend::NumberOfEvents(0u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u) }
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
     };
 
     /* // 4 players throughout
@@ -108,6 +118,17 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset2)
     EXPECT_EQ(0, mi.GetPreview()[0]);
     EXPECT_EQ(3, mi.GetPreview()[1]);
     EXPECT_EQ(2, mi.GetPreview()[2]);
+
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(0));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(1));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(2));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(3));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(4));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(5));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(6));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(7));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(8));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(9));
 }
 
 TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset3)
@@ -116,11 +137,11 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset3)
     Backend::MultiplierInfo mi;
     std::vector<Backend::EventInfo> events
     {
-        { Backend::NumberOfEvents(0u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u) },
-        { Backend::NumberOfEvents(2u), Backend::Players(5u) },
-        { Backend::NumberOfEvents(0u), Backend::Players(5u) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u) }
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2u), Backend::Players(5u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0u), Backend::Players(5u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
     };
 
     /* // 4 (.) or 5 (#) players
@@ -155,6 +176,96 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset3)
     EXPECT_EQ(1, mi.GetPreview()[0]);
     EXPECT_EQ(2, mi.GetPreview()[1]);
     EXPECT_EQ(3, mi.GetPreview()[2]);
+
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 0));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 1));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 2));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 3));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 4));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 5));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 6));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 7));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 8));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 9));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(10));
+}
+
+TEST(BackendTest, MultiplierShallGiveCorrectDataAfterResetWithMandatorySolo)
+{
+    // Arrange
+    Backend::MultiplierInfo mi;
+    std::vector<Backend::EventInfo> events
+    {
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(true) },
+
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+
+        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
+    };
+
+    /* // 4 players throughout
+     *  0 0u, 0
+     *  1 2u, 0
+     *  2 2u, 2 - trigger mandatory solo
+     *  3 m
+     *  4 m
+     *  5 m
+     *  6 m
+     *  7 0u, 2 +1
+     *  8 1u  2 +1
+     *  9     2 +1
+     * 10       +1 +1 +1
+     * 11          +1 +1
+     * 12          +1 +1
+     * 13          +1 +1
+     */
+
+    // Act, Assert
+    mi.ResetTo(events);
+
+    EXPECT_EQ(1, mi.GetMultiplier(0));
+    EXPECT_EQ(1, mi.GetMultiplier(1));
+    EXPECT_EQ(4, mi.GetMultiplier(2));
+
+    EXPECT_EQ(1, mi.GetMultiplier(3));
+    EXPECT_EQ(1, mi.GetMultiplier(4));
+    EXPECT_EQ(1, mi.GetMultiplier(5));
+    EXPECT_EQ(1, mi.GetMultiplier(6));
+
+    EXPECT_EQ(8, mi.GetMultiplier( 7));
+    EXPECT_EQ(8, mi.GetMultiplier( 8));
+    EXPECT_EQ(8, mi.GetMultiplier( 9));
+    EXPECT_EQ(8, mi.GetMultiplier(10));
+    EXPECT_EQ(4, mi.GetMultiplier(11));
+    EXPECT_EQ(4, mi.GetMultiplier(12));
+    EXPECT_EQ(4, mi.GetMultiplier(13));
+
+    EXPECT_EQ(0, mi.GetPreview()[0]);
+    EXPECT_EQ(3, mi.GetPreview()[1]);
+    EXPECT_EQ(2, mi.GetPreview()[2]);
+
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 0));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 1));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 2));
+
+    EXPECT_EQ(true, mi.GetIsMandatorySolo( 3));
+    EXPECT_EQ(true, mi.GetIsMandatorySolo( 4));
+    EXPECT_EQ(true, mi.GetIsMandatorySolo( 5));
+    EXPECT_EQ(true, mi.GetIsMandatorySolo( 6));
+
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 7));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 8));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo( 9));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(10));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(11));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(12));
+    EXPECT_EQ(false, mi.GetIsMandatorySolo(13));
 }
 
 #endif // TST_MULTIPLIERINFO_H

@@ -137,7 +137,7 @@ namespace Backend
         }
 
         this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
-        this->events.push_back( { NumberOfEvents(numberOfEvents), Players(numberOfPresentPlayers) } );
+        this->events.push_back( { NumberOfEvents(numberOfEvents), Players(numberOfPresentPlayers), MandatorySolo(false) } );
         this->multiplierInfo.PushDeal(this->events.back());
 
         this->ApplyScheme();
@@ -174,6 +174,15 @@ namespace Backend
         this->ApplyScheme();
     }
 
+    void GameInfo::TriggerMandatorySolo()
+    {
+        if(!this->events.empty())
+        {
+            this->events.back().mandatorySolo = true;
+            this->multiplierInfo.ResetTo(this->events);
+        }
+    }
+
     std::vector<unsigned int> GameInfo::MultiplierPreview() const
     {
         return this->multiplierInfo.GetPreview();
@@ -197,6 +206,16 @@ namespace Backend
     unsigned int GameInfo::AbsentPlayerCashCents() const
     {
         return CalculateCashCents(this->MaximumCurrentScore());
+    }
+
+    GameInfo::MandatorySoloRound GameInfo::MandatorySoloState() const
+    {
+        if(this->events.empty())
+        {
+            return MandatorySoloRound::CannotInitiate;
+        }
+
+        return this->multiplierInfo.GetIsMandatorySolo(static_cast<unsigned int>(this->events.size())) ? MandatorySoloRound::Active : MandatorySoloRound::Ready;
     }
 
     void GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)

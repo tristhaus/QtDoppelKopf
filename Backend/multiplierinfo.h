@@ -32,7 +32,7 @@ namespace Backend
     {
     private:
         unsigned int dealIndex;
-        std::vector<unsigned short> effective;
+        std::vector<std::pair<unsigned short, bool>> effective;
 
     public:
         /*!
@@ -59,6 +59,13 @@ namespace Backend
          * \return The final multiplier to be applied to the deal results.
          */
         unsigned short GetMultiplier(const unsigned int index) const;
+
+        /*!
+         * \brief Gets a value indicating whether the deal is a mandatory solo.
+         * \param index The index of the deal in question.
+         * \return A value indicating whether the deal is a mandatory solo.
+         */
+        bool GetIsMandatorySolo(const unsigned int index) const;
 
         /*!
          * \brief Gets the future levels of multiplication (which are the indices of the vector returned).

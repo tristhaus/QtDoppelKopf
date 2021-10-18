@@ -42,16 +42,20 @@ namespace Backend
 
     typedef NamedNumber<unsigned int> NumberOfEvents;
     typedef NamedNumber<unsigned int> Players;
+    typedef bool MandatorySolo;
 
     /*!
      * \brief The EventInfo struct collects information regarding
      *        the number of multiplier-relevant events
-     *        and the number of present players.
+     *        the number of present players,
+     *        and whether a round of mandatory solo (suspending the multiplier)
+     *        was triggered.
      */
     struct EventInfo
     {
         NumberOfEvents number;
         Players players;
+        MandatorySolo mandatorySolo;
     };
 }
 

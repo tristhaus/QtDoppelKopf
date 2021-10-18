@@ -24,7 +24,7 @@
 Backend::MultiplierInfo::MultiplierInfo()
     : dealIndex(0)
 {
-    this->effective.push_back(0);
+    this->effective.push_back(std::make_pair(0u, false));
 }
 
 void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
@@ -33,7 +33,7 @@ void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
     {
         while(minIndex >= this->effective.size())
         {
-            this->effective.push_back(0);
+            this->effective.push_back(std::make_pair(0u, false));
         }
     };
 
@@ -41,22 +41,35 @@ void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
 
     GrowEffective(effectiveIndex);
 
+    if(eventInfo.mandatorySolo)
+    {
+        for(unsigned int iter = 0; iter < eventInfo.players.Value(); ++iter)
+        {
+            this->effective.insert(effective.begin() + effectiveIndex, std::make_pair(0u, true));
+            ++effectiveIndex;
+        }
+    }
+
+    unsigned int baseIndex = effectiveIndex;
+
     for(unsigned int event = 0; event < eventInfo.number.Value(); ++event)
     {
-        effectiveIndex = dealIndex + 1;
+        effectiveIndex = baseIndex;
 
         GrowEffective(effectiveIndex);
 
-        while(this->effective[effectiveIndex] == 3)
+        while(this->effective[effectiveIndex].first == 3u)
         {
             ++effectiveIndex;
+
+            GrowEffective(effectiveIndex);
         }
 
         for(unsigned int iter = 0; iter < eventInfo.players.Value(); ++iter)
         {
             GrowEffective(effectiveIndex);
 
-            this->effective[effectiveIndex++]++;
+            this->effective[effectiveIndex++].first++;
         }
     }
 
@@ -82,27 +95,37 @@ unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int index) 
         throw std::exception("attempt to get multiplier for game that does not exist");
     }
 
-    switch (this->effective[index])
+    switch (this->effective[index].first)
     {
     case 3:
-        return 8;
+        return 8u;
     case 2:
-        return 4;
+        return 4u;
     case 1:
-        return 2;
+        return 2u;
     case 0:
         return 1u;
     default:
-        throw std::exception((std::string("not supported bock of") + std::to_string(static_cast<unsigned int>(this->effective[index]))).c_str());
+        throw std::exception((std::string("not supported bock of") + std::to_string(static_cast<unsigned int>(this->effective[index].first))).c_str());
     }
+}
+
+bool Backend::MultiplierInfo::GetIsMandatorySolo(const unsigned int index) const
+{
+    if(this->effective.size() <= index)
+    {
+        throw std::exception("attempt to get mandatory solo for game that does not exist");
+    }
+
+    return this->effective[index].second;
 }
 
 std::vector<unsigned int> Backend::MultiplierInfo::GetPreview() const
 {
     return std::vector<unsigned int>
     {
-        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), 1)),
-        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), 2)),
-        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), 3))
+        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), std::pair<unsigned short, bool>(1u, false))),
+        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), std::pair<unsigned short, bool>(2u, false))),
+        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), std::pair<unsigned short, bool>(3u, false)))
     };
 }
