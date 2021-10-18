@@ -53,6 +53,7 @@ protected:
 private:
     const unsigned int maxNumberOfPlayers;
     const QString ScoreStylesheet = "QLabel { font-weight: bold ; font-size: 12pt }";
+    const QString MultiplierStylesheet = "QLabel { font-weight: bold ; font-size: 12pt }";
 
     QWidget *centralwidget;
     QHBoxLayout *centralLayout;
@@ -86,7 +87,6 @@ private:
     QHBoxLayout *horizontalLayout;
     QLabel *bockereignisseLabel;
     QSpinBox *spinBox;
-    QLabel *multiplier;
     QPushButton *commitButton;
     QPushButton *resetButton;
     QSpacerItem *controlSpacer0;
@@ -126,6 +126,16 @@ private:
     std::vector<QLabel*> maxSingleWins;
     std::vector<QLabel*> maxSingleLosss;
     std::vector<QLabel*> unmultipliedScores;
+
+    QLabel *currentGameMultiplier;
+    QWidget *multiplierPreviewWidget;
+    QGridLayout *multiplierPreviewGridLayout;
+    QLabel *dreifachbockLabel;
+    QLabel *doppelbockLabel;
+    QLabel *einfachbockLabel;
+    QLabel *tripleMultiplier;
+    QLabel *doubleMultiplier;
+    QLabel *singleMultiplier;
 
     QWidget *playerHistorySelectionWidget;
     QGridLayout *playerHistoryGridLayout;
@@ -297,11 +307,6 @@ public:
         spinBox->setMinimum(0);
 
         horizontalLayout->addWidget(spinBox);
-
-        multiplier = new QLabel(controlWidget);
-        multiplier->setObjectName(QString::fromUtf8("multiplier"));
-
-        horizontalLayout->addWidget(multiplier);
 
         controlSpacer0 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -493,6 +498,41 @@ public:
         rightVerticalLayout = new QVBoxLayout(rightwidget);
         rightVerticalLayout->setObjectName(QString::fromUtf8("rightVerticalLayout"));
 
+        currentGameMultiplier = new QLabel(rightwidget);
+        currentGameMultiplier->setObjectName(QString::fromUtf8("currentGameMultiplier"));
+        currentGameMultiplier->setStyleSheet(MultiplierStylesheet);
+        rightVerticalLayout->addWidget(currentGameMultiplier);
+
+        multiplierPreviewWidget= new QWidget(rightwidget);
+        multiplierPreviewWidget->setObjectName(QString::fromUtf8("multiplierPreviewWidget"));
+        multiplierPreviewGridLayout = new QGridLayout(multiplierPreviewWidget);
+
+        dreifachbockLabel = new QLabel(rightwidget);
+        dreifachbockLabel->setObjectName(QString::fromUtf8("dreifachbockLabel"));
+        multiplierPreviewGridLayout->addWidget(dreifachbockLabel, 0, 0, 1, 1);
+
+        doppelbockLabel = new QLabel(rightwidget);
+        doppelbockLabel->setObjectName(QString::fromUtf8("doppelbockLabel"));
+        multiplierPreviewGridLayout->addWidget(doppelbockLabel,  1, 0, 1, 1);
+
+        einfachbockLabel = new QLabel(rightwidget);
+        einfachbockLabel->setObjectName(QString::fromUtf8("einfachbockLabel"));
+        multiplierPreviewGridLayout->addWidget(einfachbockLabel, 2, 0, 1, 1);
+
+        tripleMultiplier = new QLabel(rightwidget);
+        tripleMultiplier->setObjectName(QString::fromUtf8("tripleMultiplier"));
+        multiplierPreviewGridLayout->addWidget(tripleMultiplier, 0, 1, 1, 1);
+
+        doubleMultiplier = new QLabel(rightwidget);
+        doubleMultiplier->setObjectName(QString::fromUtf8("doubleMultiplier"));
+        multiplierPreviewGridLayout->addWidget(doubleMultiplier, 1, 1, 1, 1);
+
+        singleMultiplier = new QLabel(rightwidget);
+        singleMultiplier->setObjectName(QString::fromUtf8("singleMultiplier"));
+        multiplierPreviewGridLayout->addWidget(singleMultiplier, 2, 1, 1, 1);
+
+        rightVerticalLayout->addWidget(multiplierPreviewWidget);
+
         playerHistorySelectionWidget = new QWidget(rightwidget);
         playerHistorySelectionWidget->setObjectName(QString::fromUtf8("playerHistorySelectionWidget"));
         playerHistoryGridLayout = new QGridLayout(playerHistorySelectionWidget);
@@ -595,7 +635,6 @@ public:
         aktuellesLabel->setText(QCoreApplication::translate("MainWindow", "Aktuelles Spiel", nullptr));
 
         bockereignisseLabel->setText(QCoreApplication::translate("MainWindow", "Bockereignisse", nullptr));
-        multiplier->setText(QCoreApplication::translate("MainWindow", "!multiplier", nullptr));
         commitButton->setText(QCoreApplication::translate("MainWindow", "\303\234bernehmen", nullptr));
         resetButton->setText(QCoreApplication::translate("MainWindow", "Letztes Spiel zur\303\274cksetzen", nullptr));
 
@@ -616,6 +655,14 @@ public:
         groessterGewinnLabel->setText(QCoreApplication::translate("MainWindow", "H\303\266chstes +", nullptr));
         groessterVerlustLabel->setText(QCoreApplication::translate("MainWindow", "H\303\266chstes -", nullptr));
         ohneBockLabel->setText(QCoreApplication::translate("MainWindow", "Ohne Bock", nullptr));
+
+        currentGameMultiplier->setText(QCoreApplication::translate("MainWindow", "Kein Bock", nullptr));
+        dreifachbockLabel->setText(QCoreApplication::translate("MainWindow", "Dreifachbock Spiele", nullptr));
+        doppelbockLabel->setText(QCoreApplication::translate("MainWindow", "Doppelbock Spiele", nullptr));
+        einfachbockLabel->setText(QCoreApplication::translate("MainWindow", "Einfachbock Spiele", nullptr));
+        tripleMultiplier->setText(QCoreApplication::translate("MainWindow", "!3bock", nullptr));
+        doubleMultiplier->setText(QCoreApplication::translate("MainWindow", "!2bock", nullptr));
+        singleMultiplier->setText(QCoreApplication::translate("MainWindow", "!1bock", nullptr));
     } // retranslateUi
 
 };

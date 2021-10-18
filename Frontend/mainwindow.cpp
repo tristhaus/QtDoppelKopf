@@ -156,7 +156,6 @@ void MainWindow::UpdateDisplay()
     }
 
     ui->spinBox->setValue(0);
-    ui->multiplier->setText(this->DetermineMultiplierText());
 
     ui->totalCash->setText(QString("%1,%2 (inkl. %3,%4 pro Abwesender)")
                            .arg(gameInfo.TotalCashCents()/100)
@@ -165,6 +164,8 @@ void MainWindow::UpdateDisplay()
                            .arg(gameInfo.AbsentPlayerCashCents()%100, 2, 10, QLatin1Char('0')));
 
     ui->resetButton->setEnabled(this->gameInfo.CanPopLastDeal());
+
+    this->DetermineAndSetMultiplierLabels();
 
     this->RedrawPlayerHistory();
 }
@@ -294,28 +295,6 @@ void MainWindow::ShowNotImplementedMessageBox()
     errorBox->exec();
 }
 
-QString MainWindow::DetermineMultiplierText() const
-{
-    auto preview = this->gameInfo.MultiplierPreview();
-
-    if(preview[2] > 0)
-    {
-        return QString("Dreifachbock (%1:%2:%3)").arg(preview[2]).arg(preview[1]).arg(preview[0]);
-    }
-    else if(preview[1] > 0)
-    {
-        return QString("Doppelbock (%1:%2)").arg(preview[1]).arg(preview[0]);
-    }
-    else if(preview[0] > 0)
-    {
-        return QString("Bock (%1)").arg(preview[0]);
-    }
-    else
-    {
-        return QString("Normalspiel");
-    }
-}
-
 void MainWindow::RedrawPlayerHistory()
 {
     ui->plotPlayerHistory->clearGraphs();
@@ -384,6 +363,32 @@ void MainWindow::ShowAboutDialog()
     this->aboutMessageBox->exec();
 
     this->aboutMessageBox.reset();
+}
+
+void MainWindow::DetermineAndSetMultiplierLabels()
+{
+    auto preview = this->gameInfo.MultiplierPreview();
+
+    if(preview[2] > 0)
+    {
+        ui->currentGameMultiplier->setText(QString("Dreifachbock"));
+    }
+    else if(preview[1] > 0)
+    {
+        ui->currentGameMultiplier->setText(QString("Doppelbock"));
+    }
+    else if(preview[0] > 0)
+    {
+        ui->currentGameMultiplier->setText(QString("Einfachbock"));
+    }
+    else
+    {
+        ui->currentGameMultiplier->setText(QString("Kein Bock"));
+    }
+
+    ui->tripleMultiplier->setText(QString().number(preview[2]));
+    ui->doubleMultiplier->setText(QString().number(preview[1]));
+    ui->singleMultiplier->setText(QString().number(preview[0]));
 }
 
 void MainWindow::OnChangePlayerPressed()

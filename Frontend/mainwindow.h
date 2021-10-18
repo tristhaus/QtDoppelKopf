@@ -55,10 +55,10 @@ private:
     void ShowPlayerSelection(bool calledOnStartup);
     std::vector<std::pair<QString, bool>> GetDefaultPlayers();
     void ShowNotImplementedMessageBox();
-    QString DetermineMultiplierText() const;
     std::map<QString, std::pair<std::vector<int>,std::vector<int>>> GetHistoricData();
     void RedrawPlayerHistory();
     void ShowAboutDialog();
+    void DetermineAndSetMultiplierLabels();
 
 private slots:
     void OnChangePlayerPressed();

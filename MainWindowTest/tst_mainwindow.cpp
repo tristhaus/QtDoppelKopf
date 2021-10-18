@@ -110,7 +110,6 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(mw.ui->horizontalLayout, "not created horizontal layout");
         QVERIFY2(mw.ui->bockereignisseLabel, "not created bockereignisse label");
         QVERIFY2(mw.ui->spinBox, "not created spin box");
-        QVERIFY2(mw.ui->multiplier, "not created multiplier");
         QVERIFY2(mw.ui->commitButton, "not created commit button");
         QVERIFY2(mw.ui->resetButton, "not created reset button");
         QVERIFY2(mw.ui->controlSpacer0, "not created control spacer 0");
@@ -218,6 +217,16 @@ void FrontendTest::ConstructionShallWorkCompletely()
             QVERIFY2(mw.ui->unmultipliedScores[i], "unmultiplied scores label not created");
         }
 
+        QVERIFY2(mw.ui->currentGameMultiplier, "current game multiplier not created");
+        QVERIFY2(mw.ui->multiplierPreviewWidget, "multiplier preview widget not created");
+        QVERIFY2(mw.ui->multiplierPreviewGridLayout, "multiplier preview grid layout not created");
+        QVERIFY2(mw.ui->dreifachbockLabel, "dreifachbock label not created");
+        QVERIFY2(mw.ui->doppelbockLabel, "doppelbock label not created");
+        QVERIFY2(mw.ui->einfachbockLabel, "einfachbock label not created");
+        QVERIFY2(mw.ui->tripleMultiplier, "triple multiplier not created");
+        QVERIFY2(mw.ui->doubleMultiplier, "double multiplier not created");
+        QVERIFY2(mw.ui->singleMultiplier, "single multiplier not created");
+
         QVERIFY2(mw.ui->playerHistorySelectionWidget, "not created player history selection widget");
         QVERIFY2(mw.ui->playerHistoryGridLayout, "not created player history grid layout");
 
@@ -321,7 +330,6 @@ void FrontendTest::SetDataShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 
     QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
     QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,00")) == 0, "incorrect cashs 1");
@@ -331,6 +339,11 @@ void FrontendTest::SetDataShallBeDisplayed()
     QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
 
     QVERIFY2(mw.ui->totalCash->text().compare(QString("0,00 (inkl. 0,00 pro Abwesender)")) == 0, "incorrect totalCash");
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Kein Bock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
 }
 
 void FrontendTest::OneCommittedGameShallBeDisplayed()
@@ -408,7 +421,6 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 
     QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
     QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,02")) == 0, "incorrect cashs 1");
@@ -418,6 +430,11 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
     QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,01")) == 0, "incorrect cashs 5");
 
     QVERIFY2(mw.ui->totalCash->text().compare(QString("0,08 (inkl. 0,01 pro Abwesender)")) == 0, "incorrect totalCash");
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Kein Bock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
 }
 
 void FrontendTest::TwoCommittedGamesShallBeDisplayed()
@@ -499,7 +516,6 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 
     QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
     QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,01")) == 0, "incorrect cashs 1");
@@ -509,6 +525,11 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
 
     QVERIFY2(mw.ui->totalCash->text().compare(QString("0,10 (inkl. 0,01 pro Abwesender)")) == 0, "incorrect totalCash");
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Kein Bock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
 }
 
 void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
@@ -593,7 +614,6 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
     QVERIFY2(mw.ui->spinBox->value() == 0, "events spinbox not set to zero");
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Dreifachbock (5:1:0)")) == 0, "multiplier label incorrect");
 
     QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,02")) == 0, "incorrect cashs 0");
     QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,01")) == 0, "incorrect cashs 1");
@@ -603,6 +623,11 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
 
     QVERIFY2(mw.ui->totalCash->text().compare(QString("0,24 (inkl. 0,03 pro Abwesender)")) == 0, "incorrect totalCash");
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Dreifachbock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("5")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("1")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
 
     QVERIFY2(isEnabled1 == false, "reset button wrong enabled state");
     QVERIFY2(isEnabled2, "reset button wrong enabled state");
@@ -647,7 +672,6 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
     QVERIFY2(mw.ui->spinBox->value() == 2, "events spinbox not set to correct value");
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Bock (6)")) == 0, "multiplier label incorrect");
 
     QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
     QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,02")) == 0, "incorrect cashs 1");
@@ -657,6 +681,11 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,01")) == 0, "incorrect cashs 5");
 
     QVERIFY2(mw.ui->totalCash->text().compare(QString("0,08 (inkl. 0,01 pro Abwesender)")) == 0, "incorrect totalCash");
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Einfachbock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("6")) == 0, "single multiplier label incorrect");
 
     QVERIFY2(isEnabled4, "reset button wrong enabled state");
 
@@ -699,7 +728,6 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), "actuals 5 not empty");
 
     QVERIFY2(mw.ui->spinBox->value() == 1, "events spinbox not set to correct value");
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
 
     QVERIFY2(mw.ui->cashs[0]->text().compare(QString("0,00")) == 0, "incorrect cashs 0");
     QVERIFY2(mw.ui->cashs[1]->text().compare(QString("0,00")) == 0, "incorrect cashs 1");
@@ -709,6 +737,11 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->cashs[5]->text().compare(QString("0,00")) == 0, "incorrect cashs 5");
 
     QVERIFY2(mw.ui->totalCash->text().compare(QString("0,00 (inkl. 0,00 pro Abwesender)")) == 0, "incorrect totalCash");
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Kein Bock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
 
     QVERIFY2(isEnabled5 == false, "reset button wrong enabled state");
 }
@@ -737,7 +770,10 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
 
     // Act, Assert
 
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Normalspiel")) == 0, "multiplier label incorrect");
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Kein Bock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
 
     mw.ui->actuals[0]->setText(QString("2"));
     mw.ui->actuals[3]->setText(QString("2"));
@@ -745,7 +781,10 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
 
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Bock (5)")) == 0, "multiplier label incorrect");
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Einfachbock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("5")) == 0, "single multiplier label incorrect");
 
     mw.ui->actuals[2]->setText(QString("-3"));
     mw.ui->actuals[4]->setText(QString("-3"));
@@ -753,7 +792,10 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
 
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Doppelbock (4:1)")) == 0, "multiplier label incorrect");
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Doppelbock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("4")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("1")) == 0, "single multiplier label incorrect");
 
     mw.ui->actuals[2]->setText(QString("-3"));
     mw.ui->actuals[4]->setText(QString("-3"));
@@ -761,7 +803,10 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
 
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
-    QVERIFY2(mw.ui->multiplier->text().compare(QString("Dreifachbock (3:1:1)")) == 0, "multiplier label incorrect");
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Dreifachbock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("3")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("1")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("1")) == 0, "single multiplier label incorrect");
 }
 
 void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
