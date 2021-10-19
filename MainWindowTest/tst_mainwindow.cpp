@@ -51,6 +51,7 @@ private slots:
     void StatisticsShallCorrectlyBeDisplayed();
     void ScoreHistoryPlotShallWorkCorrectly();
     void AboutButtonShallTriggerDialogAndOKShallClose();
+    void MandatorySoloButtonShallBeEnabledAndTrigger();
 #endif
 };
 
@@ -1005,13 +1006,77 @@ void FrontendTest::AboutButtonShallTriggerDialogAndOKShallClose()
 
     QTest::mouseClick(mw.ui->aboutButton, Qt::LeftButton);
 
-    spyAboutButton.wait();
-
     // Assert
     QVERIFY2(aboutMessageBoxFound, "aboutMessageBox not found");
     QVERIFY2(aboutMessageBoxHasOneButton, "aboutMessageBox does not have exactly one button");
 
     QVERIFY2(mw.aboutMessageBox == nullptr, "aboutMessageBox still reachable");
+}
+
+void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger()
+{
+    // Arrange
+    std::vector<std::wstring> players
+    {
+        L"A",
+        L"B",
+        L"C",
+        L"D"
+    };
+
+    std::wstring dealer(L"A");
+    std::set<unsigned int> sitOutScheme {};
+
+    MainWindow mw(8u, false);
+
+    QSignalSpy mandatorySoloButtonSpy(mw.ui->mandatorySoloButton, &QPushButton::clicked);
+    QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
+    QSignalSpy resetButtonSpy(mw.ui->resetButton, &QPushButton::clicked);
+
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    // Act, Assert
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString::fromUtf8("Kein Bock")) == 0, "incorrect multiplier label at beginning");
+    QVERIFY2(mw.ui->mandatorySoloButton->isEnabled() == false, "wrong enabled state at beginning");
+
+    mw.ui->actuals[0]->setText(QString("-1"));
+    mw.ui->actuals[1]->setText(QString("-1"));
+    mw.ui->actuals[2]->setText(QString("1"));
+    mw.ui->actuals[3]->setText(QString("1"));
+    mw.ui->spinBox->setValue(1);
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    mw.ui->actuals[0]->setText(QString("-1"));
+    mw.ui->actuals[1]->setText(QString("-1"));
+    mw.ui->actuals[2]->setText(QString("1"));
+    mw.ui->actuals[3]->setText(QString("1"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString::fromUtf8("Einfachbock")) == 0, "incorrect multiplier label after first game");
+    QVERIFY2(mw.ui->mandatorySoloButton->isEnabled() == true, "wrong enabled state after first game");
+
+    QTest::mouseClick(mw.ui->mandatorySoloButton, Qt::LeftButton);
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString::fromUtf8("Pflichtsolorunde")) == 0, "incorrect multiplier label after trigger");
+    QVERIFY2(mw.ui->mandatorySoloButton->isEnabled() == false, "wrong enabled state after trigger");
+
+    mw.ui->actuals[0]->setText(QString("1"));
+    mw.ui->actuals[1]->setText(QString("1"));
+    mw.ui->actuals[2]->setText(QString("-3"));
+    mw.ui->actuals[3]->setText(QString("1"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8("-2")) == 0, "incorrect score 0");
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8("-2")) == 0, "incorrect score 1");
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString::fromUtf8("0")) == 0, "incorrect score 2");
+    QVERIFY2(mw.ui->scores[3]->text().compare(QString::fromUtf8("4")) == 0, "incorrect score 3");
+
+    QTest::mouseClick(mw.ui->resetButton, Qt::LeftButton);
+    QTest::mouseClick(mw.ui->resetButton, Qt::LeftButton);
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString::fromUtf8("Einfachbock")) == 0, "incorrect multiplier label after reset");
+    QVERIFY2(mw.ui->mandatorySoloButton->isEnabled() == true, "wrong enabled state after reset");
 }
 
 #endif // _USE_LONG_TEST

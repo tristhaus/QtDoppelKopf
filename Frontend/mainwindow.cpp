@@ -72,7 +72,6 @@ void MainWindow::DisableNotImplementedButtons()
 {
     this->ui->loadButton->setDisabled(true);
     this->ui->saveButton->setDisabled(true);
-    this->ui->mandatorySoloButton->setDisabled(true);
 }
 
 void MainWindow::UpdateDisplay()
@@ -166,6 +165,7 @@ void MainWindow::UpdateDisplay()
     ui->resetButton->setEnabled(this->gameInfo.CanPopLastDeal());
 
     this->DetermineAndSetMultiplierLabels();
+    ui->mandatorySoloButton->setEnabled(this->gameInfo.MandatorySoloState() == Backend::GameInfo::MandatorySoloRound::Ready);
 
     this->RedrawPlayerHistory();
 }
@@ -369,7 +369,11 @@ void MainWindow::DetermineAndSetMultiplierLabels()
 {
     auto preview = this->gameInfo.MultiplierPreview();
 
-    if(preview[2] > 0)
+    if(this->gameInfo.MandatorySoloState() == Backend::GameInfo::MandatorySoloRound::Active)
+    {
+        ui->currentGameMultiplier->setText(QString("Pflichtsolorunde"));
+    }
+    else if(preview[2] > 0)
     {
         ui->currentGameMultiplier->setText(QString("Dreifachbock"));
     }
@@ -408,7 +412,9 @@ void MainWindow::OnSaveGamePressed()
 
 void MainWindow::OnMandatorySoloPressed()
 {
-    this->ShowNotImplementedMessageBox();
+    this->gameInfo.TriggerMandatorySolo();
+
+    this->UpdateDisplay();
 }
 
 void MainWindow::OnCommitPressed()
