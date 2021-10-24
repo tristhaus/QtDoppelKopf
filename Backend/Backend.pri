@@ -18,13 +18,20 @@
 
 HEADERS += \
     $$PWD/cashcalculation.h \
+    $$PWD/deal.h \
+    $$PWD/entry.h \
     $$PWD/eventinfo.h \
     $$PWD/gameinfo.h \
+    $$PWD/mandatorysolotrigger.h \
     $$PWD/multiplierinfo.h \
-    $$PWD/playerinfo.h
+    $$PWD/playerinfo.h \
+    $$PWD/playersset.h
 
 SOURCES += \
     $$PWD/cashcalculation.cpp \
+    $$PWD/deal.cpp \
     $$PWD/gameinfo.cpp \
+    $$PWD/mandatorysolotrigger.cpp \
     $$PWD/multiplierinfo.cpp \
-    $$PWD/playerinfo.cpp
+    $$PWD/playerinfo.cpp \
+    $$PWD/playersset.cpp

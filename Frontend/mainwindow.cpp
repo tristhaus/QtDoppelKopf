@@ -162,10 +162,10 @@ void MainWindow::UpdateDisplay()
                            .arg(gameInfo.AbsentPlayerCashCents()/100)
                            .arg(gameInfo.AbsentPlayerCashCents()%100, 2, 10, QLatin1Char('0')));
 
-    ui->resetButton->setEnabled(this->gameInfo.CanPopLastDeal());
+    ui->resetButton->setEnabled(this->gameInfo.CanPopLastEntry());
 
     this->DetermineAndSetMultiplierLabels();
-    ui->mandatorySoloButton->setEnabled(this->gameInfo.MandatorySoloState() == Backend::GameInfo::MandatorySoloRound::Ready);
+    ui->mandatorySoloButton->setEnabled(this->gameInfo.MandatorySolo() == Backend::GameInfo::MandatorySolo::Ready);
 
     this->RedrawPlayerHistory();
 }
@@ -369,7 +369,7 @@ void MainWindow::DetermineAndSetMultiplierLabels()
 {
     auto preview = this->gameInfo.MultiplierPreview();
 
-    if(this->gameInfo.MandatorySoloState() == Backend::GameInfo::MandatorySoloRound::Active)
+    if(this->gameInfo.MandatorySolo() == Backend::GameInfo::MandatorySolo::Active)
     {
         ui->currentGameMultiplier->setText(QString("Pflichtsolorunde"));
     }
@@ -463,7 +463,7 @@ void MainWindow::OnResetPressed()
 
     auto numberOfEvents = this->gameInfo.LastNumberOfEvents();
 
-    this->gameInfo.PopLastDeal();
+    this->gameInfo.PopLastEntry();
 
     this->UpdateDisplay();
 

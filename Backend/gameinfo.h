@@ -27,6 +27,10 @@
 #include "playerinfo.h"
 #include "eventinfo.h"
 #include "multiplierinfo.h"
+#include "entry.h"
+#include "mandatorysolotrigger.h"
+#include "deal.h"
+#include "playersset.h"
 
 namespace Backend
 {
@@ -40,13 +44,13 @@ namespace Backend
         /*!
          * \brief The MandatorySoloRound enum lists possible states
          *        of the mandatory solo system:
-         *        Unable to initiate because it is the first deal,
+         *        Unable to trigger because it is the first deal,
          *        Ready to initiate a round,
          *        A round is active.
          */
-        enum MandatorySoloRound
+        enum class MandatorySolo
         {
-            CannotInitiate,
+            CannotTrigger,
             Ready,
             Active
         };
@@ -54,15 +58,14 @@ namespace Backend
     private:
         class PlayerInfoInternal;
         const unsigned int MaxPlayers;
-        unsigned int dealsRecorded;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         std::map<std::wstring, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
         unsigned int numberOfPresentPlayers;
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;
-        unsigned int poppableGames;
-        std::vector<EventInfo> events;
         MultiplierInfo multiplierInfo;
+
+        std::vector<std::shared_ptr<Entry>> entries;
 
     public:
         /*!
@@ -108,20 +111,20 @@ namespace Backend
         void PushDeal(std::vector<std::pair<std::wstring, int>> changes, unsigned int numberOfEvents);
 
         /*!
-         * \brief Gets a value indicating whether the last deal can be popped off.
-         * \return A value indicating whether the last deal can be popped off.
-         */
-        bool CanPopLastDeal();
-
-        /*!
-         * \brief Removes the last deal from the collection of deals.
-         */
-        void PopLastDeal();
-
-        /*!
          * \brief Begins a round of mandatory solo, which suspends the multiplier.
          */
         void TriggerMandatorySolo();
+
+        /*!
+         * \brief Gets a value indicating whether the last entry can be popped off.
+         * \return A value indicating whether the last entry can be popped off.
+         */
+        bool CanPopLastEntry();
+
+        /*!
+         * \brief Removes the last entry from the collection of deals.
+         */
+        void PopLastEntry();
 
         /*!
          * \brief Gets the future levels of multiplication (which are the indices of the vector returned).
@@ -151,16 +154,20 @@ namespace Backend
          * \brief Gets the state of the mandatory solo round.
          * \return The state of the mandatory solo round.
          */
-        MandatorySoloRound MandatorySoloState() const;
+        enum MandatorySolo MandatorySolo() const;
 
     private:
+        void SetPlayersInternal(std::shared_ptr<PlayersSet> playersSet);
         void SortAndSetPlayerInfos(std::vector<std::wstring> players);
         void SetDealer(std::wstring dealer);
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
         void ApplyScheme();
+        void PushDealInternal(std::shared_ptr<Deal> deal);
         std::vector<std::pair<std::wstring, int>> AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges);
-        std::wstring FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes);
+        std::wstring FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes) const;
         int MaximumCurrentScore() const;
+        void ReconstructEventsForMultiplierInfo();
+        unsigned int DealsRecorded() const;
 
     private:
         class PlayerInfoInternal : public PlayerInfo

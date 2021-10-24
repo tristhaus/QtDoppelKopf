@@ -25,9 +25,7 @@
 namespace Backend
 {
     GameInfo::GameInfo(const unsigned int maxPlayers)
-        : MaxPlayers(maxPlayers),
-          dealsRecorded(0u),
-          poppableGames(0u)
+        : MaxPlayers(maxPlayers)
     {
     }
 
@@ -50,7 +48,136 @@ namespace Backend
                               std::wstring dealer,
                               std::set<unsigned int> sitOutScheme)
     {
+        auto entry = std::make_shared<PlayersSet>(players, dealer, sitOutScheme);
+
+        this->SetPlayersInternal(entry);
+
+        // first entry must be PlayersSet and is thus replaced
+        if(this->entries.size() == 1)
+        {
+            this->entries.pop_back();
+        }
+
+        this->entries.push_back(entry);
+    }
+
+    void GameInfo::PushDeal(std::vector<std::pair<std::wstring, int>> changes,
+                            unsigned int numberOfEvents)
+    {
+
+        auto entry = std::make_shared<Deal>(changes, NumberOfEvents(numberOfEvents), Players(numberOfPresentPlayers));
+
+        this->PushDealInternal(entry);
+
+        this->entries.push_back(entry);
+    }
+
+    void GameInfo::TriggerMandatorySolo()
+    {
+        if(this->MandatorySolo() != MandatorySolo::Ready)
+        {
+            throw std::exception("cannot trigger mandatory solo at this point");
+        }
+
+        this->entries.emplace_back(std::make_shared<MandatorySoloTrigger>());
+
+        this->ReconstructEventsForMultiplierInfo();
+    }
+
+    bool GameInfo::CanPopLastEntry()
+    {
+        if(this->entries.size() < 2)
+        {
+            return false;
+        }
+
+        if(this->entries.back()->Kind() == Entry::Kind::PlayersSet)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    void GameInfo::PopLastEntry()
+    {
+        if(!this->CanPopLastEntry())
+        {
+            return;
+        }
+
+        if(this->entries.back()->Kind() == Entry::Kind::MandatorySoloTrigger)
+        {
+            this->entries.pop_back();
+        }
+
+        this->entries.pop_back();
+
+        auto playerInfosIt = this->playerInfos.begin();
+        auto playerInfosEnd = this->playerInfos.end();
+        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        {
+            (*playerInfosIt)->PopLastDealResult();
+        }
+
+        this->currentDealerIndex = (this->currentDealerIndex - 1 + this->numberOfPresentPlayers) % this->numberOfPresentPlayers;
+
+        this->ApplyScheme();
+
+        this->ReconstructEventsForMultiplierInfo();
+    }
+
+    std::vector<unsigned int> GameInfo::MultiplierPreview() const
+    {
+        return this->multiplierInfo.GetPreview();
+    }
+
+    unsigned int GameInfo::LastNumberOfEvents() const
+    {
+        auto it = std::find_if(this->entries.rbegin(), this->entries.rend(), [](std::shared_ptr<Entry> entry) { return entry->Kind() == Entry::Kind::Deal; });
+
+        if(it == this->entries.rend())
+        {
+            return 0u;
+        }
+
+        auto deal = std::static_pointer_cast<Deal>(*it);
+
+        return deal->NumberOfEvents().Value();
+    }
+
+    unsigned int GameInfo::TotalCashCents() const
+    {
+        auto sum = std::accumulate(this->playerInfos.begin(),
+                                  this->playerInfos.end(),
+                                  0,
+                                  [](int s, std::shared_ptr<PlayerInfoInternal> p){ s += p->CashCents(); return s; });
+        sum += (MaxPlayers - static_cast<int>(this->playerInfos.size())) * this->AbsentPlayerCashCents();
+        return sum;
+    }
+
+    unsigned int GameInfo::AbsentPlayerCashCents() const
+    {
+        return CalculateCashCents(this->MaximumCurrentScore());
+    }
+
+    enum GameInfo::MandatorySolo GameInfo::MandatorySolo() const
+    {
+        unsigned int count = this->DealsRecorded();
+
+        if(count == 0)
+        {
+            return MandatorySolo::CannotTrigger;
+        }
+
+        return this->multiplierInfo.GetIsMandatorySolo(count) ? MandatorySolo::Active : MandatorySolo::Ready;
+    }
+
+    void Backend::GameInfo::SetPlayersInternal(std::shared_ptr<PlayersSet> playersSet)
+    {
         bool dealerFound = false;
+        auto players = playersSet->Players();
+        auto dealer = playersSet->Dealer();
         const auto playersSize = players.size();
 
         if(playersSize < 4u)
@@ -79,145 +206,14 @@ namespace Backend
             throw std::exception("name of dealer must be among the players");
         }
 
-        if(playersSize > 5u && sitOutScheme.size() + 5u != playersSize)
+        if(playersSize > 5u && playersSet->SitOutScheme().size() + 5u != playersSize)
         {
             throw std::exception("incorrect size of the sit out scheme");
         }
 
-        this->SortAndSetPlayerInfos(players);
-        this->poppableGames = 0u;
-
-        this->SetDealer(dealer);
-
-        this->SetAndApplyScheme(sitOutScheme);
-    }
-
-    void GameInfo::PushDeal(std::vector<std::pair<std::wstring, int>> changes,
-                            unsigned int numberOfEvents)
-    {
-        auto actualChanges = this->AutoCompleteDeal(changes);
-
-        std::wstring soloPlayer = this->FindSoloPlayer(actualChanges);
-
-        auto changesIt = actualChanges.begin();
-        auto changesEnd = actualChanges.end();
-        for(; changesIt != changesEnd; ++changesIt)
-        {
-            auto player = nameToPlayerInfo.at(changesIt->first);
-
-            if(!player->IsPlaying())
-            {
-                throw std::exception("found change for player not playing");
-            }
-
-            player->PushDealResult(true, changesIt->second, player->Name().compare(soloPlayer) == 0);
-
-            player->SetHasPlayed(true);
-
-            auto relevantChange = std::find_if(changes.begin(), changes.end(), [&](std::pair<std::wstring, int> change){ return change.first == player->Name(); });
-            if(relevantChange != changes.end())
-            {
-                player->SetInputInDeal(std::to_wstring(relevantChange->second));
-            }
-            else
-            {
-                player->SetInputInDeal(std::wstring(L""));
-            }
-        }
-
-        auto playerInfosIt = this->playerInfos.begin();
-        auto playerInfosEnd = this->playerInfos.end();
-        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
-        {
-            if(!(*playerInfosIt)->IsPlaying())
-            {
-                (*playerInfosIt)->PushDealResult(false, 0, false);
-                (*playerInfosIt)->SetInputInDeal(std::wstring(L""));
-            }
-        }
-
-        this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
-        this->events.push_back( { NumberOfEvents(numberOfEvents), Players(numberOfPresentPlayers), MandatorySolo(false) } );
-        this->multiplierInfo.PushDeal(this->events.back());
-
-        this->ApplyScheme();
-
-        ++(this->poppableGames);
-        ++(this->dealsRecorded);
-    }
-
-    bool GameInfo::CanPopLastDeal()
-    {
-        return poppableGames > 0;
-    }
-
-    void GameInfo::PopLastDeal()
-    {
-        if(!this->CanPopLastDeal())
-        {
-            return;
-        }
-
-        --(this->poppableGames);
-        --(this->dealsRecorded);
-
-        auto playerInfosIt = this->playerInfos.begin();
-        auto playerInfosEnd = this->playerInfos.end();
-        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
-        {
-            (*playerInfosIt)->PopLastDealResult();
-        }
-
-        this->currentDealerIndex = (this->currentDealerIndex - 1 + this->numberOfPresentPlayers) % this->numberOfPresentPlayers;
-
-        this->events.pop_back();
-        this->multiplierInfo.ResetTo(this->events);
-
-        this->ApplyScheme();
-    }
-
-    void GameInfo::TriggerMandatorySolo()
-    {
-        if(!this->events.empty())
-        {
-            this->events.back().mandatorySolo = true;
-            this->multiplierInfo.ResetTo(this->events);
-        }
-    }
-
-    std::vector<unsigned int> GameInfo::MultiplierPreview() const
-    {
-        return this->multiplierInfo.GetPreview();
-    }
-
-    unsigned int GameInfo::LastNumberOfEvents() const
-    {
-        return !this->events.empty() ? this->events.back().number.Value() : 0u;
-    }
-
-    unsigned int GameInfo::TotalCashCents() const
-    {
-        auto sum = std::accumulate(this->playerInfos.begin(),
-                                  this->playerInfos.end(),
-                                  0,
-                                  [](int s, std::shared_ptr<PlayerInfoInternal> p){ s += p->CashCents(); return s; });
-        sum += (MaxPlayers - static_cast<int>(this->playerInfos.size())) * this->AbsentPlayerCashCents();
-        return sum;
-    }
-
-    unsigned int GameInfo::AbsentPlayerCashCents() const
-    {
-        return CalculateCashCents(this->MaximumCurrentScore());
-    }
-
-    GameInfo::MandatorySoloRound GameInfo::MandatorySoloState() const
-    {
-        if(this->events.empty())
-        {
-            return MandatorySoloRound::CannotInitiate;
-        }
-
-        return this->multiplierInfo.GetIsMandatorySolo(static_cast<unsigned int>(this->events.size())) ? MandatorySoloRound::Active : MandatorySoloRound::Ready;
+        this->SortAndSetPlayerInfos(playersSet->Players());
+        this->SetDealer(playersSet->Dealer());
+        this->SetAndApplyScheme(playersSet->SitOutScheme());
     }
 
     void GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)
@@ -235,7 +231,7 @@ namespace Backend
                 auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt,
                                                                           [&](unsigned int index){ return this->multiplierInfo.GetMultiplier(index); },
                                                                           [&](){ return this->MaximumCurrentScore(); });
-                while(newPlayerInfo->NumberOfRecordedDeals() < this->dealsRecorded)
+                while(newPlayerInfo->NumberOfRecordedDeals() < this->DealsRecorded())
                 {
                     newPlayerInfo->PushDealResult(false, 0, false);
                 }
@@ -308,6 +304,58 @@ namespace Backend
         }
     }
 
+    void Backend::GameInfo::PushDealInternal(std::shared_ptr<Deal> deal)
+    {
+        auto changes = deal->Changes();
+        auto actualChanges = this->AutoCompleteDeal(changes);
+
+        std::wstring soloPlayer = this->FindSoloPlayer(actualChanges);
+
+        auto changesIt = actualChanges.begin();
+        auto changesEnd = actualChanges.end();
+        for(; changesIt != changesEnd; ++changesIt)
+        {
+            auto player = nameToPlayerInfo.at(changesIt->first);
+
+            if(!player->IsPlaying())
+            {
+                throw std::exception("found change for player not playing");
+            }
+
+            player->PushDealResult(true, changesIt->second, player->Name().compare(soloPlayer) == 0);
+
+            player->SetHasPlayed(true);
+
+            auto relevantChange = std::find_if(changes.begin(), changes.end(), [&](std::pair<std::wstring, int> change){ return change.first == player->Name(); });
+            if(relevantChange != changes.end())
+            {
+                player->SetInputInDeal(std::to_wstring(relevantChange->second));
+            }
+            else
+            {
+                player->SetInputInDeal(std::wstring(L""));
+            }
+        }
+
+        auto playerInfosIt = this->playerInfos.begin();
+        auto playerInfosEnd = this->playerInfos.end();
+        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        {
+            if(!(*playerInfosIt)->IsPlaying())
+            {
+                (*playerInfosIt)->PushDealResult(false, 0, false);
+                (*playerInfosIt)->SetInputInDeal(std::wstring(L""));
+            }
+        }
+
+        this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
+
+        EventInfo eventInfo { deal->NumberOfEvents(), Players(numberOfPresentPlayers), ::Backend::MandatorySolo(false) };
+        this->multiplierInfo.PushDeal(eventInfo);
+
+        this->ApplyScheme();
+    }
+
     std::vector<std::pair<std::wstring, int>> GameInfo::AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges)
     {
         auto changesIt = inputChanges.begin();
@@ -378,7 +426,7 @@ namespace Backend
         return newChanges;
     }
 
-    std::wstring GameInfo::FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes)
+    std::wstring GameInfo::FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes) const
     {
         std::wstring losingPlayer;
         std::wstring winningPlayer;
@@ -419,6 +467,52 @@ namespace Backend
         return (*std::max_element(this->playerInfos.begin(),
                                   this->playerInfos.end(),
                                   [](const std::shared_ptr<PlayerInfoInternal> p1, const std::shared_ptr<PlayerInfoInternal> p2){ return p1->CurrentScore() < p2->CurrentScore(); }))->CurrentScore();
+    }
+
+    void GameInfo::ReconstructEventsForMultiplierInfo()
+    {
+        std::vector<EventInfo> events;
+
+        std::unique_ptr<EventInfo> candidate;
+
+        for (auto & entry : this->entries)
+        {
+            if(entry->Kind() == Entry::Kind::MandatorySoloTrigger)
+            {
+                candidate->mandatorySolo = true;
+            }
+
+            if(entry->Kind() != Entry::Kind::Deal)
+            {
+                if(candidate)
+                {
+                    events.push_back(*candidate);
+                    candidate = nullptr;
+                }
+                continue;
+            }
+
+            if(candidate)
+            {
+                events.push_back(*candidate);
+            }
+
+            auto deal = std::static_pointer_cast<Deal>(entry);
+
+            candidate = std::make_unique<EventInfo>(EventInfo{ deal->NumberOfEvents(), deal->Players(), Backend::MandatorySolo(false) });
+        }
+
+        if(candidate)
+        {
+            events.push_back(*candidate);
+        }
+
+        this->multiplierInfo.ResetTo(events);
+    }
+
+    unsigned int GameInfo::DealsRecorded() const
+    {
+        return static_cast<unsigned int>(std::count_if(this->entries.rbegin(), this->entries.rend(), [](std::shared_ptr<Entry> entry) { return entry->Kind() == Entry::Kind::Deal; }));
     }
 
     GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name,
