@@ -143,6 +143,7 @@ namespace Backend
         this->ApplyScheme();
 
         ++(this->poppableGames);
+        ++(this->dealsRecorded);
     }
 
     bool GameInfo::CanPopLastDeal()
@@ -158,6 +159,7 @@ namespace Backend
         }
 
         --(this->poppableGames);
+        --(this->dealsRecorded);
 
         auto playerInfosIt = this->playerInfos.begin();
         auto playerInfosEnd = this->playerInfos.end();
