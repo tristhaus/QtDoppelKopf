@@ -67,6 +67,7 @@ namespace Backend
     public:
         /*!
          * \brief Initializes a new instance.
+         * \param maxPlayers The maximum number of players that will be kept in this instance.
          */
         GameInfo(const unsigned int maxPlayers = 8u);
 

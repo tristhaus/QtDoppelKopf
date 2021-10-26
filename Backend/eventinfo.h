@@ -29,11 +29,19 @@ namespace Backend
     {
         const T value;
     public:
+        /*!
+         * \brief Initializes a new instance.
+         * \param The value to contain.
+         */
         NamedNumber(T value)
             : value(value)
         {
         }
 
+        /*!
+         * \brief Get the contained value.
+         * \return The contained value.
+         */
         T Value() const
         {
             return value;
