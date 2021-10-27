@@ -34,6 +34,8 @@ Icon (suit symbols and letters) by tristhaus.
 
 [QCustomPlot](https://www.qcustomplot.com/) library (Version 2.1.0) by Emanuel Eichhammer used under the [GPL v3](https://www.gnu.org/licenses/gpl-3.0.html).
 
+JSON de/serialization via [rapidjson](https://rapidjson.org/) provided by THL A29 Limited, a Tencent company, and Milo Yip used under the [MIT license](http://opensource.org/licenses/MIT).
+
 GoogleTest used under the following conditions:
 
 ```

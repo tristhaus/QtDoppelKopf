@@ -31,6 +31,8 @@ Icon (Farbsymbole und Buchstaben) von tristhaus.
 
 [QCustomPlot](https://www.qcustomplot.com/) Bibliothek (Version 2.1.0) von Emanuel Eichhammer genutzt unter der [GPL v3](https://www.gnu.org/licenses/gpl-3.0.html).
 
+JSON De/Serialisierung via [rapidjson](https://rapidjson.org/) bereitgestellt von THL A29 Limited, eine Tencent Firma, und Milo Yip benutzt unter der [MIT Lizenz](http://opensource.org/licenses/MIT).
+
 GoogleTest genutzt unter folgenden Bedingungen:
 
 ```
