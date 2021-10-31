@@ -655,6 +655,42 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 }
 
+TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping)
+{
+    // Arrange
+    Backend::GameInfo gameInfo;
+    std::set<unsigned int> emptySitOutScheme;
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
+
+    // Act
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"A", 1),
+                          std::make_pair<std::wstring, int>(L"B", 1),
+                      }, 0u);
+
+    while(gameInfo.CanPopLastEntry())
+    {
+        gameInfo.PopLastEntry();
+    }
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"A", 1),
+                          std::make_pair<std::wstring, int>(L"C", 1),
+                      }, 0u);
+
+    // Assert
+    auto playerInfos = gameInfo.PlayerInfos();
+
+    EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
+    EXPECT_EQ(-1, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
+
+    ASSERT_TRUE(gameInfo.CanPopLastEntry());
+}
+
 TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
 {
     // Arrange

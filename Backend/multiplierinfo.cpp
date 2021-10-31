@@ -80,8 +80,10 @@ void Backend::MultiplierInfo::ResetTo(const std::vector<EventInfo> events)
 {
     this->effective.clear();
     dealIndex = 0;
+    this->effective.push_back(std::make_pair(0u, false));
 
-    for (auto event : events) {
+    for (auto event : events)
+    {
         this->PushDeal(event);
     }
 
