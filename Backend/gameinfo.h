@@ -31,6 +31,8 @@
 #include "mandatorysolotrigger.h"
 #include "deal.h"
 #include "playersset.h"
+#include "repository.h"
+#include "diskrepository.h"
 
 namespace Backend
 {
@@ -56,6 +58,8 @@ namespace Backend
         };
 
     private:
+        std::shared_ptr<Repository> repository;
+
         class PlayerInfoInternal;
         const unsigned int MaxPlayers;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
@@ -70,9 +74,11 @@ namespace Backend
     public:
         /*!
          * \brief Initializes a new instance.
+         * \param repository The repository to be used for permanent storage.
          * \param maxPlayers The maximum number of players that will be kept in this instance.
          */
-        GameInfo(const unsigned int maxPlayers = 8u);
+        GameInfo(std::shared_ptr<Repository> repository = std::make_shared<DiskRepository>(),
+                 const unsigned int maxPlayers = 8u);
 
         /*!
          * \brief Provides access to the player information.
@@ -125,6 +131,18 @@ namespace Backend
          * \brief Removes the last entry from the collection of deals.
          */
         void PopLastEntry();
+
+        /*!
+         * \brief Saves the state to the ID, which should be a filename.
+         * \param id The identifier to save to.
+         */
+        void SaveTo(std::wstring id) const;
+
+        /*!
+         * \brief Load the persisted state from the ID, which should be a filename.
+         * \param id The identifier to load from.
+         */
+        void LoadFrom(std::wstring id);
 
         /*!
          * \brief Gets the future levels of multiplication (which are the indices of the vector returned).

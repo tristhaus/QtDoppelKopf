@@ -31,5 +31,6 @@ DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs depr
 include(../Frontend/Frontend.pri)
 
 include(../Backend/Backend.pri)
+include(../TestHelper/TestHelper.pri)
 
 SOURCES +=  tst_mainwindow.cpp

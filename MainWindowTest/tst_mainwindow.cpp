@@ -28,6 +28,8 @@
 #include "../Frontend/mainwindow.h"
 #include "../Frontend/mainwindow_ui.h"
 
+#include "../TestHelper/memoryrepository.h"
+
 class FrontendTest : public QObject
 {
     Q_OBJECT
@@ -68,7 +70,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
     try
     {
         // Act
-        MainWindow mw(8u, false);
+        MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
         // Assert
         QVERIFY2(mw.ui->centralwidget, "not created central widget");
@@ -288,7 +290,7 @@ void FrontendTest::SetDataShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     // Act
     mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
@@ -366,7 +368,7 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -457,7 +459,7 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -552,7 +554,7 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
     QSignalSpy resetButtonSpy(mw.ui->resetButton, &QPushButton::clicked);
@@ -762,7 +764,7 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
     std::wstring dealer(L"C");
     std::set<unsigned int> sitOutScheme;
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -825,7 +827,7 @@ void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
     std::wstring dealer(L"A");
     std::set<unsigned int> sitOutScheme {};
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -941,7 +943,7 @@ void FrontendTest::ScoreHistoryPlotShallWorkCorrectly()
     std::wstring dealer(L"A");
     std::set<unsigned int> sitOutScheme {};
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -984,7 +986,7 @@ void FrontendTest::ScoreHistoryPlotShallWorkCorrectly()
 void FrontendTest::AboutButtonShallTriggerDialogAndOKShallClose()
 {
     // Arrange
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
     auto ui = mw.ui;
 
     // spy needed such that events actually happen
@@ -1027,7 +1029,7 @@ void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger()
     std::wstring dealer(L"A");
     std::set<unsigned int> sitOutScheme {};
 
-    MainWindow mw(8u, false);
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy mandatorySoloButtonSpy(mw.ui->mandatorySoloButton, &QPushButton::clicked);
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);

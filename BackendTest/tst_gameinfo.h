@@ -19,15 +19,17 @@
 #ifndef TST_GAMEINFO_H
 #define TST_GAMEINFO_H
 
+#include <regex>
+#include <memory>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "../Backend/gameinfo.h"
-#include <memory>
+#include "../TestHelper/memoryrepository.h"
 
 TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSetting)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme;
 
     // Act, Assert
@@ -143,7 +145,7 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
 TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
 
     // Act, Assert
@@ -203,7 +205,7 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
 TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
 
     // Act, Assert
     gameInfo.SetPlayers(std::vector<std::wstring>{L"A", L"B", L"C", L"D", L"E", L"F"}, L"A", std::set<unsigned int> { 3 });
@@ -324,7 +326,7 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
 TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
 
@@ -390,7 +392,7 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
 TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
 
@@ -490,7 +492,7 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
 TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
 
@@ -587,7 +589,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
 TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
 
@@ -658,7 +660,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
 TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
 
@@ -694,7 +696,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping)
 TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { 3 };
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D", L"E", L"F"}, L"A", sitOutScheme);
 
@@ -832,7 +834,7 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
 TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { };
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
 
@@ -904,7 +906,7 @@ TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers)
 TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme {};
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D", L"E"}, L"A", sitOutScheme);
 
@@ -1024,7 +1026,7 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
 TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { };
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
 
@@ -1148,7 +1150,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
 TEST(BackendTest, GameInfoShallPopMandatorySolo)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { };
     gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
 
@@ -1248,7 +1250,7 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo)
 TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates)
 {
     // Arrange
-    Backend::GameInfo gameInfo;
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
 
     // Act, Assert
@@ -1289,6 +1291,248 @@ TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates)
             throw;
         }
     }, std::exception);
+}
+
+TEST(BackendTest, GameInfoShallCorrectlySaveToRepository)
+{
+    // Arrange
+    auto repository = std::make_shared<MemoryRepository>();
+    std::wstring id(L"some Id");
+    Backend::GameInfo gameInfo(repository);
+    std::set<unsigned int> sitOutScheme { };
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"文字"}, L"A", sitOutScheme);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 1),
+                          std::make_pair<std::wstring, int>(L"C", 1),
+                      }, 1u);
+
+    gameInfo.TriggerMandatorySolo();
+
+    // Act
+    gameInfo.SaveTo(id);
+
+    // Assert
+    std::wstring persisted;
+    bool found = repository->TryGetByIdentifier(id, persisted);
+
+    ASSERT_TRUE(found);
+
+    ASSERT_TRUE(persisted.length() > 0);
+    std::wregex dataVersionRegex(LR"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, dataVersionRegex));
+
+    std::wregex playersSetKindRegex(LR"foo("kind":"playersSet")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, playersSetKindRegex));
+    std::wregex playerNamesRegex(LR"foo("playerNames":\["A","B","C","\\u6587\\u5B57"\])foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, playerNamesRegex));
+    std::wregex dealerNameRegex(LR"foo("dealerName":"A")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, dealerNameRegex));
+    std::wregex sitOutSchemeRegex(LR"foo("sitOutScheme":\[\])foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, sitOutSchemeRegex));
+
+    std::wregex dealKindRegex(LR"foo("kind":"deal")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, dealKindRegex));
+    std::wregex playersRegex(LR"foo("players":4)foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, playersRegex));
+    std::wregex numberOfEventsRegex(LR"foo("numberOfEvents":1)foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, numberOfEventsRegex));
+    std::wregex changesRegex(LR"foo("changes":\[\{)foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, sitOutSchemeRegex));
+    std::wregex objectBRegex(LR"foo(\{"name":"B","diff":1\})foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, objectBRegex));
+    std::wregex objectCRegex(LR"foo(\{"name":"C","diff":1\})foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, objectCRegex));
+
+    std::wregex mandatorySoloTriggerKindRegex(LR"foo("kind":"mandatorySoloTrigger")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, mandatorySoloTriggerKindRegex));
+}
+
+TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository)
+{
+    // Arrange
+    std::vector<std::shared_ptr<Backend::Entry>> entries;
+
+    entries.push_back(std::make_shared<Backend::PlayersSet>(
+                          std::vector<std::wstring>
+                          {
+                              L"A",
+                              L"B",
+                              L"C",
+                              L"D",
+                              L"E",
+                              L"F",
+                              L"文字",
+                          },
+                          L"C",
+                          std::set<unsigned int> { 2, 4 }));
+    entries.push_back(std::make_shared<Backend::Deal>(
+                          std::vector<std::pair<std::wstring, int>>
+                          {
+                              std::make_pair<std::wstring, int>(L"A", 1),
+                              std::make_pair<std::wstring, int>(L"B", 1),
+                              std::make_pair<std::wstring, int>(L"D", -1),
+                              std::make_pair<std::wstring, int>(L"F", -1)
+                          },
+                          Backend::NumberOfEvents(2),
+                          Backend::Players(7)));
+    entries.push_back(std::make_shared<Backend::MandatorySoloTrigger>());
+
+    auto repository = std::make_shared<MemoryRepository>();
+    std::wstring id = L"some Id";
+    repository->Save(entries, id);
+
+    Backend::GameInfo gameInfo(repository);
+
+    // Act
+    gameInfo.LoadFrom(id);
+
+    // Assert
+    auto playerInfos = gameInfo.PlayerInfos();
+
+    EXPECT_STREQ(L"A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ(L"B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ(L"C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ(L"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ(L"E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ(L"F", playerInfos[5]->Name().c_str());
+    EXPECT_STREQ(L"文字", playerInfos[6]->Name().c_str());
+
+    EXPECT_STREQ(L"D", gameInfo.Dealer()->Name().c_str());
+
+    EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
+    EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
+    EXPECT_EQ( 0, playerInfos[2]->CurrentScore());
+    EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
+    EXPECT_EQ( 0, playerInfos[4]->CurrentScore());
+    EXPECT_EQ(-1, playerInfos[5]->CurrentScore());
+    EXPECT_EQ( 0, playerInfos[6]->CurrentScore());
+
+    auto multiplierPreview = gameInfo.MultiplierPreview();
+
+    EXPECT_EQ(0, multiplierPreview[0]);
+    EXPECT_EQ(7, multiplierPreview[1]);
+    EXPECT_EQ(0, multiplierPreview[2]);
+
+    auto mandatorySolo = gameInfo.MandatorySolo();
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, mandatorySolo);
+}
+
+TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository)
+{
+    // Arrange
+    auto repository = std::make_shared<MemoryRepository>();
+    std::wstring id(L"some Id");
+    Backend::GameInfo gameInfo(repository);
+    std::set<unsigned int> sitOutScheme { };
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 1),
+                          std::make_pair<std::wstring, int>(L"C", 1),
+                      }, 1u);
+
+    gameInfo.TriggerMandatorySolo();
+
+    // Act
+    gameInfo.SaveTo(id);
+
+    while(gameInfo.CanPopLastEntry())
+    {
+        gameInfo.PopLastEntry();
+    }
+
+    auto playerInfos = gameInfo.PlayerInfos();
+
+    ASSERT_EQ(0, playerInfos[0]->NumberGames());
+    ASSERT_EQ(0, playerInfos[1]->NumberGames());
+    ASSERT_EQ(0, playerInfos[2]->NumberGames());
+    ASSERT_EQ(0, playerInfos[3]->NumberGames());
+
+    gameInfo.LoadFrom(id);
+
+    // Assert
+    ASSERT_EQ(1, playerInfos[0]->NumberGames());
+    ASSERT_EQ(1, playerInfos[1]->NumberGames());
+    ASSERT_EQ(1, playerInfos[2]->NumberGames());
+    ASSERT_EQ(1, playerInfos[3]->NumberGames());
+
+    ASSERT_EQ(-1, playerInfos[0]->CurrentScore());
+    ASSERT_EQ( 1, playerInfos[1]->CurrentScore());
+    ASSERT_EQ( 1, playerInfos[2]->CurrentScore());
+    ASSERT_EQ(-1, playerInfos[3]->CurrentScore());
+
+    auto multiplierPreview = gameInfo.MultiplierPreview();
+
+    EXPECT_EQ(4, multiplierPreview[0]);
+    EXPECT_EQ(0, multiplierPreview[1]);
+    EXPECT_EQ(0, multiplierPreview[2]);
+
+    auto mandatorySolo = gameInfo.MandatorySolo();
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, mandatorySolo);
+}
+
+TEST(BackendTest, GameInfoShallCorrectlyHandleBadLoad)
+{
+    // Arrange
+    auto repository = std::make_shared<MemoryRepository>();
+    std::wstring id(L"some Id");
+    std::wstring content(LR"foo({"will not work":"stuff"})foo");
+    repository->SetByIdentifier(id, content);
+
+    Backend::GameInfo gameInfo(repository);
+    std::set<unsigned int> sitOutScheme { };
+    gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+                      {
+                          std::make_pair<std::wstring, int>(L"B", 1),
+                          std::make_pair<std::wstring, int>(L"C", 1),
+                      }, 1u);
+
+    gameInfo.TriggerMandatorySolo();
+
+    // Act
+    bool exceptionCaught = false;
+
+    try
+    {
+        gameInfo.LoadFrom(id);
+    }
+    catch (...)
+    {
+        exceptionCaught = true;
+    }
+
+    // Assert
+    // there should be no change due to LoadFrom call
+    ASSERT_TRUE(exceptionCaught);
+
+    auto playerInfos = gameInfo.PlayerInfos();
+
+    ASSERT_EQ(1, playerInfos[0]->NumberGames());
+    ASSERT_EQ(1, playerInfos[1]->NumberGames());
+    ASSERT_EQ(1, playerInfos[2]->NumberGames());
+    ASSERT_EQ(1, playerInfos[3]->NumberGames());
+
+    ASSERT_EQ(-1, playerInfos[0]->CurrentScore());
+    ASSERT_EQ( 1, playerInfos[1]->CurrentScore());
+    ASSERT_EQ( 1, playerInfos[2]->CurrentScore());
+    ASSERT_EQ(-1, playerInfos[3]->CurrentScore());
+
+    auto multiplierPreview = gameInfo.MultiplierPreview();
+
+    EXPECT_EQ(4, multiplierPreview[0]);
+    EXPECT_EQ(0, multiplierPreview[1]);
+    EXPECT_EQ(0, multiplierPreview[2]);
+
+    auto mandatorySolo = gameInfo.MandatorySolo();
+
+    EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, mandatorySolo);
 }
 
 #endif // TST_GAMEINFO_H

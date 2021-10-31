@@ -43,10 +43,13 @@ private:
     std::vector<QColor> htmlColors;
     Ui::MainWindow *ui;
     std::unique_ptr<QMessageBox> aboutMessageBox;
-    Backend::GameInfo gameInfo = Backend::GameInfo(this->MaxPlayers);
+    Backend::GameInfo gameInfo;
     unsigned int dealerIndex;
 public:
-    MainWindow(unsigned int maxPlayers, bool showPlayerSelection = true, QWidget *parent = nullptr);
+    MainWindow(unsigned int maxPlayers,
+               std::shared_ptr<Backend::Repository> repository = std::make_shared<Backend::DiskRepository>(),
+               bool showPlayerSelection = true,
+               QWidget *parent = nullptr);
     ~MainWindow();
 
 private:

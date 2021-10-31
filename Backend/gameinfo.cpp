@@ -24,8 +24,9 @@
 
 namespace Backend
 {
-    GameInfo::GameInfo(const unsigned int maxPlayers)
-        : MaxPlayers(maxPlayers)
+    GameInfo::GameInfo(std::shared_ptr<Repository> repository, const unsigned int maxPlayers)
+        : repository(repository),
+          MaxPlayers(maxPlayers)
     {
     }
 
@@ -125,6 +126,67 @@ namespace Backend
         this->ApplyScheme();
 
         this->ReconstructEventsForMultiplierInfo();
+    }
+
+    void GameInfo::SaveTo(std::wstring id) const
+    {
+        this->repository->Save(this->entries, id);
+    }
+
+    void GameInfo::LoadFrom(std::wstring id)
+    {
+        auto applyEntries = [&](std::vector<std::shared_ptr<Entry>> entries)
+        {
+            for (auto & entry : entries)
+            {
+                switch(entry->Kind())
+                {
+                case Entry::Kind::PlayersSet:
+                {
+                    this->SetPlayersInternal(std::static_pointer_cast<PlayersSet>(entry));
+
+                    // first entry must be PlayersSet and is thus replaced
+                    if(this->entries.size() == 1)
+                    {
+                        this->entries.pop_back();
+                    }
+
+                    this->entries.push_back(entry);
+                    break;
+                }
+                case Entry::Kind::Deal:
+                {
+                    this->PushDealInternal(std::static_pointer_cast<Deal>(entry));
+
+                    this->entries.push_back(entry);
+                    break;
+                }
+                case Entry::Kind::MandatorySoloTrigger:
+                {
+                    this->TriggerMandatorySolo();
+                    break;
+                }
+                default:
+                    throw std::exception("value of Entry::Kind not handled");
+                }
+            }
+        };
+
+        auto oldEntries = this->entries;
+
+        auto newEntries = this->repository->Load(id);
+
+        try
+        {
+            this->entries.clear();
+            applyEntries(newEntries);
+        }
+        catch (...)
+        {
+            this->entries.clear();
+            applyEntries(oldEntries);
+            throw;
+        }
     }
 
     std::vector<unsigned int> GameInfo::MultiplierPreview() const

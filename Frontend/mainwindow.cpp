@@ -22,10 +22,11 @@
 
 #include <QMessageBox>
 
-MainWindow::MainWindow(const unsigned int maxPlayers, bool showPlayerSelection, QWidget *parent)
+MainWindow::MainWindow(const unsigned int maxPlayers, std::shared_ptr<Backend::Repository> repository, bool showPlayerSelection, QWidget *parent)
     : QMainWindow(parent),
       MaxPlayers(maxPlayers),
-      ui(new Ui::MainWindow(MaxPlayers))
+      ui(new Ui::MainWindow(MaxPlayers)),
+      gameInfo(Backend::GameInfo(repository, maxPlayers))
 {
     assert(maxPlayers <= 8);
     this->htmlColors = std::vector<QColor>
