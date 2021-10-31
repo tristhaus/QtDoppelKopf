@@ -16,16 +16,34 @@
  *
  */
 
-#include <gtest/gtest.h>
+#include "../Backend/repository.h"
 
-#include "tst_gameinfo.h"
-#include "tst_playerinfo.h"
-#include "tst_multiplierinfo.h"
-#include "tst_deserializer.h"
-#include "tst_diskrepository.h"
+#ifndef DISKREPOSITORY_H
+#define DISKREPOSITORY_H
 
-int main(int argc, char *argv[])
+namespace Backend
 {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    class DiskRepository final : public Repository
+    {
+    private:
+        Backend::DeSerializer deserializer;
+
+    public:
+        /*!
+         * \brief Initializes a new instance.
+         */
+        DiskRepository();
+
+        /*!
+         * \reimp
+         */
+        virtual void Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::wstring & identifier);
+
+        /*!
+         * \reimp
+         */
+        virtual std::vector<std::shared_ptr<Backend::Entry>> Load(const std::wstring & identifier);
+    };
 }
+
+#endif // DISKREPOSITORY_H

@@ -22,6 +22,7 @@ HEADERS += \
     $$PWD/cashcalculation.h \
     $$PWD/deal.h \
     $$PWD/deserializer.h \
+    $$PWD/diskrepository.h \
     $$PWD/entry.h \
     $$PWD/eventinfo.h \
     $$PWD/gameinfo.h \
@@ -35,6 +36,7 @@ SOURCES += \
     $$PWD/cashcalculation.cpp \
     $$PWD/deal.cpp \
     $$PWD/deserializer.cpp \
+    $$PWD/diskrepository.cpp \
     $$PWD/gameinfo.cpp \
     $$PWD/mandatorysolotrigger.cpp \
     $$PWD/multiplierinfo.cpp \
