@@ -28,7 +28,8 @@ HEADERS += \
     $$PWD/mandatorysolotrigger.h \
     $$PWD/multiplierinfo.h \
     $$PWD/playerinfo.h \
-    $$PWD/playersset.h
+    $$PWD/playersset.h \
+    $$PWD/repository.h
 
 SOURCES += \
     $$PWD/cashcalculation.cpp \
