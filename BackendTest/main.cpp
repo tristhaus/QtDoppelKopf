@@ -22,6 +22,7 @@
 #include "tst_playerinfo.h"
 #include "tst_multiplierinfo.h"
 #include "tst_deserializer.h"
+#include "tst_memoryrepository.h"
 #include "tst_diskrepository.h"
 
 int main(int argc, char *argv[])

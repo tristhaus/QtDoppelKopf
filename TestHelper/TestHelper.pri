@@ -16,25 +16,8 @@
 #
 #
 
-include(../Backend/Backend.pri)
-include(../TestHelper/TestHelper.pri)
-
-# you may need to change this
-GOOGLETEST_DIR = D:\\VSProject\\googletest
-
-include(gtest_dependency.pri)
-
-TEMPLATE = app
-CONFIG += console c++11 thread
-CONFIG -= app_bundle
-
 HEADERS += \
-    tst_deserializer.h \
-    tst_diskrepository.h \
-    tst_gameinfo.h \
-    tst_memoryrepository.h \
-    tst_multiplierinfo.h \
-    tst_playerinfo.h
+    $$PWD/memoryrepository.h
 
 SOURCES += \
-        main.cpp
+    $$PWD/memoryrepository.cpp
