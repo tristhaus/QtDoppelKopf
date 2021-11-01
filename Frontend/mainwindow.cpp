@@ -60,19 +60,11 @@ MainWindow::MainWindow(const unsigned int maxPlayers, std::shared_ptr<Backend::R
     {
         this->ShowPlayerSelection(true);
     }
-
-    this->DisableNotImplementedButtons();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::DisableNotImplementedButtons()
-{
-    this->ui->loadButton->setDisabled(true);
-    this->ui->saveButton->setDisabled(true);
 }
 
 void MainWindow::UpdateDisplay()
@@ -284,18 +276,6 @@ std::vector<std::pair<QString, bool>> MainWindow::GetDefaultPlayers()
 #undef MAKEWIDE
 }
 
-void MainWindow::ShowNotImplementedMessageBox()
-{
-    auto messageBoxTitle = QString("Nicht implementiert");
-    auto messageBoxText = QString("Diese Funktion ist noch nicht implementiert.");
-    auto errorBox = std::make_unique<QMessageBox>(
-                    QMessageBox::Icon::Warning,
-                    messageBoxTitle,
-                    messageBoxText);
-
-    errorBox->exec();
-}
-
 void MainWindow::RedrawPlayerHistory()
 {
     ui->plotPlayerHistory->clearGraphs();
@@ -403,12 +383,80 @@ void MainWindow::OnChangePlayerPressed()
 
 void MainWindow::OnLoadGamePressed()
 {
-    this->ShowNotImplementedMessageBox();
+    Resetter resetter([&](){ this->presetFilename.clear(); });
+
+    auto folder = this->GetFolderForFileDialog();
+    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getOpenFileName(this, "", folder, FileFilter, nullptr, QFileDialog::Options());
+
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+
+    try
+    {
+        this->gameInfo.LoadFrom(fileName.toStdWString());
+    }
+    catch(std::exception & exception)
+    {
+        QString messageBoxTitle = QString::fromUtf8("Fehler");
+
+        QString messageBoxTextTemplate = QString::fromUtf8("Beim Ladeversuch aufgetretener Fehler: %1");
+        QString errorMesssage = QString::fromUtf8(exception.what());
+        QString messageBoxText = messageBoxTextTemplate.arg(errorMesssage);
+
+        auto errorBox = std::make_unique<QMessageBox>(
+                    QMessageBox::Icon::Critical,
+                    messageBoxTitle,
+                    messageBoxText);
+
+        errorBox->exec();
+
+        errorBox.reset();
+    }
+
+    this->UpdateDisplay();
 }
 
 void MainWindow::OnSaveGamePressed()
 {
-    this->ShowNotImplementedMessageBox();
+    Resetter resetter([&](){ this->presetFilename.clear(); });
+
+    auto folder = this->GetFolderForFileDialog();
+    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getSaveFileName(this, "", folder, this->FileFilter, nullptr, QFileDialog::Options());
+
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+
+    try
+    {
+        this->gameInfo.SaveTo(fileName.toStdWString());
+    }
+    catch(std::exception & exception)
+    {
+        QString messageBoxTitle = QString::fromUtf8("Fehler");
+
+        QString messageBoxTextTemplate = QString::fromUtf8("Beim Speicherversuch aufgetretener Fehler: %1");
+        QString errorMesssage = QString::fromUtf8(exception.what());
+        QString messageBoxText = messageBoxTextTemplate.arg(errorMesssage);
+
+        auto errorBox = std::make_unique<QMessageBox>(
+                    QMessageBox::Icon::Critical,
+                    messageBoxTitle,
+                    messageBoxText);
+
+        errorBox->exec();
+
+        errorBox.reset();
+    }
+}
+
+QString MainWindow::GetFolderForFileDialog()
+{
+    auto list = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    return QString(list.first());
 }
 
 void MainWindow::OnMandatorySoloPressed()

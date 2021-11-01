@@ -39,12 +39,20 @@ class MainWindow : public QMainWindow
 private:
     const QString StandardNamesStylesheet = "QLabel { }";
     const QString DealerNamesStylesheet = "QLabel { border: 3px solid orange ; border-radius : 6px }";
+    const QString FileFilter = "Spiele (*.qdk)";
     const unsigned int MaxPlayers;
     std::vector<QColor> htmlColors;
     Ui::MainWindow *ui;
     std::unique_ptr<QMessageBox> aboutMessageBox;
     Backend::GameInfo gameInfo;
     unsigned int dealerIndex;
+
+    /*!
+     * \brief presetFilename allows to set a filename and
+     *        thus circumvent the file dialog, e.g. for testing.
+     */
+    QString presetFilename;
+
 public:
     MainWindow(unsigned int maxPlayers,
                std::shared_ptr<Backend::Repository> repository = std::make_shared<Backend::DiskRepository>(),
@@ -53,15 +61,14 @@ public:
     ~MainWindow();
 
 private:
-    void DisableNotImplementedButtons();
     void UpdateDisplay();
     void ShowPlayerSelection(bool calledOnStartup);
     std::vector<std::pair<QString, bool>> GetDefaultPlayers();
-    void ShowNotImplementedMessageBox();
     std::map<QString, std::pair<std::vector<int>,std::vector<int>>> GetHistoricData();
     void RedrawPlayerHistory();
     void ShowAboutDialog();
     void DetermineAndSetMultiplierLabels();
+    QString GetFolderForFileDialog();
 
 private slots:
     void OnChangePlayerPressed();
@@ -72,5 +79,33 @@ private slots:
     void OnResetPressed();
     void OnHistoryPlayerSelected();
     void OnAboutPressed();
+
+private:
+    /*!
+     * \brief The Resetter class executes the contained action on destruction.
+     *        The usual application is to reset something.
+     */
+    class Resetter
+    {
+    private:
+        std::function<void()> action;
+
+    public:
+        /*!
+         * \brief Initializes a new instance holding the supplied action.
+         * \param action The action to store and execute on destruction.
+         */
+        Resetter(std::function<void()> action) : action(action)
+        {
+        }
+        ~Resetter()
+        {
+            this->action();
+        }
+        Resetter(const Resetter&) = delete;
+        Resetter(Resetter&&) = delete;
+        Resetter& operator=(const Resetter&) = delete;
+        Resetter& operator=(Resetter&&) = delete;
+    };
 };
 #endif // MAINWINDOW_H

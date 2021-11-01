@@ -54,6 +54,8 @@ private slots:
     void ScoreHistoryPlotShallWorkCorrectly();
     void AboutButtonShallTriggerDialogAndOKShallClose();
     void MandatorySoloButtonShallBeEnabledAndTrigger();
+    void SaveGameShallWorkWithPresetValueAndPersist();
+    void LoadGameShallWorkWithPresetValueAndDisplayGame();
 #endif
 };
 
@@ -1079,6 +1081,137 @@ void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger()
 
     QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString::fromUtf8("Einfachbock")) == 0, "incorrect multiplier label after reset");
     QVERIFY2(mw.ui->mandatorySoloButton->isEnabled() == true, "wrong enabled state after reset");
+}
+
+void FrontendTest::SaveGameShallWorkWithPresetValueAndPersist()
+{
+    // Arrange
+    std::shared_ptr<MemoryRepository> memoryRepository = std::make_shared<MemoryRepository>();
+    MainWindow mw(8u, memoryRepository, false);
+    auto ui = mw.ui;
+
+    std::wstring identifier = L"something";
+    std::wstring dummy;
+
+    mw.presetFilename = QString::fromStdWString(identifier);
+
+    // spy needed such that events actually happen
+    QSignalSpy spySaveAction(ui->saveButton, &QAbstractButton::pressed);
+
+    // Act
+    QTest::mouseClick(mw.ui->saveButton, Qt::LeftButton);
+
+    // Assert
+    QVERIFY2(memoryRepository->TryGetByIdentifier(identifier, dummy), "no persisted data found");
+    QVERIFY2(mw.presetFilename.isEmpty(), "preset file name not cleared after logic has executed");
+}
+
+void FrontendTest::LoadGameShallWorkWithPresetValueAndDisplayGame()
+{
+    // Arrange
+    std::shared_ptr<MemoryRepository> memoryRepository = std::make_shared<MemoryRepository>();
+    std::wstring identifier = L"something";
+    std::wstring content = LR"foo({
+    "dataVersion": "1",
+    "data": [
+        {
+            "kind": "playersSet",
+            "playerNames": [
+                "A",
+                "B",
+                "C",
+                "D"
+            ],
+            "dealerName": "A",
+            "sitOutScheme": []
+        },
+        {
+            "kind": "deal",
+            "players": 4,
+            "numberOfEvents": 1,
+            "changes": [
+                {
+                    "name": "A",
+                    "diff": 1
+                },
+                {
+                    "name": "B",
+                    "diff": 1
+                }
+            ]
+        },
+        {
+            "kind": "deal",
+            "players": 4,
+            "numberOfEvents": 2,
+            "changes": [
+                {
+                    "name": "A",
+                    "diff": 3
+                },
+                {
+                    "name": "C",
+                    "diff": 3
+                }
+            ]
+        },
+        {
+            "kind": "deal",
+            "players": 4,
+            "numberOfEvents": 0,
+            "changes": [
+                {
+                    "name": "C",
+                    "diff": 2
+                },
+                {
+                    "name": "D",
+                    "diff": 2
+                }
+            ]
+        }
+    ]
+})foo";
+    memoryRepository->SetByIdentifier(identifier, content);
+
+    MainWindow mw(8u, memoryRepository, false);
+    auto ui = mw.ui;
+
+    mw.presetFilename = QString::fromStdWString(identifier);
+
+    // spy needed such that events actually happen
+    QSignalSpy spyLoadAction(ui->loadButton, &QAbstractButton::pressed);
+
+    // Act
+    QTest::mouseClick(mw.ui->loadButton, Qt::LeftButton);
+
+    // Assert
+    QVERIFY2(mw.presetFilename.isEmpty(), "preset file name not cleared after logic has executed");
+
+    QVERIFY2(mw.ui->names[0]->text().compare(QString("A")) == 0, "incorrect player name 0");
+    QVERIFY2(mw.ui->names[1]->text().compare(QString("B")) == 0, "incorrect player name 1");
+    QVERIFY2(mw.ui->names[2]->text().compare(QString("C")) == 0, "incorrect player name 2");
+    QVERIFY2(mw.ui->names[3]->text().compare(QString("D")) == 0, "incorrect player name 3");
+
+    QVERIFY2(mw.ui->names[0]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 0");
+    QVERIFY2(mw.ui->names[1]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 1");
+    QVERIFY2(mw.ui->names[2]->styleSheet().compare(ExpectedStandardNamesStyleSheet) == 0, "incorrect dealer state name 2");
+    QVERIFY2(mw.ui->names[3]->styleSheet().compare(ExpectedDealerNamesStyleSheet) == 0, "incorrect dealer state name 4");
+
+    QVERIFY2(mw.ui->actuals[0]->isEnabled() == true, "incorrect state actuals 0");
+    QVERIFY2(mw.ui->actuals[1]->isEnabled() == true, "incorrect state actuals 1");
+    QVERIFY2(mw.ui->actuals[2]->isEnabled() == true, "incorrect state actuals 2");
+    QVERIFY2(mw.ui->actuals[3]->isEnabled() == true, "incorrect state actuals 3");
+
+    QVERIFY2(mw.ui->scores[0]->text().compare(QString("-9")) == 0, "incorrect scores 0");
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString("-21")) == 0, "incorrect scores 1");
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString("21")) == 0, "incorrect scores 2");
+    QVERIFY2(mw.ui->scores[3]->text().compare(QString("9")) == 0, "incorrect scores 3");
+
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString("Dreifachbock")) == 0, "current game multiplier label incorrect");
+    QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("2")) == 0, "triple multiplier label incorrect");
+    QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("1")) == 0, "double multiplier label incorrect");
+    QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
 }
 
 #endif // _USE_LONG_TEST
