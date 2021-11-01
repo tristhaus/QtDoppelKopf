@@ -25,7 +25,7 @@
 #ifndef TST_DESERIALIZER_H
 #define TST_DESERIALIZER_H
 
-TEST(BackendTest, SerializationOfEntriesShouldWorkCorrectly)
+TEST(BackendTest, SerializationOfEntriesShallWorkCorrectly)
 {
     // Arrange
     std::wstringstream ss;
@@ -99,7 +99,7 @@ TEST(BackendTest, SerializationOfEntriesShouldWorkCorrectly)
     EXPECT_TRUE(std::regex_search(result, mandatorySoloTriggerKindRegex));
 }
 
-TEST(BackendTest, DeserializationOfEntriesShouldWorkCorrectly)
+TEST(BackendTest, DeserializationOfEntriesShallWorkCorrectly)
 {
     // Arrange
     const wchar_t * json = LR"foo(
@@ -186,7 +186,7 @@ TEST(BackendTest, DeserializationOfEntriesShouldWorkCorrectly)
     EXPECT_EQ(Backend::Entry::Kind::MandatorySoloTrigger, mandatorySoloTrigger->Kind());
 }
 
-TEST(BackendTest, DeserializationRoundtripShouldWorkCorrectly)
+TEST(BackendTest, DeserializationRoundtripShallWorkCorrectly)
 {
     // Arrange
     std::wstringstream ss;
@@ -298,7 +298,7 @@ INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest, // clazy:exclude
     TestDeserializationErrorResult{L"ChangesItemDiffNotInt", LR"foo({"dataVersion":"1","data":[{"kind":"deal","players":7,"numberOfEvents":2,"changes":[{"name":"A","diff":{}},{"name":"B","diff":1},{"name":"C","diff":-1},{"name":"D","diff":-1}]}]})foo"}
     ));
 
-TEST_P(DeserializationErrorTest, GivenBadJsonDeserializationShouldGiveError)
+TEST_P(DeserializationErrorTest, GivenBadJsonDeserializationShallGiveError)
 {
     // Arrange
     TestDeserializationErrorResult tder = GetParam();

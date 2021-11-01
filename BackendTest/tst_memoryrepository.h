@@ -24,7 +24,7 @@
 #ifndef TST_MEMORYREPOSITORY_H
 #define TST_MEMORYREPOSITORY_H
 
-TEST(BackendTest, MemoryRepositoryShouldCorrectlyStoreEntries)
+TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries)
 {
     // Arrange
     std::vector<std::shared_ptr<Backend::Entry>> entries;
@@ -100,7 +100,7 @@ TEST(BackendTest, MemoryRepositoryShouldCorrectlyStoreEntries)
     EXPECT_TRUE(std::regex_search(persisted, mandatorySoloTriggerKindRegex));
 }
 
-TEST(BackendTest, MemoryRepositoryShouldCorrectlyLoadEntries)
+TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries)
 {
     std::wstring content(LR"foo({
     "dataVersion": "1",
@@ -183,7 +183,7 @@ TEST(BackendTest, MemoryRepositoryShouldCorrectlyLoadEntries)
     EXPECT_EQ(Backend::Entry::Kind::MandatorySoloTrigger, mandatorySoloTrigger->Kind());
 }
 
-TEST(BackendTest, MemoryRepositoryRoundtripShouldWorkCorrectly)
+TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly)
 {
     // Arrange
     std::vector<std::shared_ptr<Backend::Entry>> entries;
