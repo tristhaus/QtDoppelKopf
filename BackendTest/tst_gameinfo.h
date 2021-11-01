@@ -202,6 +202,21 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
     }, std::exception );
 }
 
+TEST(BackendTest, GameInfoShallCorrectlyReportIfPlayersWereSet)
+{
+    // Arrange
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
+    std::set<unsigned int> sitOutScheme;
+
+    // Act, Assert
+    EXPECT_FALSE(gameInfo.HasPlayersSet());
+
+    gameInfo.SetPlayers(std::vector<std::wstring>{L"A", L"B", L"C", L"D"}, L"A", sitOutScheme);
+
+    EXPECT_TRUE(gameInfo.HasPlayersSet());
+    EXPECT_FALSE(gameInfo.CanPopLastEntry());
+}
+
 TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
 {
     // Arrange

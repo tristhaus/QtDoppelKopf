@@ -62,7 +62,7 @@ public:
 
 private:
     void UpdateDisplay();
-    void ShowPlayerSelection(bool calledOnStartup);
+    void ShowPlayerSelection();
     std::vector<std::pair<QString, bool>> GetDefaultPlayers();
     std::map<QString, std::pair<std::vector<int>,std::vector<int>>> GetHistoricData();
     void RedrawPlayerHistory();

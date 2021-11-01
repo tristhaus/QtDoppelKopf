@@ -58,8 +58,6 @@ namespace Backend
         };
 
     private:
-        std::shared_ptr<Repository> repository;
-
         class PlayerInfoInternal;
         const unsigned int MaxPlayers;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
@@ -69,6 +67,7 @@ namespace Backend
         std::set<unsigned int> sitOutScheme;
         MultiplierInfo multiplierInfo;
 
+        std::shared_ptr<Repository> repository;
         std::vector<std::shared_ptr<Entry>> entries;
 
     public:
@@ -87,8 +86,8 @@ namespace Backend
         const std::vector<std::shared_ptr<PlayerInfo>> PlayerInfos() const;
 
         /*!
-         * \brief Indicates the current dealer.
-         * \return A player info about the current dealer.
+         * \brief Indicates the current dealer, if set.
+         * \return A player info about the current dealer or nullptr.
          */
         const std::shared_ptr<PlayerInfo> Dealer() const;
 
@@ -143,6 +142,12 @@ namespace Backend
          * \param id The identifier to load from.
          */
         void LoadFrom(std::wstring id);
+
+        /*!
+         * \brief Gets a value indicating whether any players are set in this instance.
+         * \return A value indicating whether any players are set in this instance.
+         */
+        bool HasPlayersSet() const;
 
         /*!
          * \brief Gets the future levels of multiplication (which are the indices of the vector returned).

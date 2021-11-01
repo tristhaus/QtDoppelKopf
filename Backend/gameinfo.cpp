@@ -25,8 +25,8 @@
 namespace Backend
 {
     GameInfo::GameInfo(std::shared_ptr<Repository> repository, const unsigned int maxPlayers)
-        : repository(repository),
-          MaxPlayers(maxPlayers)
+        : MaxPlayers(maxPlayers),
+          repository(repository)
     {
     }
 
@@ -37,7 +37,7 @@ namespace Backend
 
     const std::shared_ptr<PlayerInfo> GameInfo::Dealer() const
     {
-        return this->playerInfos[this->currentDealerIndex];
+        return !this->playerInfos.empty() ? this->playerInfos[this->currentDealerIndex] : nullptr;
     }
 
     const std::set<unsigned int> GameInfo::SitOutScheme() const
@@ -187,6 +187,11 @@ namespace Backend
             applyEntries(oldEntries);
             throw;
         }
+    }
+
+    bool GameInfo::HasPlayersSet() const
+    {
+        return std::find_if(this->entries.begin(), this->entries.end(), [](std::shared_ptr<Entry> entry) { return entry->Kind() == Entry::Kind::PlayersSet; }) != this->entries.end();
     }
 
     std::vector<unsigned int> GameInfo::MultiplierPreview() const
@@ -526,6 +531,11 @@ namespace Backend
 
     int GameInfo::MaximumCurrentScore() const
     {
+        if(this->playerInfos.empty())
+        {
+            return 0;
+        }
+
         return (*std::max_element(this->playerInfos.begin(),
                                   this->playerInfos.end(),
                                   [](const std::shared_ptr<PlayerInfoInternal> p1, const std::shared_ptr<PlayerInfoInternal> p2){ return p1->CurrentScore() < p2->CurrentScore(); }))->CurrentScore();

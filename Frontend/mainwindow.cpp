@@ -1,4 +1,4 @@
-﻿/*
+/*
  * This file is part of QtDoppelKopf.
  *
  * QtDoppelKopf is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ MainWindow::MainWindow(const unsigned int maxPlayers, std::shared_ptr<Backend::R
 
     if(showPlayerSelection)
     {
-        this->ShowPlayerSelection(true);
+        this->ShowPlayerSelection();
     }
 }
 
@@ -111,7 +111,7 @@ void MainWindow::UpdateDisplay()
 
         QString name = QString::fromStdWString(playerInfo->Name());
         ui->names[index]->setText(name);
-        if(playerInfo->Name().compare(dealer->Name()) == 0)
+        if(dealer && playerInfo->Name().compare(dealer->Name()) == 0)
         {
             ui->names[index]->setStyleSheet(this->DealerNamesStylesheet);
         }
@@ -156,6 +156,8 @@ void MainWindow::UpdateDisplay()
                            .arg(gameInfo.AbsentPlayerCashCents()%100, 2, 10, QLatin1Char('0')));
 
     ui->resetButton->setEnabled(this->gameInfo.CanPopLastEntry());
+    ui->saveButton->setEnabled(this->gameInfo.HasPlayersSet());
+    ui->commitButton->setEnabled(this->gameInfo.HasPlayersSet());
 
     this->DetermineAndSetMultiplierLabels();
     ui->mandatorySoloButton->setEnabled(this->gameInfo.MandatorySolo() == Backend::GameInfo::MandatorySolo::Ready);
@@ -163,7 +165,7 @@ void MainWindow::UpdateDisplay()
     this->RedrawPlayerHistory();
 }
 
-void MainWindow::ShowPlayerSelection(bool calledOnStartup)
+void MainWindow::ShowPlayerSelection()
 {
     std::vector<std::pair<QString, bool>> currentPlayers;
     QString currentDealer;
@@ -199,11 +201,7 @@ void MainWindow::ShowPlayerSelection(bool calledOnStartup)
 
     if(dialogCode == QDialog::Rejected)
     {
-        if(calledOnStartup)
-        {
-            exit(EXIT_FAILURE);
-        }
-
+        this->UpdateDisplay();
         return;
     }
 
@@ -279,6 +277,12 @@ std::vector<std::pair<QString, bool>> MainWindow::GetDefaultPlayers()
 void MainWindow::RedrawPlayerHistory()
 {
     ui->plotPlayerHistory->clearGraphs();
+
+    if(!gameInfo.HasPlayersSet())
+    {
+        ui->plotPlayerHistory->replot();
+        return;
+    }
 
     auto players = this->gameInfo.PlayerInfos();
     auto map = this->GetHistoricData();
@@ -378,7 +382,7 @@ void MainWindow::DetermineAndSetMultiplierLabels()
 
 void MainWindow::OnChangePlayerPressed()
 {
-    this->ShowPlayerSelection(false);
+    this->ShowPlayerSelection();
 }
 
 void MainWindow::OnLoadGamePressed()
