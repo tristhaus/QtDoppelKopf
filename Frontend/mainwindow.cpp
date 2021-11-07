@@ -155,7 +155,37 @@ void MainWindow::UpdateDisplay()
                            .arg(gameInfo.AbsentPlayerCashCents()/100)
                            .arg(gameInfo.AbsentPlayerCashCents()%100, 2, 10, QLatin1Char('0')));
 
-    ui->resetButton->setEnabled(this->gameInfo.CanPopLastEntry());
+    ui->resetButton->setEnabled(this->gameInfo.LastPoppableEntry() != Backend::GameInfo::PoppableEntry::None);
+    switch(this->gameInfo.LastPoppableEntry())
+    {
+    case Backend::GameInfo::PoppableEntry::None:
+    {
+        ui->resetButton->setText(this->ResetButtonLabelNone);
+        break;
+    }
+
+    case Backend::GameInfo::PoppableEntry::PlayersSet:
+    {
+        ui->resetButton->setText(this->ResetButtonLabelPlayersSet);
+        break;
+    }
+
+    case Backend::GameInfo::PoppableEntry::Deal:
+    {
+        ui->resetButton->setText(this->ResetButtonLabelDeal);
+        break;
+    }
+
+    case Backend::GameInfo::PoppableEntry::MandatorySoloTrigger:
+    {
+        ui->resetButton->setText(this->ResetButtonLabelMandatorySoloTrigger);
+        break;
+    }
+
+    default:
+        throw std::exception("value of Backend::GameInfo::PoppableEntry not handled");
+    }
+
     ui->saveButton->setEnabled(this->gameInfo.HasPlayersSet());
     ui->commitButton->setEnabled(this->gameInfo.HasPlayersSet());
 
@@ -520,16 +550,20 @@ void MainWindow::OnResetPressed()
 
     auto numberOfEvents = this->gameInfo.LastNumberOfEvents();
 
+    bool wasDeal = this->gameInfo.LastPoppableEntry() == Backend::GameInfo::PoppableEntry::Deal;
     this->gameInfo.PopLastEntry();
 
     this->UpdateDisplay();
 
-    for (unsigned int index = 0; index < resetActuals.size(); ++index)
+    if(wasDeal)
     {
-        this->ui->actuals[index]->setText(QString::fromStdWString(resetActuals[index]));
-    }
+        for (unsigned int index = 0; index < resetActuals.size(); ++index)
+        {
+            this->ui->actuals[index]->setText(QString::fromStdWString(resetActuals[index]));
+        }
 
-    this->ui->spinBox->setValue(static_cast<int>(numberOfEvents));
+        this->ui->spinBox->setValue(static_cast<int>(numberOfEvents));
+    }
 }
 
 void MainWindow::OnHistoryPlayerSelected()

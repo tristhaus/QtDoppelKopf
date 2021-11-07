@@ -20,10 +20,12 @@
 
 Backend::PlayersSet::PlayersSet(std::vector<std::wstring> players,
                                 std::wstring dealer,
-                                std::set<unsigned int> sitOutScheme)
+                                std::set<unsigned int> sitOutScheme,
+                                std::wstring previousDealer)
     : players(players),
       dealer(dealer),
-      sitOutScheme(sitOutScheme)
+      sitOutScheme(sitOutScheme),
+      previousDealer(previousDealer)
 {
 }
 
@@ -45,4 +47,9 @@ std::wstring Backend::PlayersSet::Dealer() const
 std::vector<std::wstring> Backend::PlayersSet::Players() const
 {
     return players;
+}
+
+std::wstring Backend::PlayersSet::PreviousDealer() const
+{
+    return previousDealer;
 }

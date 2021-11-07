@@ -44,7 +44,8 @@ TEST(BackendTest, SerializationOfEntriesShallWorkCorrectly)
                               L"G",
                           },
                           L"C",
-                          std::set<unsigned int> { 2, 4 }));
+                          std::set<unsigned int> { 2, 4 },
+                          L"Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::wstring, int>>
                           {
@@ -77,6 +78,8 @@ TEST(BackendTest, SerializationOfEntriesShallWorkCorrectly)
     EXPECT_TRUE(std::regex_search(result, dealerNameRegex));
     std::wregex sitOutSchemeRegex(LR"foo("sitOutScheme":\[2,4\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, sitOutSchemeRegex));
+    std::wregex previousDealerNameRegex(LR"foo("previousDealerName":"Z")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(result, previousDealerNameRegex));
 
     std::wregex dealKindRegex(LR"foo("kind":"deal")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(result, dealKindRegex));
@@ -104,7 +107,7 @@ TEST(BackendTest, DeserializationOfEntriesShallWorkCorrectly)
     // Arrange
     const wchar_t * json = LR"foo(
 {
-    "dataVersion": "1",
+    "dataVersion": "2",
     "data": [
         {
             "kind": "playersSet",
@@ -121,7 +124,8 @@ TEST(BackendTest, DeserializationOfEntriesShallWorkCorrectly)
             "sitOutScheme": [
                 2,
                 4
-            ]
+            ],
+            "previousDealerName": "B"
         },
         {
             "kind": "deal",
@@ -168,6 +172,7 @@ TEST(BackendTest, DeserializationOfEntriesShallWorkCorrectly)
     EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::wstring(L"A"), std::wstring(L"B"), std::wstring(L"C"), std::wstring(L"D"), std::wstring(L"E"), std::wstring(L"F"), std::wstring(L"G")));
     EXPECT_STREQ(L"C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
+    EXPECT_STREQ(L"B", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());
@@ -205,7 +210,8 @@ TEST(BackendTest, DeserializationRoundtripShallWorkCorrectly)
                               L"G",
                           },
                           L"C",
-                          std::set<unsigned int> { 2, 4 }));
+                          std::set<unsigned int> { 2, 4 },
+                          L"Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::wstring, int>>
                           {
@@ -231,6 +237,7 @@ TEST(BackendTest, DeserializationRoundtripShallWorkCorrectly)
     EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::wstring(L"A"), std::wstring(L"B"), std::wstring(L"C"), std::wstring(L"D"), std::wstring(L"E"), std::wstring(L"F"), std::wstring(L"G")));
     EXPECT_STREQ(L"C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
+    EXPECT_STREQ(L"Z", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());
@@ -285,6 +292,8 @@ INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest, // clazy:exclude
     TestDeserializationErrorResult{L"InvalidSitOutSchemeMember", LR"foo({"dataVersion":"1","data":[{"kind":"playersSet","playerNames":["A","B","C","D","E","F","G"],"dealerName":"C","sitOutScheme":{}}]})foo"},
     TestDeserializationErrorResult{L"SitOutSchemeItemNotNumber", LR"foo({"dataVersion":"1","data":[{"kind":"playersSet","playerNames":["A","B","C","D","E","F","G"],"dealerName":"C","sitOutScheme":[1,true]}]})foo"},
     TestDeserializationErrorResult{L"SitOutSchemeItemNotInt", LR"foo({"dataVersion":"1","data":[{"kind":"playersSet","playerNames":["A","B","C","D","E","F","G"],"dealerName":"C","sitOutScheme":[1,5.1]}]})foo"},
+    TestDeserializationErrorResult{L"NoPreviousDealerMember", LR"foo({"dataVersion":"1","data":[{"kind":"playersSet","playerNames":["A","B","C","D","E","F","G"],"dealerName":"C","sitOutScheme":[1,3]}]})foo"},
+    TestDeserializationErrorResult{L"InvalidPreviousDealerMember", LR"foo({"dataVersion":"1","data":[{"kind":"playersSet","playerNames":["A","B","C","D","E","F","G"],"dealerName":"C","sitOutScheme":[1,3],"previousDealer":{}}]})foo"},
     TestDeserializationErrorResult{L"NoPlayersMember", LR"foo({"dataVersion":"1","data":[{"kind":"deal","numberOfEvents":2,"changes":[{"name":"A","diff":1},{"name":"B","diff":1},{"name":"C","diff":-1},{"name":"D","diff":-1}]}]})foo"},
     TestDeserializationErrorResult{L"InvalidPlayersMember", LR"foo({"dataVersion":"1","data":[{"kind":"deal","players":{},"numberOfEvents":2,"changes":[{"name":"A","diff":1},{"name":"B","diff":1},{"name":"C","diff":-1},{"name":"D","diff":-1}]}]})foo"},
     TestDeserializationErrorResult{L"NoNumberOfEventsMember", LR"foo({"dataVersion":"1","data":[{"kind":"deal","players":7,"changes":[{"name":"A","diff":1},{"name":"B","diff":1},{"name":"C","diff":-1},{"name":"D","diff":-1}]}]})foo"},

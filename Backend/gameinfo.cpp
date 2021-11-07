@@ -49,7 +49,8 @@ namespace Backend
                               std::wstring dealer,
                               std::set<unsigned int> sitOutScheme)
     {
-        auto entry = std::make_shared<PlayersSet>(players, dealer, sitOutScheme);
+        std::wstring previousDealer = this->Dealer() != nullptr ? this->Dealer()->Name() : L"";
+        auto entry = std::make_shared<PlayersSet>(players, dealer, sitOutScheme, previousDealer);
 
         this->SetPlayersInternal(entry);
 
@@ -85,47 +86,68 @@ namespace Backend
         this->ReconstructEventsForMultiplierInfo();
     }
 
-    bool GameInfo::CanPopLastEntry()
+    GameInfo::PoppableEntry GameInfo::LastPoppableEntry()
     {
         if(this->entries.size() < 2)
         {
-            return false;
+            return GameInfo::PoppableEntry::None;
         }
 
-        if(this->entries.back()->Kind() == Entry::Kind::PlayersSet)
+        switch(this->entries.back()->Kind())
         {
-            return false;
+        case Backend::Entry::Kind::PlayersSet:
+            return GameInfo::PoppableEntry::PlayersSet;
+        case Backend::Entry::Kind::Deal:
+            return GameInfo::PoppableEntry::Deal;
+        case Backend::Entry::Kind::MandatorySoloTrigger:
+            return GameInfo::PoppableEntry::MandatorySoloTrigger;
+        default:
+            throw std::exception("value of Entry::Kind not handled");
         }
-
-        return true;
     }
 
     void GameInfo::PopLastEntry()
     {
-        if(!this->CanPopLastEntry())
+        if(this->LastPoppableEntry() == GameInfo::PoppableEntry::None)
         {
             return;
         }
 
-        if(this->entries.back()->Kind() == Entry::Kind::MandatorySoloTrigger)
-        {
-            this->entries.pop_back();
-        }
-
+        auto entry = entries.back();
         this->entries.pop_back();
 
-        auto playerInfosIt = this->playerInfos.begin();
-        auto playerInfosEnd = this->playerInfos.end();
-        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        if(entry->Kind() == Entry::Kind::PlayersSet)
         {
-            (*playerInfosIt)->PopLastDealResult();
+            auto lastPlayerSetEntry = std::find_if(entries.rbegin(), entries.rend(), [](std::shared_ptr<Backend::Entry> x){ return  x->Kind() == Backend::Entry::Kind::PlayersSet; });
+
+            if(lastPlayerSetEntry == entries.rend())
+            {
+                throw std::exception("must never happen");
+            }
+
+            this->SetPlayersInternal(std::static_pointer_cast<Backend::PlayersSet>(*lastPlayerSetEntry));
+
+            this->SetDealer(std::static_pointer_cast<Backend::PlayersSet>(entry)->PreviousDealer());
         }
+        else if(entry->Kind() == Entry::Kind::Deal)
+        {
+            auto playerInfosIt = this->playerInfos.begin();
+            auto playerInfosEnd = this->playerInfos.end();
+            for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+            {
+                (*playerInfosIt)->PopLastDealResult();
+            }
 
-        this->currentDealerIndex = (this->currentDealerIndex - 1 + this->numberOfPresentPlayers) % this->numberOfPresentPlayers;
+            this->currentDealerIndex = (this->currentDealerIndex - 1 + this->numberOfPresentPlayers) % this->numberOfPresentPlayers;
 
-        this->ApplyScheme();
+            this->ApplyScheme();
 
-        this->ReconstructEventsForMultiplierInfo();
+            this->ReconstructEventsForMultiplierInfo();
+        }
+        else if(entry->Kind() == Entry::Kind::MandatorySoloTrigger)
+        {
+            this->ReconstructEventsForMultiplierInfo();
+        }
     }
 
     void GameInfo::SaveTo(std::wstring id) const
@@ -327,8 +349,6 @@ namespace Backend
                 (*playerInfosIt)->SetIsPlaying(false);
                 newInfos.push_back(*playerInfosIt);
             }
-
-            (*playerInfosIt)->DropPreviousDealInformation();
         }
 
         this->playerInfos = newInfos;
@@ -544,39 +564,32 @@ namespace Backend
     void GameInfo::ReconstructEventsForMultiplierInfo()
     {
         std::vector<EventInfo> events;
-
-        std::unique_ptr<EventInfo> candidate;
+        unsigned int relevantNumberOfPlayers = 4;
 
         for (auto & entry : this->entries)
         {
             if(entry->Kind() == Entry::Kind::MandatorySoloTrigger)
             {
-                candidate->mandatorySolo = true;
-            }
+                auto numberOfEvents = events.back().number;
+                events.pop_back();
 
-            if(entry->Kind() != Entry::Kind::Deal)
-            {
-                if(candidate)
-                {
-                    events.push_back(*candidate);
-                    candidate = nullptr;
-                }
+                EventInfo event{ numberOfEvents, relevantNumberOfPlayers, Backend::MandatorySolo(true) };
+                events.push_back(event);
+
                 continue;
             }
-
-            if(candidate)
+            else if(entry->Kind() == Entry::Kind::PlayersSet)
             {
-                events.push_back(*candidate);
+                auto playersSet = std::static_pointer_cast<PlayersSet>(entry);
+                relevantNumberOfPlayers = static_cast<unsigned int>(playersSet->Players().size());
+                continue;
             }
 
             auto deal = std::static_pointer_cast<Deal>(entry);
 
-            candidate = std::make_unique<EventInfo>(EventInfo{ deal->NumberOfEvents(), deal->Players(), Backend::MandatorySolo(false) });
-        }
+            EventInfo event{ deal->NumberOfEvents(), relevantNumberOfPlayers, Backend::MandatorySolo(false) };
 
-        if(candidate)
-        {
-            events.push_back(*candidate);
+            events.push_back(event);
         }
 
         this->multiplierInfo.ResetTo(events);
@@ -627,11 +640,6 @@ namespace Backend
         this->multipliedResults.pop_back();
         this->accumulatedMultipliedResults.pop_back();
         this->dealInput.pop_back();
-    }
-
-    void GameInfo::PlayerInfoInternal::DropPreviousDealInformation()
-    {
-        this->dealInput.clear();
     }
 
     void GameInfo::PlayerInfoInternal::SetInputInDeal(std::wstring input)

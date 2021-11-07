@@ -51,6 +51,7 @@ protected:
     }
 
 private:
+    const int experimentalWidthOfResetButton = 145;
     const unsigned int maxNumberOfPlayers;
     const QString ScoreStylesheet = "QLabel { font-weight: bold ; font-size: 12pt }";
     const QString MultiplierStylesheet = "QLabel { font-weight: bold ; font-size: 12pt }";
@@ -323,6 +324,7 @@ public:
 
         resetButton = new QPushButton(controlWidget);
         resetButton->setObjectName(QString::fromUtf8("resetButton"));
+        resetButton->setFixedWidth(this->experimentalWidthOfResetButton);
 
         horizontalLayout->addWidget(resetButton);
 
@@ -636,7 +638,7 @@ public:
 
         bockereignisseLabel->setText(QCoreApplication::translate("MainWindow", "Bockereignisse", nullptr));
         commitButton->setText(QCoreApplication::translate("MainWindow", "\303\234bernehmen", nullptr));
-        resetButton->setText(QCoreApplication::translate("MainWindow", "Letztes Spiel zur\303\274cksetzen", nullptr));
+        resetButton->setText(QCoreApplication::translate("MainWindow", "Zur\303\274cksetzen", nullptr));
 
         spielstandLabel->setText(QCoreApplication::translate("MainWindow", "Spielstand", nullptr));
         zuZahlenLabel->setText(QCoreApplication::translate("MainWindow", "Zu Zahlen", nullptr));

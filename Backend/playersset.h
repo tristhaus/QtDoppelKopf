@@ -36,6 +36,7 @@ namespace Backend
         std::vector<std::wstring> players;
         std::wstring dealer;
         std::set<unsigned int> sitOutScheme;
+        std::wstring previousDealer;
 
     public:
         /*!
@@ -46,7 +47,8 @@ namespace Backend
          */
         PlayersSet(std::vector<std::wstring> players,
                    std::wstring dealer,
-                   std::set<unsigned int> sitOutScheme);
+                   std::set<unsigned int> sitOutScheme,
+                   std::wstring previousDealer);
 
         /*!
          * \reimp
@@ -70,6 +72,12 @@ namespace Backend
          * \return The sit out scheme.
          */
         std::set<unsigned int> SitOutScheme() const;
+
+        /*!
+         * \brief Gets the name of the last current dealer before this set.
+         * \return The name of the last current dealer before this set.
+         */
+        std::wstring PreviousDealer() const;
     };
 }
 

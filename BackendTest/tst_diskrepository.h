@@ -44,7 +44,8 @@ TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame)
                               L"文字",
                           },
                           L"C",
-                          std::set<unsigned int> { 2, 4 }));
+                          std::set<unsigned int> { 2, 4 },
+                          L"Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::wstring, int>>
                           {
@@ -71,6 +72,7 @@ TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame)
     EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::wstring(L"A"), std::wstring(L"B"), std::wstring(L"C"), std::wstring(L"D"), std::wstring(L"E"), std::wstring(L"F"), std::wstring(L"文字")));
     EXPECT_STREQ(L"C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
+    EXPECT_STREQ(L"Z", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());

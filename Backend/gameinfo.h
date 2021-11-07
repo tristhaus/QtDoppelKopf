@@ -57,6 +57,22 @@ namespace Backend
             Active
         };
 
+        /*!
+         * \brief The PoppableEntry enum lists possible states
+         *        of the pop entry functionality:
+         *        No popping possible,
+         *        popping of players being set,
+         *        of a deal,
+         *        of the trigger of a mandatory solo round, respectively.
+         */
+        enum class PoppableEntry
+        {
+            None,
+            PlayersSet,
+            Deal,
+            MandatorySoloTrigger,
+        };
+
     private:
         class PlayerInfoInternal;
         const unsigned int MaxPlayers;
@@ -121,10 +137,10 @@ namespace Backend
         void TriggerMandatorySolo();
 
         /*!
-         * \brief Gets a value indicating whether the last entry can be popped off.
-         * \return A value indicating whether the last entry can be popped off.
+         * \brief Gets whether and what can be popped from the entries.
+         * \return A value indicating whether and what can be popped from the entries.
          */
-        bool CanPopLastEntry();
+        PoppableEntry LastPoppableEntry();
 
         /*!
          * \brief Removes the last entry from the collection of deals.
@@ -236,12 +252,6 @@ namespace Backend
              * \brief Removes the last deal result from the collection.
              */
             void PopLastDealResult();
-
-            /*!
-             * \brief Removes information regarding previous deals,
-             *        disabling the popping of old results.
-             */
-            void DropPreviousDealInformation();
 
             /*!
              * \brief Sets the input in the last deal, if any.

@@ -55,9 +55,10 @@ private slots:
     void ScoreHistoryPlotShallWorkCorrectly();
     void AboutButtonShallTriggerDialogAndOKShallClose();
     void MandatorySoloButtonShallBeEnabledAndTrigger();
+    void EveryOptionOfResetButtonShallBeDisplayed();
     void SaveGameShallWorkWithPresetValueAndPersist();
     void LoadGameShallWorkWithPresetValueAndDisplayGame();
-#endif
+#endif // _USE_LONG_TEST
 };
 
 FrontendTest::FrontendTest()
@@ -1116,6 +1117,72 @@ void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger()
     QVERIFY2(mw.ui->mandatorySoloButton->isEnabled() == true, "wrong enabled state after reset");
 }
 
+void FrontendTest::EveryOptionOfResetButtonShallBeDisplayed()
+{
+    // Arrange
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    auto ui = mw.ui;
+
+    std::vector<std::wstring> players
+    {
+        L"A",
+        L"B",
+        L"C",
+        L"D"
+    };
+
+    std::wstring dealer(L"A");
+    std::set<unsigned int> sitOutScheme { };
+
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    // spy needed such that events actually happen
+    QSignalSpy spyChangePlayersButton(ui->changePlayersButton, &QAbstractButton::pressed);
+    QSignalSpy spyCommitButton(ui->commitButton, &QAbstractButton::pressed);
+    QSignalSpy spyMandatorySoloButton(ui->mandatorySoloButton, &QAbstractButton::pressed);
+
+    // Act, Assert
+    QVERIFY2(!ui->resetButton->isEnabled(), "incorrect reset button state: none");
+    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8("Zurücksetzen")) == 0, "incorrect reset button label: none");
+
+    mw.ui->actuals[0]->setText(QString("2"));
+    mw.ui->actuals[1]->setText(QString("2"));
+    QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
+
+    QVERIFY2(ui->resetButton->isEnabled(), "incorrect reset button state: deal");
+    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8("Spiel zurücksetzen")) == 0, "incorrect reset button label: deal");
+
+    bool changePlayersDialogFound = false;
+    int interval = 1000;
+    QTimer::singleShot(interval, [&]()
+    {
+        changePlayersDialogFound = mw.playerSelection != nullptr;
+        mw.playerSelection->dialogNames[1]->setText(QString::fromUtf8("NewPlayer"));
+        if(changePlayersDialogFound)
+        {
+            QTest::mouseClick(mw.playerSelection->dialogAcceptButton, Qt::LeftButton);
+        }
+    });
+
+    QTest::mouseClick(ui->changePlayersButton, Qt::LeftButton);
+
+    QVERIFY2(changePlayersDialogFound, "changePlayersDialog not found");
+
+    QVERIFY2(mw.playerSelection == nullptr, "playerSelection still reachable");
+
+    QVERIFY2(ui->names[1]->text().compare(QString::fromUtf8("NewPlayer")) == 0, "incorrect name");
+
+    QVERIFY2(ui->resetButton->isEnabled(), "incorrect reset button state: player choice");
+    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8("Spielerwahl zurücksetzen")) == 0, "incorrect reset button label: player choice");
+
+    QTest::mouseClick(ui->mandatorySoloButton, Qt::LeftButton);
+
+    QVERIFY2(ui->resetButton->isEnabled(), "incorrect reset button state: mandatory solo");
+    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8("Pflichtsolo zurücksetzen")) == 0, "incorrect reset button label: mandatory solo");
+    QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString::fromUtf8("Pflichtsolorunde")) == 0, "incorrect multiplier label after trigger");
+}
+
 void FrontendTest::SaveGameShallWorkWithPresetValueAndPersist()
 {
     // Arrange
@@ -1145,7 +1212,7 @@ void FrontendTest::LoadGameShallWorkWithPresetValueAndDisplayGame()
     std::shared_ptr<MemoryRepository> memoryRepository = std::make_shared<MemoryRepository>();
     std::wstring identifier = L"something";
     std::wstring content = LR"foo({
-    "dataVersion": "1",
+    "dataVersion": "2",
     "data": [
         {
             "kind": "playersSet",
@@ -1156,7 +1223,8 @@ void FrontendTest::LoadGameShallWorkWithPresetValueAndDisplayGame()
                 "D"
             ],
             "dealerName": "A",
-            "sitOutScheme": []
+            "sitOutScheme": [],
+            "previousDealerName": ""
         },
         {
             "kind": "deal",

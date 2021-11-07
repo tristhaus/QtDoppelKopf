@@ -41,7 +41,8 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries)
                               L"文字",
                           },
                           L"C",
-                          std::set<unsigned int> { 2, 4 }));
+                          std::set<unsigned int> { 2, 4 },
+                          L"Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::wstring, int>>
                           {
@@ -78,6 +79,8 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries)
     EXPECT_TRUE(std::regex_search(persisted, dealerNameRegex));
     std::wregex sitOutSchemeRegex(LR"foo("sitOutScheme":\[2,4\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, sitOutSchemeRegex));
+    std::wregex previousDealerNameRegex(LR"foo("previousDealerName":"Z")foo", std::regex_constants::ECMAScript);
+    EXPECT_TRUE(std::regex_search(persisted, previousDealerNameRegex));
 
     std::wregex dealKindRegex(LR"foo("kind":"deal")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, dealKindRegex));
@@ -103,7 +106,7 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries)
 TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries)
 {
     std::wstring content(LR"foo({
-    "dataVersion": "1",
+    "dataVersion": "2",
     "data": [
         {
             "kind": "playersSet",
@@ -120,7 +123,8 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries)
             "sitOutScheme": [
                 2,
                 4
-            ]
+            ],
+            "previousDealerName": "B"
         },
         {
             "kind": "deal",
@@ -165,6 +169,7 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries)
     EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::wstring(L"A"), std::wstring(L"B"), std::wstring(L"C"), std::wstring(L"D"), std::wstring(L"E"), std::wstring(L"F"), std::wstring(L"G")));
     EXPECT_STREQ(L"C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
+    EXPECT_STREQ(L"B", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());
@@ -200,7 +205,8 @@ TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly)
                               L"文字",
                           },
                           L"C",
-                          std::set<unsigned int> { 2, 4 }));
+                          std::set<unsigned int> { 2, 4 },
+                          L"Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::wstring, int>>
                           {
@@ -227,6 +233,7 @@ TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly)
     EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::wstring(L"A"), std::wstring(L"B"), std::wstring(L"C"), std::wstring(L"D"), std::wstring(L"E"), std::wstring(L"F"), std::wstring(L"文字")));
     EXPECT_STREQ(L"C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
+    EXPECT_STREQ(L"Z", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());

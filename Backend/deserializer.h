@@ -46,6 +46,7 @@ namespace Backend
         constexpr static const wchar_t * const KeyPlayerNames = L"playerNames";
         constexpr static const wchar_t * const KeyDealerName = L"dealerName";
         constexpr static const wchar_t * const KeySitOutScheme = L"sitOutScheme";
+        constexpr static const wchar_t * const KeyPreviousDealerName = L"previousDealerName";
 
         constexpr static const wchar_t * const KeyPlayers = L"players";
         constexpr static const wchar_t * const KeyNumberOfEvents = L"numberOfEvents";

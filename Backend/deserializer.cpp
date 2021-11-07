@@ -21,6 +21,8 @@
 #include "rapidjson/ostreamwrapper.h"
 #include "rapidjson/istreamwrapper.h"
 
+#define DATAVERSION L"2"
+
 Backend::DeSerializer::DeSerializer()
 {
 }
@@ -34,7 +36,7 @@ void Backend::DeSerializer::Serialize(std::vector<std::shared_ptr<Backend::Entry
     rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value;
 
     key.SetString(KeyDataVersion, static_cast<rapidjson::SizeType>(wcslen(KeyDataVersion)), allocator);
-    value.SetString(L"1");
+    value.SetString(DATAVERSION);
     document.AddMember(key, value, allocator);
 
     rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> array;
@@ -68,7 +70,7 @@ std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(
         throw std::exception("did not parse to object");
     }
 
-    if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::wcscmp(document[KeyDataVersion].GetString(), L"1") == 0))
+    if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::wcscmp(document[KeyDataVersion].GetString(), DATAVERSION) == 0))
     {
         throw std::exception("no valid data version found");
     }
@@ -178,6 +180,10 @@ void Backend::DeSerializer::SerializePlayersSet(std::shared_ptr<PlayersSet> play
         value.PushBack(helper, allocator);
     }
 
+    serializedEntry.AddMember(key, value, allocator);
+
+    key.SetString(KeyPreviousDealerName, static_cast<rapidjson::SizeType>(wcslen(KeyPreviousDealerName)), allocator);
+    value.SetString(playersSet->PreviousDealer().c_str(), static_cast<rapidjson::SizeType>(wcslen(playersSet->PreviousDealer().c_str())), allocator);
     serializedEntry.AddMember(key, value, allocator);
 }
 
@@ -299,7 +305,19 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(rap
         sitOutScheme.emplace(schemeIt->GetInt());
     }
 
-    return std::make_shared<PlayersSet>(players, dealer, sitOutScheme);
+    if(!data->HasMember(KeyPreviousDealerName))
+    {
+        throw std::exception("no member previousDealerName");
+    }
+
+    if(!(*data)[KeyPreviousDealerName].IsString())
+    {
+        throw std::exception("previousDealerName is not string");
+    }
+
+    auto previousDealer = (*data)[KeyPreviousDealerName].GetString();
+
+    return std::make_shared<PlayersSet>(players, dealer, sitOutScheme, previousDealer);
 }
 
 std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializeDeal(rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> * data)
@@ -380,3 +398,5 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializeDeal(rapidjson
 
     return std::make_shared<Deal>(changes, NumberOfEvents(numberOfEvents), Players(players));
 }
+
+#undef DATAVERSION

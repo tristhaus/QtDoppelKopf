@@ -41,6 +41,10 @@ private:
     const QString StandardNamesStylesheet = "QLabel { }";
     const QString DealerNamesStylesheet = "QLabel { border: 3px solid orange ; border-radius : 6px }";
     const QString FileFilter = "Spiele (*.qdk)";
+    const QString ResetButtonLabelNone = "Zurücksetzen";
+    const QString ResetButtonLabelPlayersSet  = "Spielerwahl zurücksetzen";
+    const QString ResetButtonLabelDeal = "Spiel zurücksetzen";
+    const QString ResetButtonLabelMandatorySoloTrigger = "Pflichtsolo zurücksetzen";
     const unsigned int MaxPlayers;
     std::vector<QColor> htmlColors;
     Ui::MainWindow *ui;
