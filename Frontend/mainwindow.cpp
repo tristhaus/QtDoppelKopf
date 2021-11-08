@@ -298,6 +298,9 @@ void MainWindow::RedrawPlayerHistory()
             QVector<double> dataX(data.first.begin(), data.first.end());
             QVector<double> dataY(data.second.begin(), data.second.end());
 
+            dataX.insert(dataX.cbegin(), 0.0);
+            dataY.insert(dataY.cbegin(), 0.0);
+
             auto * qcpGraph = ui->plotPlayerHistory->addGraph();
             qcpGraph->addData(dataX, dataY, true);
 
