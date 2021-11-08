@@ -194,10 +194,10 @@ void MainWindow::ShowPlayerSelection()
 
     currentDealer = currentPlayers[this->dealerIndex].first;
 
-    Ui::PlayerSelection ps(this->MaxPlayers, currentPlayers, currentDealer, currentSitOutScheme, this);
-    ps.setModal(true);
-    ps.show();
-    int dialogCode = ps.exec();
+    this->playerSelection = std::make_unique<Ui::PlayerSelection>(this->MaxPlayers, currentPlayers, currentDealer, currentSitOutScheme, this);
+    this->playerSelection->setModal(true);
+    this->playerSelection->show();
+    int dialogCode = this->playerSelection->exec();
 
     if(dialogCode == QDialog::Rejected)
     {
@@ -205,7 +205,8 @@ void MainWindow::ShowPlayerSelection()
         return;
     }
 
-    auto result = ps.GetResults();
+    auto result = this->playerSelection->GetResults();
+    this->playerSelection.reset();
 
     std::vector<std::wstring> players;
 

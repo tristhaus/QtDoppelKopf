@@ -46,6 +46,7 @@ private slots:
     void ConstructionShallWorkCompletely();
 #ifdef _USE_LONG_TEST
     void SetDataShallBeDisplayed();
+    void PlayerSelectionButtonShallTriggerDialogAndSetDataShallBeUsed();
     void OneCommittedGameShallBeDisplayed();
     void TwoCommittedGamesShallBeDisplayed();
     void TwoCommittedAndTwoPoppedGameShallBeDisplayed();
@@ -349,6 +350,38 @@ void FrontendTest::SetDataShallBeDisplayed()
     QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString("0")) == 0, "triple multiplier label incorrect");
     QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString("0")) == 0, "double multiplier label incorrect");
     QVERIFY2(mw.ui->singleMultiplier->text().compare(QString("0")) == 0, "single multiplier label incorrect");
+}
+
+void FrontendTest::PlayerSelectionButtonShallTriggerDialogAndSetDataShallBeUsed()
+{
+    // Arrange
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    auto ui = mw.ui;
+
+    // spy needed such that events actually happen
+    QSignalSpy spyChangePlayersButton(ui->changePlayersButton, &QAbstractButton::pressed);
+
+    // Act
+    bool changePlayersDialogFound = false;
+    int interval = 1000;
+    QTimer::singleShot(interval, [&]()
+    {
+        changePlayersDialogFound = mw.playerSelection != nullptr;
+        mw.playerSelection->dialogNames[1]->setText(QString::fromUtf8("NewPlayer"));
+        if(changePlayersDialogFound)
+        {
+            QTest::mouseClick(mw.playerSelection->dialogAcceptButton, Qt::LeftButton);
+        }
+    });
+
+    QTest::mouseClick(mw.ui->changePlayersButton, Qt::LeftButton);
+
+    // Assert
+    QVERIFY2(changePlayersDialogFound, "changePlayersDialog not found");
+
+    QVERIFY2(mw.playerSelection == nullptr, "playerSelection still reachable");
+
+    QVERIFY2(ui->names[1]->text().compare(QString::fromUtf8("NewPlayer")) == 0, "incorrect name");
 }
 
 void FrontendTest::OneCommittedGameShallBeDisplayed()

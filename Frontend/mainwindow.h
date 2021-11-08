@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include "../Backend/gameinfo.h"
 #include "../Backend/playerinfo.h"
+#include "playerselection_ui.h"
 
 class FrontendTest;
 
@@ -43,6 +44,7 @@ private:
     const unsigned int MaxPlayers;
     std::vector<QColor> htmlColors;
     Ui::MainWindow *ui;
+    std::unique_ptr<Ui::PlayerSelection> playerSelection;
     std::unique_ptr<QMessageBox> aboutMessageBox;
     Backend::GameInfo gameInfo;
     unsigned int dealerIndex;
