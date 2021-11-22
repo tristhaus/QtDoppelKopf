@@ -47,14 +47,14 @@ namespace Backend
             const bool PlayedSolo;
         };
 
-        std::wstring name;
+        std::string name;
         bool hasPlayed;
         bool isPresent;
         bool isPlaying;
         std::vector<DealResult> dealResults;
         std::vector<int> multipliedResults;
         std::vector<int> accumulatedMultipliedResults;
-        std::vector<std::wstring> dealInput;
+        std::vector<std::string> dealInput;
         std::function<unsigned short(unsigned int)> multiplierAccessor;
         std::function<int()> maxCurrentScoreAccessor;
 
@@ -65,7 +65,7 @@ namespace Backend
          * \param multiplierAccessor A function to obtain the multiplier for the indexed game.
          * \param maxCurrentScoreAccessor A function to obtain the maximum current score among the players.
          */
-        PlayerInfo(std::wstring name,
+        PlayerInfo(std::string name,
                    std::function<unsigned short(unsigned int)> multiplierAccessor,
                    std::function<int()> maxCurrentScoreAccessor);
 
@@ -73,7 +73,7 @@ namespace Backend
          * \brief Gets the name of the player.
          * \return The name of the player.
          */
-        std::wstring Name() const;
+        std::string Name() const;
 
         /*!
          * \brief Gets a value indicating whether the player has participated in any deal.
@@ -115,7 +115,7 @@ namespace Backend
          * \brief Gets the input in the last deal, if any.
          * \return The input in the last deal, if any.
          */
-        std::wstring InputInLastDeal() const;
+        std::string InputInLastDeal() const;
 
         /*!
          * \brief Gets the due balance in Euro cent.

@@ -18,10 +18,10 @@
 
 #include "playersset.h"
 
-Backend::PlayersSet::PlayersSet(std::vector<std::wstring> players,
-                                std::wstring dealer,
+Backend::PlayersSet::PlayersSet(std::vector<std::string> players,
+                                std::string dealer,
                                 std::set<unsigned int> sitOutScheme,
-                                std::wstring previousDealer)
+                                std::string previousDealer)
     : players(players),
       dealer(dealer),
       sitOutScheme(sitOutScheme),
@@ -39,17 +39,17 @@ std::set<unsigned int> Backend::PlayersSet::SitOutScheme() const
     return sitOutScheme;
 }
 
-std::wstring Backend::PlayersSet::Dealer() const
+std::string Backend::PlayersSet::Dealer() const
 {
     return dealer;
 }
 
-std::vector<std::wstring> Backend::PlayersSet::Players() const
+std::vector<std::string> Backend::PlayersSet::Players() const
 {
     return players;
 }
 
-std::wstring Backend::PlayersSet::PreviousDealer() const
+std::string Backend::PlayersSet::PreviousDealer() const
 {
     return previousDealer;
 }

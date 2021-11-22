@@ -24,50 +24,53 @@ Backend::DiskRepository::DiskRepository()
 {
 }
 
-void Backend::DiskRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::wstring & identifier)
+void Backend::DiskRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier)
 {
-    std::wofstream wofs(identifier);
+    std::filesystem::path path = std::filesystem::u8path(identifier);
+    std::ofstream ofs(path);
 
-    if(!(wofs.is_open() && wofs.good()))
+    if(!(ofs.is_open() && ofs.good()))
     {
-        throw std::exception("unable to open stream for writing");
+        throw std::exception((std::string(u8"unable to open stream for writing \"") + path.string() + std::string(u8"\"")).c_str());
     }
 
-    deserializer.Serialize(entries, wofs);
+    deserializer.Serialize(entries, ofs);
 
-    if(!(wofs.is_open() && wofs.good()))
+    if(!(ofs.is_open() && ofs.good()))
     {
-        throw std::exception("bad stream after writing");
+        throw std::exception((std::string(u8"bad stream after writing \"") + path.string() + std::string(u8"\"")).c_str());
     }
 
-    wofs.close();
+    ofs.close();
 }
 
-std::vector<std::shared_ptr<Backend::Entry>> Backend::DiskRepository::Load(const std::wstring & identifier)
+std::vector<std::shared_ptr<Backend::Entry>> Backend::DiskRepository::Load(const std::string & identifier)
 {
+    std::filesystem::path path = std::filesystem::u8path(identifier);
+    if(!std::filesystem::exists(path))
+    {
+        throw std::exception((std::string(u8"file \"") + path.string() + std::string(u8"\" does not exist")).c_str());
+    }
+
+    std::ifstream ifs;
+
     try
     {
-        std::filesystem::path path(identifier);
-        if(!std::filesystem::exists(path))
-        {
-            throw std::exception("file does not exist");
-        }
+        ifs.open(path);
     }
-    catch (const std::exception&)
+    catch (const std::exception& exception)
     {
-        throw std::exception("exception when opening");
+        throw std::exception((std::string(u8"when opening \"") + path.string() + std::string(u8"\" exception: \"") + exception.what() + std::string(u8"\"")).c_str());
     }
 
-    std::wifstream wifs(identifier);
-
-    if(!(wifs.is_open() && wifs.good()))
+    if(!(ifs.is_open() && ifs.good()))
     {
-        throw std::exception("unable to open stream for reading");
+        throw std::exception((std::string(u8"unable to open stream \"") + path.string() + std::string(u8"\" for reading")).c_str());
     }
 
-    auto entries = deserializer.Deserialize(wifs);
+    auto entries = deserializer.Deserialize(ifs);
 
-    wifs.close();
+    ifs.close();
 
     return entries;
 }

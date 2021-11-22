@@ -38,13 +38,13 @@ class MainWindow : public QMainWindow
     friend FrontendTest;
 
 private:
-    const QString StandardNamesStylesheet = "QLabel { }";
-    const QString DealerNamesStylesheet = "QLabel { border: 3px solid orange ; border-radius : 6px }";
-    const QString FileFilter = "Spiele (*.qdk)";
-    const QString ResetButtonLabelNone = "Zurücksetzen";
-    const QString ResetButtonLabelPlayersSet  = "Spielerwahl zurücksetzen";
-    const QString ResetButtonLabelDeal = "Spiel zurücksetzen";
-    const QString ResetButtonLabelMandatorySoloTrigger = "Pflichtsolo zurücksetzen";
+    const QString StandardNamesStylesheet = QString::fromUtf8(u8"QLabel { }");
+    const QString DealerNamesStylesheet = QString::fromUtf8(u8"QLabel { border: 3px solid orange ; border-radius : 6px }");
+    const QString FileFilter = QString::fromUtf8(u8"Spiele (*.qdk)");
+    const QString ResetButtonLabelNone = QString::fromUtf8(u8"Zurücksetzen");
+    const QString ResetButtonLabelPlayersSet  = QString::fromUtf8(u8"Spielerwahl zurücksetzen");
+    const QString ResetButtonLabelDeal = QString::fromUtf8(u8"Spiel zurücksetzen");
+    const QString ResetButtonLabelMandatorySoloTrigger = QString::fromUtf8(u8"Pflichtsolo zurücksetzen");
     const unsigned int MaxPlayers;
     std::vector<QColor> htmlColors;
     Ui::MainWindow *ui;

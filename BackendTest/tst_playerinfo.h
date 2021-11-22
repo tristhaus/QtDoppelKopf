@@ -29,14 +29,14 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
     Backend::GameInfo gameInfo;
 
     // Act, Assert
-    gameInfo.SetPlayers(std::vector<std::wstring>{L"A", L"B", L"C", L"D", L"E"}, L"A", std::set<unsigned int> {});
+    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", std::set<unsigned int> {});
     std::vector<std::shared_ptr<Backend::PlayerInfo>> playerInfos(gameInfo.PlayerInfos());
 
-    EXPECT_STREQ(L"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(L"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(L"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(L"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(L"E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
 
     EXPECT_FALSE(playerInfos[0]->ParticipatedInLastDeal());
     EXPECT_FALSE(playerInfos[1]->ParticipatedInLastDeal());
@@ -44,12 +44,12 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
     EXPECT_FALSE(playerInfos[3]->ParticipatedInLastDeal());
     EXPECT_FALSE(playerInfos[4]->ParticipatedInLastDeal());
 
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"B", -2),
-                          std::make_pair<std::wstring, int>(L"C", 2),
-                          std::make_pair<std::wstring, int>(L"D", -2),
-                          std::make_pair<std::wstring, int>(L"E", 2)
+                          std::make_pair<std::string, int>(u8"B", -2),
+                          std::make_pair<std::string, int>(u8"C", 2),
+                          std::make_pair<std::string, int>(u8"D", -2),
+                          std::make_pair<std::string, int>(u8"E", 2)
                       }, 0u);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
@@ -75,12 +75,12 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
     EXPECT_EQ(-2, playerInfos[3]->ScoreInLastDeal());
     EXPECT_EQ( 2, playerInfos[4]->ScoreInLastDeal());
 
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"A", -3),
-                          std::make_pair<std::wstring, int>(L"C", 1),
-                          std::make_pair<std::wstring, int>(L"D", 1),
-                          std::make_pair<std::wstring, int>(L"E", 1)
+                          std::make_pair<std::string, int>(u8"A", -3),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>(u8"D", 1),
+                          std::make_pair<std::string, int>(u8"E", 1)
                       }, 0u);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
@@ -106,12 +106,12 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
     EXPECT_EQ( 1, playerInfos[3]->ScoreInLastDeal());
     EXPECT_EQ( 1, playerInfos[4]->ScoreInLastDeal());
 
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"A", -2),
-                          std::make_pair<std::wstring, int>(L"B", -2),
-                          std::make_pair<std::wstring, int>(L"D", 6),
-                          std::make_pair<std::wstring, int>(L"E", -2)
+                          std::make_pair<std::string, int>(u8"A", -2),
+                          std::make_pair<std::string, int>(u8"B", -2),
+                          std::make_pair<std::string, int>(u8"D", 6),
+                          std::make_pair<std::string, int>(u8"E", -2)
                       }, 0u);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
@@ -144,19 +144,19 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     Backend::GameInfo gameInfo;
 
     // Act, Assert
-    gameInfo.SetPlayers(std::vector<std::wstring>{L"A", L"B", L"C", L"D", L"E"}, L"A", std::set<unsigned int> {});
+    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", std::set<unsigned int> {});
     std::vector<std::shared_ptr<Backend::PlayerInfo>> playerInfos(gameInfo.PlayerInfos());
 
-    EXPECT_STREQ(L"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(L"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(L"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(L"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(L"E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
 
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"B", -2),
-                          std::make_pair<std::wstring, int>(L"D", -2),
+                          std::make_pair<std::string, int>(u8"B", -2),
+                          std::make_pair<std::string, int>(u8"D", -2),
                       }, 0u);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
@@ -176,11 +176,11 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ(-2, playerInfos[3]->ScoreInLastDeal());
     EXPECT_EQ( 2, playerInfos[4]->ScoreInLastDeal());
 
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"C", 1),
-                          std::make_pair<std::wstring, int>(L"D", 1),
-                          std::make_pair<std::wstring, int>(L"E", 1)
+                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>(u8"D", 1),
+                          std::make_pair<std::string, int>(u8"E", 1)
                       }, 0u);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
@@ -200,9 +200,9 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ( 1, playerInfos[3]->ScoreInLastDeal());
     EXPECT_EQ( 1, playerInfos[4]->ScoreInLastDeal());
 
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"D", 6),
+                          std::make_pair<std::string, int>(u8"D", 6),
                       }, 0u);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
@@ -222,9 +222,9 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ( 6, playerInfos[3]->ScoreInLastDeal());
     EXPECT_EQ(-2, playerInfos[4]->ScoreInLastDeal());
 
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"E", -9),
+                          std::make_pair<std::string, int>(u8"E", -9),
                       }, 0u);
 
     EXPECT_EQ(-2, playerInfos[0]->CurrentScore());
@@ -250,28 +250,28 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
     // Arrange
     Backend::GameInfo gameInfo;
     std::set<unsigned int> emptySitOutScheme;
-    gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
+    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", emptySitOutScheme);
 
     // Act, Assert
-    gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::wstring, int>(L"B", 0),
+                          std::make_pair<std::string, int>(u8"B", 0),
                       }, 0u);
 
-    gameInfo.SetPlayers({L"A", L"B", L"C", L"D"}, L"A", emptySitOutScheme);
+    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", emptySitOutScheme);
 
     EXPECT_THROW({
         try
         {
-            gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+            gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                          {
-                             std::make_pair<std::wstring, int>(L"B", -2),
-                             std::make_pair<std::wstring, int>(L"C", 2)
+                             std::make_pair<std::string, int>(u8"B", -2),
+                             std::make_pair<std::string, int>(u8"C", 2)
                          }, 0u);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ("unable to complete the changes from the information given", e.what());
+            EXPECT_STREQ(u8"unable to complete the changes from the information given", e.what());
             throw;
         }
     }, std::exception);
@@ -279,15 +279,15 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
     EXPECT_THROW({
         try
         {
-            gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+            gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                          {
-                             std::make_pair<std::wstring, int>(L"B", 1),
-                             std::make_pair<std::wstring, int>(L"C", 2)
+                             std::make_pair<std::string, int>(u8"B", 1),
+                             std::make_pair<std::string, int>(u8"C", 2)
                          }, 0u);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ("unable to complete the changes from the information given", e.what());
+            EXPECT_STREQ(u8"unable to complete the changes from the information given", e.what());
             throw;
         }
     }, std::exception);
@@ -295,18 +295,18 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
     EXPECT_THROW({
         try
         {
-            gameInfo.PushDeal(std::vector<std::pair<std::wstring, int>>
+            gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                          {
-                             std::make_pair<std::wstring, int>(L"B", -2),
-                             std::make_pair<std::wstring, int>(L"C", 2),
-                             std::make_pair<std::wstring, int>(L"A", 2),
-                             std::make_pair<std::wstring, int>(L"D", 2),
-                             std::make_pair<std::wstring, int>(L"E", 2)
+                             std::make_pair<std::string, int>(u8"B", -2),
+                             std::make_pair<std::string, int>(u8"C", 2),
+                             std::make_pair<std::string, int>(u8"A", 2),
+                             std::make_pair<std::string, int>(u8"D", 2),
+                             std::make_pair<std::string, int>(u8"E", 2)
                          }, 0u);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ("there can never be more than 4 or zero changes", e.what());
+            EXPECT_STREQ(u8"there can never be more than 4 or zero changes", e.what());
             throw;
         }
     }, std::exception);

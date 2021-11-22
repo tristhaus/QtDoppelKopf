@@ -35,25 +35,25 @@ namespace Backend
     class DeSerializer
     {
     private:
-        constexpr static const wchar_t * const KeyDataVersion = L"dataVersion";
-        constexpr static const wchar_t * const KeyData = L"data";
+        constexpr static const char * const KeyDataVersion = u8"dataVersion";
+        constexpr static const char * const KeyData = u8"data";
 
-        constexpr static const wchar_t * const KeyKind = L"kind";
-        constexpr static const wchar_t * const ValuePlayersSet = L"playersSet";
-        constexpr static const wchar_t * const ValueDeal = L"deal";
-        constexpr static const wchar_t * const ValueMandatorySoloTrigger = L"mandatorySoloTrigger";
+        constexpr static const char * const KeyKind = u8"kind";
+        constexpr static const char * const ValuePlayersSet = u8"playersSet";
+        constexpr static const char * const ValueDeal = u8"deal";
+        constexpr static const char * const ValueMandatorySoloTrigger = u8"mandatorySoloTrigger";
 
-        constexpr static const wchar_t * const KeyPlayerNames = L"playerNames";
-        constexpr static const wchar_t * const KeyDealerName = L"dealerName";
-        constexpr static const wchar_t * const KeySitOutScheme = L"sitOutScheme";
-        constexpr static const wchar_t * const KeyPreviousDealerName = L"previousDealerName";
+        constexpr static const char * const KeyPlayerNames = u8"playerNames";
+        constexpr static const char * const KeyDealerName = u8"dealerName";
+        constexpr static const char * const KeySitOutScheme = u8"sitOutScheme";
+        constexpr static const char * const KeyPreviousDealerName = u8"previousDealerName";
 
-        constexpr static const wchar_t * const KeyPlayers = L"players";
-        constexpr static const wchar_t * const KeyNumberOfEvents = L"numberOfEvents";
+        constexpr static const char * const KeyPlayers = u8"players";
+        constexpr static const char * const KeyNumberOfEvents = u8"numberOfEvents";
 
-        constexpr static const wchar_t * const KeyChanges = L"changes";
-        constexpr static const wchar_t * const KeyChangeName = L"name";
-        constexpr static const wchar_t * const KeyChangeDiff = L"diff";
+        constexpr static const char * const KeyChanges = u8"changes";
+        constexpr static const char * const KeyChangeName = u8"name";
+        constexpr static const char * const KeyChangeDiff = u8"diff";
 
     public:
         /*!
@@ -66,30 +66,30 @@ namespace Backend
          * \param entries The entries to serialize.
          * \param wos The stream to serialize into.
          */
-        void Serialize(std::vector<std::shared_ptr<Entry>> entries, std::wostream & wos);
+        void Serialize(std::vector<std::shared_ptr<Entry>> entries, std::ostream & os);
 
         /*!
          * \brief Deserialize from the stream into the return value.
          * \param wis The stream to deserialize from.
          * \return The deserialized entries.
          */
-        std::vector<std::shared_ptr<Entry>> Deserialize(std::wistream & wis);
+        std::vector<std::shared_ptr<Entry>> Deserialize(std::istream & is);
 
     private:
         void SerializeEntry(std::shared_ptr<Entry> entry,
-                            rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+                            rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                             rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
         void SerializePlayersSet(std::shared_ptr<Backend::PlayersSet> playersSet,
-                                 rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+                                 rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                                  rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
         void SerializeDeal(std::shared_ptr<Backend::Deal> deal,
-                           rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+                           rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                            rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
-        void SerializeMandatorySoloTrigger(rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+        void SerializeMandatorySoloTrigger(rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                                            rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
 
-        std::shared_ptr<Entry> DeserializePlayersSet(rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> * data);
-        std::shared_ptr<Entry> DeserializeDeal(rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> * data);
+        std::shared_ptr<Entry> DeserializePlayersSet(rapidjson::GenericValue<rapidjson::UTF8<char>> * data);
+        std::shared_ptr<Entry> DeserializeDeal(rapidjson::GenericValue<rapidjson::UTF8<char>> * data);
     };
 }
 

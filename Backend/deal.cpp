@@ -18,7 +18,7 @@
 
 #include "deal.h"
 
-Backend::Deal::Deal(std::vector<std::pair<std::wstring, int>> changes,
+Backend::Deal::Deal(std::vector<std::pair<std::string, int>> changes,
                     Backend::NumberOfEvents numberOfEvents,
                     Backend::Players presentPlayers)
     : changes(changes),
@@ -42,7 +42,7 @@ Backend::Players Backend::Deal::Players() const
     return players;
 }
 
-std::vector<std::pair<std::wstring, int>> Backend::Deal::Changes() const
+std::vector<std::pair<std::string, int>> Backend::Deal::Changes() const
 {
     return changes;
 }

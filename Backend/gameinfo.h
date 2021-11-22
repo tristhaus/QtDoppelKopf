@@ -77,7 +77,7 @@ namespace Backend
         class PlayerInfoInternal;
         const unsigned int MaxPlayers;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
-        std::map<std::wstring, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
+        std::map<std::string, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
         unsigned int numberOfPresentPlayers;
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;
@@ -120,8 +120,8 @@ namespace Backend
          * \param sitOutScheme The positions of players sitting out, necessary for 6 players or more.
          *                     Zero is the dealer, which is always implied.
          */
-        void SetPlayers(std::vector<std::wstring> players,
-                        std::wstring dealer,
+        void SetPlayers(std::vector<std::string> players,
+                        std::string dealer,
                         std::set<unsigned int> sitOutScheme);
 
         /*!
@@ -129,7 +129,7 @@ namespace Backend
          * \param changes Collection of player names and (positive/negative) points awarded.
          * \param events The number of multiplier events in the deal.
          */
-        void PushDeal(std::vector<std::pair<std::wstring, int>> changes, unsigned int numberOfEvents);
+        void PushDeal(std::vector<std::pair<std::string, int>> changes, unsigned int numberOfEvents);
 
         /*!
          * \brief Begins a round of mandatory solo, which suspends the multiplier.
@@ -151,13 +151,13 @@ namespace Backend
          * \brief Saves the state to the ID, which should be a filename.
          * \param id The identifier to save to.
          */
-        void SaveTo(std::wstring id) const;
+        void SaveTo(std::string id) const;
 
         /*!
          * \brief Load the persisted state from the ID, which should be a filename.
          * \param id The identifier to load from.
          */
-        void LoadFrom(std::wstring id);
+        void LoadFrom(std::string id);
 
         /*!
          * \brief Gets a value indicating whether any players are set in this instance.
@@ -197,13 +197,13 @@ namespace Backend
 
     private:
         void SetPlayersInternal(std::shared_ptr<PlayersSet> playersSet);
-        void SortAndSetPlayerInfos(std::vector<std::wstring> players);
-        void SetDealer(std::wstring dealer);
+        void SortAndSetPlayerInfos(std::vector<std::string> players);
+        void SetDealer(std::string dealer);
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
         void ApplyScheme();
         void PushDealInternal(std::shared_ptr<Deal> deal);
-        std::vector<std::pair<std::wstring, int>> AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges);
-        std::wstring FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes) const;
+        std::vector<std::pair<std::string, int>> AutoCompleteDeal(std::vector<std::pair<std::string, int>> inputChanges);
+        std::string FindSoloPlayer(std::vector<std::pair<std::string, int>> changes) const;
         int MaximumCurrentScore() const;
         void ReconstructEventsForMultiplierInfo();
         unsigned int DealsRecorded() const;
@@ -218,7 +218,7 @@ namespace Backend
              * \param multiplierAccessor A function to obtain the multiplier for the indexed game.
              * \param maxCurrentScoreAccessor A function to obtain the maximum current score among the players.
              */
-            PlayerInfoInternal(std::wstring name,
+            PlayerInfoInternal(std::string name,
                                std::function<unsigned short(unsigned int)> multiplierAccessor,
                                std::function<int()> maxCurrentScoreAccessor);
 
@@ -257,7 +257,7 @@ namespace Backend
              * \brief Sets the input in the last deal, if any.
              * \param input The input in the last deal, if any.
              */
-            void SetInputInDeal(std::wstring input);
+            void SetInputInDeal(std::string input);
 
             /*!
              * \brief Gets the number of recorded deals for this player.

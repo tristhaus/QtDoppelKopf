@@ -56,17 +56,17 @@ void Ui::PlayerSelection::SetupUi()
     this->setSizePolicy(sizePolicy);
 
     verticalDialogLayout = new QVBoxLayout(this);
-    verticalDialogLayout->setObjectName(QString::fromUtf8("verticaldialoglayout"));
+    verticalDialogLayout->setObjectName(QString::fromUtf8(u8"verticaldialoglayout"));
 
     topLayout = new QHBoxLayout();
-    topLayout->setObjectName(QString::fromUtf8("toplayout"));
+    topLayout->setObjectName(QString::fromUtf8(u8"toplayout"));
 
-    dialogAnzahlSpielerLabel = new QLabel("Anzahl Spieler", this);
-    dialogAnzahlSpielerLabel->setObjectName(QString::fromUtf8("dialoganzahlspielerlabel"));
+    dialogAnzahlSpielerLabel = new QLabel(QString::fromUtf8(u8"Anzahl Spieler"), this);
+    dialogAnzahlSpielerLabel->setObjectName(QString::fromUtf8(u8"dialoganzahlspielerlabel"));
     topLayout->addWidget(dialogAnzahlSpielerLabel);
 
     dialogNumberOfPresentPlayers = new QSpinBox(this);
-    dialogNumberOfPresentPlayers->setObjectName(QString::fromUtf8("dialognumberofpresentplayers"));
+    dialogNumberOfPresentPlayers->setObjectName(QString::fromUtf8(u8"dialognumberofpresentplayers"));
     dialogNumberOfPresentPlayers->setMaximum(maxNumberOfPlayers);
     dialogNumberOfPresentPlayers->setMinimum(4);
     dialogNumberOfPresentPlayers->setValue(initialNumberOfPlayers);
@@ -75,15 +75,15 @@ void Ui::PlayerSelection::SetupUi()
     verticalDialogLayout->addLayout(topLayout);
 
     playerNamesGridLayout = new QGridLayout();
-    playerNamesGridLayout->setObjectName(QString::fromUtf8("playernamesgridlayout"));
+    playerNamesGridLayout->setObjectName(QString::fromUtf8(u8"playernamesgridlayout"));
 
     for(unsigned int index = 0; index < maxNumberOfPlayers; ++index)
     {
         dealerButtons.push_back(new QRadioButton(this));
-        dealerButtons[index]->setObjectName(QString::fromUtf8("dealerbuttons%1").arg(index));
+        dealerButtons[index]->setObjectName(QString::fromUtf8(u8"dealerbuttons%1").arg(index));
         playerNamesGridLayout->addWidget(dealerButtons[index], index, 0, 1, 1);
         dialogNames.push_back(new QLineEdit(this));
-        dialogNames[index]->setObjectName(QString::fromUtf8("dialognames%1").arg(index));
+        dialogNames[index]->setObjectName(QString::fromUtf8(u8"dialognames%1").arg(index));
         playerNamesGridLayout->addWidget(dialogNames[index], index, 1, 1, 1);
 
         bool needed = index < static_cast<unsigned int>(dialogNumberOfPresentPlayers->value());
@@ -99,16 +99,16 @@ void Ui::PlayerSelection::SetupUi()
     verticalDialogLayout->addItem(dialogSpacer);
 
     bottomLayout = new QVBoxLayout();
-    bottomLayout->setObjectName(QString::fromUtf8("bottomLayout"));
+    bottomLayout->setObjectName(QString::fromUtf8(u8"bottomLayout"));
 
-    dialogAussitzenLabel = new QLabel("Aussitzen an Position (1 ist Geber):", this);
-    dialogAussitzenLabel->setObjectName(QString::fromUtf8("dialogaussitzenlabel"));
+    dialogAussitzenLabel = new QLabel(QString::fromUtf8(u8"Aussitzen an Position (1 ist Geber):"), this);
+    dialogAussitzenLabel->setObjectName(QString::fromUtf8(u8"dialogaussitzenlabel"));
     bottomLayout->addWidget(dialogAussitzenLabel);
 
     for(unsigned int index = 0; index < (maxNumberOfPlayers - 4); ++index)
     {
         dialogSittingOuts.push_back(new QSpinBox(this));
-        dialogSittingOuts[index]->setObjectName(QString::fromUtf8("dialogsittingouts%1").arg(index));
+        dialogSittingOuts[index]->setObjectName(QString::fromUtf8(u8"dialogsittingouts%1").arg(index));
         dialogSittingOuts[index]->setValue(2 * index + 1); // is one-indexed to the user
 
         if(index == 0)
@@ -122,8 +122,8 @@ void Ui::PlayerSelection::SetupUi()
         bottomLayout->addWidget(dialogSittingOuts[index]);
     }
 
-    dialogAcceptButton = new QPushButton("OK");
-    dialogAcceptButton->setObjectName(QString::fromUtf8("dialogacceptbutton"));
+    dialogAcceptButton = new QPushButton(QString::fromUtf8(u8"OK"));
+    dialogAcceptButton->setObjectName(QString::fromUtf8(u8"dialogacceptbutton"));
     bottomLayout->addWidget(dialogAcceptButton);
 
     verticalDialogLayout->addLayout(bottomLayout);
@@ -137,7 +137,9 @@ void Ui::PlayerSelection::SetOriginalPlayers()
 
     if(dealerIt == originalPlayers.end() || !dealerIt->second)
     {
-        throw std::exception("dealer not among players or not active");
+        auto dealerBytes = originalDealer.toUtf8();
+        std::string dealer(dealerBytes.constData(), dealerBytes.length());
+        throw std::exception((std::string(u8"dealer \"") + dealer + std::string(u8"\" not among players or not active")).c_str());
     }
 
     for(unsigned int index = 0; index < originalPlayers.size(); ++index)
@@ -173,10 +175,10 @@ void Ui::PlayerSelection::OnOKButtonClicked()
 {
     // assemble and validate
 
-    QRegularExpression regexNameValidation("^[ \t]*$");
+    QRegularExpression regexNameValidation(QString::fromUtf8(u8"^[ \t]*$"));
 
     std::vector<QString> players;
-    QString dealer("");
+    QString dealer = QString::fromUtf8(u8"");
     std::set<unsigned int> sitOutScheme;
 
     for(unsigned int index = 0; index < maxNumberOfPlayers; ++index)

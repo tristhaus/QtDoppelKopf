@@ -45,11 +45,11 @@ namespace Backend
         return this->sitOutScheme;
     }
 
-    void GameInfo::SetPlayers(std::vector<std::wstring> players,
-                              std::wstring dealer,
+    void GameInfo::SetPlayers(std::vector<std::string> players,
+                              std::string dealer,
                               std::set<unsigned int> sitOutScheme)
     {
-        std::wstring previousDealer = this->Dealer() != nullptr ? this->Dealer()->Name() : L"";
+        std::string previousDealer = this->Dealer() != nullptr ? this->Dealer()->Name() : u8"";
         auto entry = std::make_shared<PlayersSet>(players, dealer, sitOutScheme, previousDealer);
 
         this->SetPlayersInternal(entry);
@@ -63,7 +63,7 @@ namespace Backend
         this->entries.push_back(entry);
     }
 
-    void GameInfo::PushDeal(std::vector<std::pair<std::wstring, int>> changes,
+    void GameInfo::PushDeal(std::vector<std::pair<std::string, int>> changes,
                             unsigned int numberOfEvents)
     {
 
@@ -78,7 +78,7 @@ namespace Backend
     {
         if(this->MandatorySolo() != MandatorySolo::Ready)
         {
-            throw std::exception("cannot trigger mandatory solo at this point");
+            throw std::exception(u8"cannot trigger mandatory solo at this point");
         }
 
         this->entries.emplace_back(std::make_shared<MandatorySoloTrigger>());
@@ -102,7 +102,7 @@ namespace Backend
         case Backend::Entry::Kind::MandatorySoloTrigger:
             return GameInfo::PoppableEntry::MandatorySoloTrigger;
         default:
-            throw std::exception("value of Entry::Kind not handled");
+            throw std::exception(u8"value of Entry::Kind not handled");
         }
     }
 
@@ -122,7 +122,7 @@ namespace Backend
 
             if(lastPlayerSetEntry == entries.rend())
             {
-                throw std::exception("must never happen");
+                throw std::exception(u8"must never happen");
             }
 
             this->SetPlayersInternal(std::static_pointer_cast<Backend::PlayersSet>(*lastPlayerSetEntry));
@@ -150,12 +150,12 @@ namespace Backend
         }
     }
 
-    void GameInfo::SaveTo(std::wstring id) const
+    void GameInfo::SaveTo(std::string id) const
     {
         this->repository->Save(this->entries, id);
     }
 
-    void GameInfo::LoadFrom(std::wstring id)
+    void GameInfo::LoadFrom(std::string id)
     {
         auto applyEntries = [&](std::vector<std::shared_ptr<Entry>> entries)
         {
@@ -189,7 +189,7 @@ namespace Backend
                     break;
                 }
                 default:
-                    throw std::exception("value of Entry::Kind not handled");
+                    throw std::exception(u8"value of Entry::Kind not handled");
                 }
             }
         };
@@ -271,7 +271,7 @@ namespace Backend
 
         if(playersSize < 4u)
         {
-            throw std::exception("not enough players");
+            throw std::exception(u8"not enough players");
         }
 
         for(size_t i = 0; i < playersSize; ++i)
@@ -285,19 +285,19 @@ namespace Backend
             {
                 if(players[i] == players[j])
                 {
-                    throw std::exception("names must be unique");
+                    throw std::exception((std::string(u8"names must be unique, offender: \"") + players[i] + std::string("\"")).c_str());
                 }
             }
         }
 
         if(!dealerFound)
         {
-            throw std::exception("name of dealer must be among the players");
+            throw std::exception(u8"name of dealer must be among the players");
         }
 
         if(playersSize > 5u && playersSet->SitOutScheme().size() + 5u != playersSize)
         {
-            throw std::exception("incorrect size of the sit out scheme");
+            throw std::exception(u8"incorrect size of the sit out scheme");
         }
 
         this->SortAndSetPlayerInfos(playersSet->Players());
@@ -305,7 +305,7 @@ namespace Backend
         this->SetAndApplyScheme(playersSet->SitOutScheme());
     }
 
-    void GameInfo::SortAndSetPlayerInfos(std::vector<std::wstring> players)
+    void GameInfo::SortAndSetPlayerInfos(std::vector<std::string> players)
     {
         this->numberOfPresentPlayers = static_cast<unsigned int>(players.size());
 
@@ -341,7 +341,7 @@ namespace Backend
             auto playerIt = std::find_if(
                         players.begin(),
                         players.end(),
-                        [&](std::wstring player){ return player == (*playerInfosIt)->Name(); });
+                        [&](std::string player){ return player == (*playerInfosIt)->Name(); });
 
             if(playerIt == players.end() && (*playerInfosIt)->HasPlayed())
             {
@@ -354,7 +354,7 @@ namespace Backend
         this->playerInfos = newInfos;
     }
 
-    void GameInfo::SetDealer(std::wstring dealer)
+    void GameInfo::SetDealer(std::string dealer)
     {
         auto dealerIt = std::find_if(
                     this->playerInfos.begin(),
@@ -363,7 +363,7 @@ namespace Backend
 
         if(dealerIt == this->playerInfos.end())
         {
-            throw std::exception("logic error: dealer must be among the players");
+            throw std::exception(u8"logic error: dealer must be among the players");
         }
 
         this->currentDealerIndex = static_cast<unsigned int>(dealerIt - this->playerInfos.begin());
@@ -396,7 +396,7 @@ namespace Backend
         auto changes = deal->Changes();
         auto actualChanges = this->AutoCompleteDeal(changes);
 
-        std::wstring soloPlayer = this->FindSoloPlayer(actualChanges);
+        std::string soloPlayer = this->FindSoloPlayer(actualChanges);
 
         auto changesIt = actualChanges.begin();
         auto changesEnd = actualChanges.end();
@@ -406,21 +406,21 @@ namespace Backend
 
             if(!player->IsPlaying())
             {
-                throw std::exception("found change for player not playing");
+                throw std::exception((std::string(u8"found change for player not playing: \"") + player->Name() + std::string("\"")).c_str());
             }
 
             player->PushDealResult(true, changesIt->second, player->Name().compare(soloPlayer) == 0);
 
             player->SetHasPlayed(true);
 
-            auto relevantChange = std::find_if(changes.begin(), changes.end(), [&](std::pair<std::wstring, int> change){ return change.first == player->Name(); });
+            auto relevantChange = std::find_if(changes.begin(), changes.end(), [&](std::pair<std::string, int> change){ return change.first == player->Name(); });
             if(relevantChange != changes.end())
             {
-                player->SetInputInDeal(std::to_wstring(relevantChange->second));
+                player->SetInputInDeal(std::to_string(relevantChange->second));
             }
             else
             {
-                player->SetInputInDeal(std::wstring(L""));
+                player->SetInputInDeal(std::string(u8""));
             }
         }
 
@@ -431,7 +431,7 @@ namespace Backend
             if(!(*playerInfosIt)->IsPlaying())
             {
                 (*playerInfosIt)->PushDealResult(false, 0, false);
-                (*playerInfosIt)->SetInputInDeal(std::wstring(L""));
+                (*playerInfosIt)->SetInputInDeal(std::string(u8""));
             }
         }
 
@@ -443,7 +443,7 @@ namespace Backend
         this->ApplyScheme();
     }
 
-    std::vector<std::pair<std::wstring, int>> GameInfo::AutoCompleteDeal(std::vector<std::pair<std::wstring, int>> inputChanges)
+    std::vector<std::pair<std::string, int>> GameInfo::AutoCompleteDeal(std::vector<std::pair<std::string, int>> inputChanges)
     {
         auto changesIt = inputChanges.begin();
         auto changesEnd = inputChanges.end();
@@ -452,20 +452,20 @@ namespace Backend
             int checksum = std::accumulate(changesIt,
                                            changesEnd,
                                            0,
-                                           [](int s, std::pair<std::wstring, int> c){ s += c.second; return s; });
+                                           [](int s, std::pair<std::string, int> c){ s += c.second; return s; });
             if(checksum != 0)
             {
-                throw std::exception("changes must sum to zero");
+                throw std::exception(u8"changes must sum to zero");
             }
 
             return inputChanges;
         }
         else if(inputChanges.size() > 4 || inputChanges.size() == 0)
         {
-            throw std::exception("there can never be more than 4 or zero changes");
+            throw std::exception(u8"there can never be more than 4 or zero changes");
         }
 
-        std::vector<std::pair<std::wstring, int>> newChanges;
+        std::vector<std::pair<std::string, int>> newChanges;
         int found = 0;
         int instances = 0;
 
@@ -482,7 +482,7 @@ namespace Backend
             }
             else
             {
-                throw std::exception("unable to complete the changes from the information given");
+                throw std::exception(u8"unable to complete the changes from the information given");
             }
 
             newChanges.push_back(*changesIt);
@@ -501,22 +501,22 @@ namespace Backend
 
             auto changeIt = std::find_if(inputChanges.begin(),
                                          changesEnd,
-                                         [&](std::pair<std::wstring, int> change){ return change.first == (*playersIt)->Name(); });
+                                         [&](std::pair<std::string, int> change){ return change.first == (*playersIt)->Name(); });
             if(changeIt != changesEnd)
             {
                 continue;
             }
 
-            newChanges.emplace_back(std::pair<std::wstring, int>((*playersIt)->Name(), valueToSet));
+            newChanges.emplace_back(std::pair<std::string, int>((*playersIt)->Name(), valueToSet));
         }
 
         return newChanges;
     }
 
-    std::wstring GameInfo::FindSoloPlayer(std::vector<std::pair<std::wstring, int>> changes) const
+    std::string GameInfo::FindSoloPlayer(std::vector<std::pair<std::string, int>> changes) const
     {
-        std::wstring losingPlayer;
-        std::wstring winningPlayer;
+        std::string losingPlayer;
+        std::string winningPlayer;
 
         unsigned int losers = 0;
         unsigned int winners = 0;
@@ -545,7 +545,7 @@ namespace Backend
         }
         else
         {
-            return std::wstring();
+            return std::string();
         }
     }
 
@@ -600,7 +600,7 @@ namespace Backend
         return static_cast<unsigned int>(std::count_if(this->entries.rbegin(), this->entries.rend(), [](std::shared_ptr<Entry> entry) { return entry->Kind() == Entry::Kind::Deal; }));
     }
 
-    GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::wstring name,
+    GameInfo::PlayerInfoInternal::PlayerInfoInternal(std::string name,
                                                      std::function<unsigned short(unsigned int)> multiplierAccessor,
                                                      std::function<int()> maxCurrentScoreAccessor)
         : PlayerInfo(name, multiplierAccessor, maxCurrentScoreAccessor)
@@ -642,7 +642,7 @@ namespace Backend
         this->dealInput.pop_back();
     }
 
-    void GameInfo::PlayerInfoInternal::SetInputInDeal(std::wstring input)
+    void GameInfo::PlayerInfoInternal::SetInputInDeal(std::string input)
     {
         this->dealInput.push_back(input);
     }

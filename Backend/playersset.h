@@ -33,10 +33,10 @@ namespace Backend
     class PlayersSet final : public Entry
     {
     private:
-        std::vector<std::wstring> players;
-        std::wstring dealer;
+        std::vector<std::string> players;
+        std::string dealer;
         std::set<unsigned int> sitOutScheme;
-        std::wstring previousDealer;
+        std::string previousDealer;
 
     public:
         /*!
@@ -45,10 +45,10 @@ namespace Backend
          * \param dealer The name of the current dealer.
          * \param sitOutScheme The sit out scheme.
          */
-        PlayersSet(std::vector<std::wstring> players,
-                   std::wstring dealer,
+        PlayersSet(std::vector<std::string> players,
+                   std::string dealer,
                    std::set<unsigned int> sitOutScheme,
-                   std::wstring previousDealer);
+                   std::string previousDealer);
 
         /*!
          * \reimp
@@ -59,13 +59,13 @@ namespace Backend
          * \brief Gets the names of the players.
          * \return The names of the players.
          */
-        std::vector<std::wstring> Players() const;
+        std::vector<std::string> Players() const;
 
         /*!
          * \brief Gets the name of the current dealer.
          * \return The name of the current dealer.
          */
-        std::wstring Dealer() const;
+        std::string Dealer() const;
 
         /*!
          * \brief Gets the sit out scheme.
@@ -77,7 +77,7 @@ namespace Backend
          * \brief Gets the name of the last current dealer before this set.
          * \return The name of the last current dealer before this set.
          */
-        std::wstring PreviousDealer() const;
+        std::string PreviousDealer() const;
     };
 }
 

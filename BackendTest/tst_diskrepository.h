@@ -29,37 +29,37 @@
 TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame)
 {
     // Arrange
-    auto tempFile = std::filesystem::temp_directory_path() / std::filesystem::path(L"qtdoppelkopf.testing.文字.temp.file");
+    auto tempFile = std::filesystem::temp_directory_path() / std::filesystem::u8path(u8"qtdoppelkopf.testing.文字.temp.file");
     std::vector<std::shared_ptr<Backend::Entry>> entries;
 
     entries.push_back(std::make_shared<Backend::PlayersSet>(
-                          std::vector<std::wstring>
+                          std::vector<std::string>
                           {
-                              L"A",
-                              L"B",
-                              L"C",
-                              L"D",
-                              L"E",
-                              L"F",
-                              L"文字",
+                              u8"A",
+                              u8"B",
+                              u8"C",
+                              u8"D",
+                              u8"E",
+                              u8"F",
+                              u8"文字",
                           },
-                          L"C",
+                          u8"C",
                           std::set<unsigned int> { 2, 4 },
-                          L"Z"));
+                          u8"Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
-                          std::vector<std::pair<std::wstring, int>>
+                          std::vector<std::pair<std::string, int>>
                           {
-                              std::make_pair<std::wstring, int>(L"A", 1),
-                              std::make_pair<std::wstring, int>(L"B", 1),
-                              std::make_pair<std::wstring, int>(L"C", -1),
-                              std::make_pair<std::wstring, int>(L"D", -1)
+                              std::make_pair<std::string, int>(u8"A", 1),
+                              std::make_pair<std::string, int>(u8"B", 1),
+                              std::make_pair<std::string, int>(u8"C", -1),
+                              std::make_pair<std::string, int>(u8"D", -1)
                           },
                           Backend::NumberOfEvents(2),
                           Backend::Players(7)));
     entries.push_back(std::make_shared<Backend::MandatorySoloTrigger>());
 
     Backend::DiskRepository repo;
-    std::wstring id = L"someId";
+    std::string id = tempFile.u8string();
 
     // Act
     repo.Save(entries, id);
@@ -69,19 +69,19 @@ TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame)
     ASSERT_EQ(3, entries.size());
 
     auto playersSet = std::static_pointer_cast<Backend::PlayersSet>(result[0]);
-    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::wstring(L"A"), std::wstring(L"B"), std::wstring(L"C"), std::wstring(L"D"), std::wstring(L"E"), std::wstring(L"F"), std::wstring(L"文字")));
-    EXPECT_STREQ(L"C", playersSet->Dealer().c_str());
+    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::string(u8"A"), std::string(u8"B"), std::string(u8"C"), std::string(u8"D"), std::string(u8"E"), std::string(u8"F"), std::string(u8"文字")));
+    EXPECT_STREQ(u8"C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
-    EXPECT_STREQ(L"Z", playersSet->PreviousDealer().c_str());
+    EXPECT_STREQ(u8"Z", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());
     EXPECT_EQ(2, deal->NumberOfEvents().Value());
     auto changes = deal->Changes();
-    EXPECT_STREQ(L"A", changes[0].first.c_str());
-    EXPECT_STREQ(L"B", changes[1].first.c_str());
-    EXPECT_STREQ(L"C", changes[2].first.c_str());
-    EXPECT_STREQ(L"D", changes[3].first.c_str());
+    EXPECT_STREQ(u8"A", changes[0].first.c_str());
+    EXPECT_STREQ(u8"B", changes[1].first.c_str());
+    EXPECT_STREQ(u8"C", changes[2].first.c_str());
+    EXPECT_STREQ(u8"D", changes[3].first.c_str());
     EXPECT_EQ( 1, changes[0].second);
     EXPECT_EQ( 1, changes[1].second);
     EXPECT_EQ(-1, changes[2].second);
@@ -89,6 +89,11 @@ TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame)
 
     auto mandatorySoloTrigger = result[2];
     EXPECT_EQ(Backend::Entry::Kind::MandatorySoloTrigger, mandatorySoloTrigger->Kind());
+
+    if(std::filesystem::exists(tempFile) && !std::filesystem::is_directory(tempFile))
+    {
+        std::filesystem::remove(tempFile);
+    }
 }
 #endif // _USE_LONG_TEST
 

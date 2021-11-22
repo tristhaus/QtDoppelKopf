@@ -33,7 +33,7 @@ namespace Backend
     class Deal final : public Entry
     {
     private:
-        std::vector<std::pair<std::wstring, int>> changes;
+        std::vector<std::pair<std::string, int>> changes;
         NumberOfEvents numberOfEvents;
         Players players;
 
@@ -44,7 +44,7 @@ namespace Backend
          * \param numberOfEvents The number of multiplier-relevant events from this deal.
          * \param players The number of players present at this deal.
          */
-        Deal(std::vector<std::pair<std::wstring, int>> changes,
+        Deal(std::vector<std::pair<std::string, int>> changes,
              NumberOfEvents numberOfEvents,
              Players presentPlayers);
 
@@ -57,7 +57,7 @@ namespace Backend
          * \brief Gets the unmultiplied score changes from this deal.
          * \return The unmultiplied score changes from this deal.
          */
-        std::vector<std::pair<std::wstring, int>> Changes() const;
+        std::vector<std::pair<std::string, int>> Changes() const;
 
         /*!
          * \brief Gets the number of multiplier-relevant events from this deal.

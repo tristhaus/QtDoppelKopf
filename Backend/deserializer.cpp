@@ -21,25 +21,25 @@
 #include "rapidjson/ostreamwrapper.h"
 #include "rapidjson/istreamwrapper.h"
 
-#define DATAVERSION L"2"
+#define DATAVERSION u8"2"
 
 Backend::DeSerializer::DeSerializer()
 {
 }
 
-void Backend::DeSerializer::Serialize(std::vector<std::shared_ptr<Backend::Entry>> entries, std::wostream & wos)
+void Backend::DeSerializer::Serialize(std::vector<std::shared_ptr<Backend::Entry>> entries, std::ostream & os)
 {
-    rapidjson::GenericDocument<rapidjson::UTF16<wchar_t>> document;
+    rapidjson::GenericDocument<rapidjson::UTF8<char>> document;
     document.SetObject();
     auto & allocator = document.GetAllocator();
 
-    rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value;
+    rapidjson::GenericValue<rapidjson::UTF8<char>> key, value;
 
-    key.SetString(KeyDataVersion, static_cast<rapidjson::SizeType>(wcslen(KeyDataVersion)), allocator);
+    key.SetString(KeyDataVersion, static_cast<rapidjson::SizeType>(strlen(KeyDataVersion)), allocator);
     value.SetString(DATAVERSION);
     document.AddMember(key, value, allocator);
 
-    rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> array;
+    rapidjson::GenericValue<rapidjson::UTF8<char>> array;
     array.SetArray();
 
     for (auto & entry : entries)
@@ -49,35 +49,35 @@ void Backend::DeSerializer::Serialize(std::vector<std::shared_ptr<Backend::Entry
         array.PushBack(value, allocator);
     }
 
-    key.SetString(KeyData, static_cast<rapidjson::SizeType>(wcslen(KeyData)), allocator);
+    key.SetString(KeyData, static_cast<rapidjson::SizeType>(strlen(KeyData)), allocator);
     document.AddMember(key, array, allocator);
 
-    rapidjson::WOStreamWrapper osw(wos);
+    rapidjson::OStreamWrapper osw(os);
 
-    rapidjson::Writer<rapidjson::WOStreamWrapper, rapidjson::UTF16<wchar_t>, rapidjson::ASCII<char>> writer(osw);
+    rapidjson::Writer<rapidjson::OStreamWrapper, rapidjson::UTF8<char>, rapidjson::ASCII<char>> writer(osw);
     document.Accept(writer);
 }
 
-std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(std::wistream& wis)
+std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(std::istream & is)
 {
-    rapidjson::WIStreamWrapper wisw(wis);
+    rapidjson::IStreamWrapper isw(is);
 
-    rapidjson::GenericDocument<rapidjson::UTF16<wchar_t>> document;
-    document.ParseStream(wisw);
+    rapidjson::GenericDocument<rapidjson::UTF8<char>> document;
+    document.ParseStream(isw);
 
     if(!(document.IsObject()))
     {
-        throw std::exception("did not parse to object");
+        throw std::exception(u8"did not parse to object");
     }
 
-    if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::wcscmp(document[KeyDataVersion].GetString(), DATAVERSION) == 0))
+    if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::strcmp(document[KeyDataVersion].GetString(), DATAVERSION) == 0))
     {
-        throw std::exception("no valid data version found");
+        throw std::exception(u8"no valid data version found");
     }
 
     if(!(document.HasMember(KeyData) && document[KeyData].IsArray()))
     {
-        throw std::exception("no valid data member found");
+        throw std::exception(u8"no valid data member found");
     }
 
     std::vector<std::shared_ptr<Backend::Entry>> entries;
@@ -90,37 +90,37 @@ std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(
     {
         if(!datasIt->IsObject())
         {
-            throw std::exception("entry is not object");
+            throw std::exception(u8"entry is not object");
         }
 
         if(!datasIt->HasMember(KeyKind))
         {
-            throw std::exception("missing kind in entry");
+            throw std::exception(u8"missing kind in entry");
         }
 
         if(!(*datasIt)[KeyKind].IsString())
         {
-            throw std::exception("kind is not string");
+            throw std::exception(u8"kind is not string");
         }
 
         auto kind = (*datasIt)[KeyKind].GetString();
-        if(std::wcscmp(kind, ValuePlayersSet) == 0)
+        if(std::strcmp(kind, ValuePlayersSet) == 0)
         {
             auto entry = this->DeserializePlayersSet(datasIt);
             entries.push_back(entry);
         }
-        else if(std::wcscmp(kind, ValueDeal) == 0)
+        else if(std::strcmp(kind, ValueDeal) == 0)
         {
             auto entry = this->DeserializeDeal(datasIt);
             entries.push_back(entry);
         }
-        else if(std::wcscmp(kind, ValueMandatorySoloTrigger) == 0)
+        else if(std::strcmp(kind, ValueMandatorySoloTrigger) == 0)
         {
             entries.push_back(std::make_shared<MandatorySoloTrigger>());
         }
         else
         {
-            throw std::exception("unknown kind value in data");
+            throw std::exception((std::string(u8"unknown kind value in data: \"") + kind + std::string("\"")).c_str());
         }
     }
 
@@ -128,7 +128,7 @@ std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(
 }
 
 void Backend::DeSerializer::SerializeEntry(std::shared_ptr<Entry> entry,
-                                           rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+                                           rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                                            rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
 {
     switch(entry->Kind())
@@ -143,36 +143,36 @@ void Backend::DeSerializer::SerializeEntry(std::shared_ptr<Entry> entry,
         this->SerializeMandatorySoloTrigger(serializedEntry, allocator);
         break;
     default:
-        throw std::exception("value of Entry::Kind not handled");
+        throw std::exception(u8"value of Entry::Kind not handled");
     }
 }
 
 void Backend::DeSerializer::SerializePlayersSet(std::shared_ptr<PlayersSet> playersSet,
-                                                rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+                                                rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                                                 rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
 {
     serializedEntry.SetObject();
 
-    rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value, helper;
+    rapidjson::GenericValue<rapidjson::UTF8<char>> key, value, helper;
 
-    key.SetString(KeyKind, static_cast<rapidjson::SizeType>(wcslen(KeyKind)), allocator);
-    value.SetString(ValuePlayersSet, static_cast<rapidjson::SizeType>(wcslen(ValuePlayersSet)), allocator);
+    key.SetString(KeyKind, static_cast<rapidjson::SizeType>(strlen(KeyKind)), allocator);
+    value.SetString(ValuePlayersSet, static_cast<rapidjson::SizeType>(strlen(ValuePlayersSet)), allocator);
     serializedEntry.AddMember(key, value, allocator);
 
-    key.SetString(KeyPlayerNames, static_cast<rapidjson::SizeType>(wcslen(KeyPlayerNames)), allocator);
+    key.SetString(KeyPlayerNames, static_cast<rapidjson::SizeType>(strlen(KeyPlayerNames)), allocator);
     value.SetArray();
     for (auto & playerName : playersSet->Players())
     {
-        helper.SetString(playerName.c_str(), static_cast<rapidjson::SizeType>(wcslen(playerName.c_str())), allocator);
+        helper.SetString(playerName.c_str(), static_cast<rapidjson::SizeType>(strlen(playerName.c_str())), allocator);
         value.PushBack(helper, allocator);
     }
     serializedEntry.AddMember(key, value, allocator);
 
-    key.SetString(KeyDealerName, static_cast<rapidjson::SizeType>(wcslen(KeyDealerName)), allocator);
-    value.SetString(playersSet->Dealer().c_str(), static_cast<rapidjson::SizeType>(wcslen(playersSet->Dealer().c_str())), allocator);
+    key.SetString(KeyDealerName, static_cast<rapidjson::SizeType>(strlen(KeyDealerName)), allocator);
+    value.SetString(playersSet->Dealer().c_str(), static_cast<rapidjson::SizeType>(strlen(playersSet->Dealer().c_str())), allocator);
     serializedEntry.AddMember(key, value, allocator);
 
-    key.SetString(KeySitOutScheme, static_cast<rapidjson::SizeType>(wcslen(KeySitOutScheme)), allocator);
+    key.SetString(KeySitOutScheme, static_cast<rapidjson::SizeType>(strlen(KeySitOutScheme)), allocator);
     value.SetArray();
     for (auto & sitOutItem : playersSet->SitOutScheme())
     {
@@ -182,42 +182,42 @@ void Backend::DeSerializer::SerializePlayersSet(std::shared_ptr<PlayersSet> play
 
     serializedEntry.AddMember(key, value, allocator);
 
-    key.SetString(KeyPreviousDealerName, static_cast<rapidjson::SizeType>(wcslen(KeyPreviousDealerName)), allocator);
-    value.SetString(playersSet->PreviousDealer().c_str(), static_cast<rapidjson::SizeType>(wcslen(playersSet->PreviousDealer().c_str())), allocator);
+    key.SetString(KeyPreviousDealerName, static_cast<rapidjson::SizeType>(strlen(KeyPreviousDealerName)), allocator);
+    value.SetString(playersSet->PreviousDealer().c_str(), static_cast<rapidjson::SizeType>(strlen(playersSet->PreviousDealer().c_str())), allocator);
     serializedEntry.AddMember(key, value, allocator);
 }
 
 void Backend::DeSerializer::SerializeDeal(std::shared_ptr<Deal> deal,
-                                          rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+                                          rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                                           rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
 {
     serializedEntry.SetObject();
 
-    rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value, changeObject, changeKey, changeValue;
+    rapidjson::GenericValue<rapidjson::UTF8<char>> key, value, changeObject, changeKey, changeValue;
 
-    key.SetString(KeyKind, static_cast<rapidjson::SizeType>(wcslen(KeyKind)), allocator);
-    value.SetString(ValueDeal, static_cast<rapidjson::SizeType>(wcslen(ValueDeal)), allocator);
+    key.SetString(KeyKind, static_cast<rapidjson::SizeType>(strlen(KeyKind)), allocator);
+    value.SetString(ValueDeal, static_cast<rapidjson::SizeType>(strlen(ValueDeal)), allocator);
     serializedEntry.AddMember(key, value, allocator);
 
-    key.SetString(KeyPlayers, static_cast<rapidjson::SizeType>(wcslen(KeyPlayers)), allocator);
+    key.SetString(KeyPlayers, static_cast<rapidjson::SizeType>(strlen(KeyPlayers)), allocator);
     value.SetInt(deal->Players().Value());
     serializedEntry.AddMember(key, value, allocator);
 
-    key.SetString(KeyNumberOfEvents, static_cast<rapidjson::SizeType>(wcslen(KeyNumberOfEvents)), allocator);
+    key.SetString(KeyNumberOfEvents, static_cast<rapidjson::SizeType>(strlen(KeyNumberOfEvents)), allocator);
     value.SetInt(deal->NumberOfEvents().Value());
     serializedEntry.AddMember(key, value, allocator);
 
-    key.SetString(KeyChanges, static_cast<rapidjson::SizeType>(wcslen(KeyChanges)), allocator);
+    key.SetString(KeyChanges, static_cast<rapidjson::SizeType>(strlen(KeyChanges)), allocator);
     value.SetArray();
     for (auto & change : deal->Changes())
     {
         changeObject.SetObject();
 
-        changeKey.SetString(KeyChangeName, static_cast<rapidjson::SizeType>(wcslen(KeyChangeName)), allocator);
-        changeValue.SetString(change.first.c_str(), static_cast<rapidjson::SizeType>(wcslen(change.first.c_str())), allocator);
+        changeKey.SetString(KeyChangeName, static_cast<rapidjson::SizeType>(strlen(KeyChangeName)), allocator);
+        changeValue.SetString(change.first.c_str(), static_cast<rapidjson::SizeType>(strlen(change.first.c_str())), allocator);
         changeObject.AddMember(changeKey, changeValue, allocator);
 
-        changeKey.SetString(KeyChangeDiff, static_cast<rapidjson::SizeType>(wcslen(KeyChangeDiff)), allocator);
+        changeKey.SetString(KeyChangeDiff, static_cast<rapidjson::SizeType>(strlen(KeyChangeDiff)), allocator);
         changeValue.SetInt(change.second);
         changeObject.AddMember(changeKey, changeValue, allocator);
 
@@ -227,41 +227,41 @@ void Backend::DeSerializer::SerializeDeal(std::shared_ptr<Deal> deal,
     serializedEntry.AddMember(key, value, allocator);
 }
 
-void Backend::DeSerializer::SerializeMandatorySoloTrigger(rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> & serializedEntry,
+void Backend::DeSerializer::SerializeMandatorySoloTrigger(rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
                                                           rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator)
 {
     serializedEntry.SetObject();
 
-    rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> key, value;
+    rapidjson::GenericValue<rapidjson::UTF8<char>> key, value;
 
-    key.SetString(KeyKind, static_cast<rapidjson::SizeType>(wcslen(KeyKind)), allocator);
-    value.SetString(ValueMandatorySoloTrigger, static_cast<rapidjson::SizeType>(wcslen(ValueMandatorySoloTrigger)), allocator);
+    key.SetString(KeyKind, static_cast<rapidjson::SizeType>(strlen(KeyKind)), allocator);
+    value.SetString(ValueMandatorySoloTrigger, static_cast<rapidjson::SizeType>(strlen(ValueMandatorySoloTrigger)), allocator);
     serializedEntry.AddMember(key, value, allocator);
 }
 
-std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> * data)
+std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(rapidjson::GenericValue<rapidjson::UTF8<char>> * data)
 {
     if(!data->HasMember(KeyPlayerNames))
     {
-        throw std::exception("no member playerNames");
+        throw std::exception(u8"no member playerNames");
     }
 
     if(!(*data)[KeyPlayerNames].IsArray())
     {
-        throw std::exception("playerNames is not array");
+        throw std::exception(u8"playerNames is not array");
     }
 
     auto & playerNames = (*data)[KeyPlayerNames];
     auto playerNamesIt = playerNames.Begin();
     auto playerNamesEnd = playerNames.End();
 
-    std::vector<std::wstring> players;
+    std::vector<std::string> players;
 
     for(; playerNamesIt != playerNamesEnd; ++playerNamesIt)
     {
         if(!playerNamesIt->IsString())
         {
-            throw std::exception("player name is not a string");
+            throw std::exception(u8"player name is not a string");
         }
 
         players.push_back(playerNamesIt->GetString());
@@ -269,24 +269,24 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(rap
 
     if(!data->HasMember(KeyDealerName))
     {
-        throw std::exception("no member dealerName");
+        throw std::exception(u8"no member dealerName");
     }
 
     if(!(*data)[KeyDealerName].IsString())
     {
-        throw std::exception("dealerName is not string");
+        throw std::exception(u8"dealerName is not string");
     }
 
     auto dealer = (*data)[KeyDealerName].GetString();
 
     if(!data->HasMember(KeySitOutScheme))
     {
-        throw std::exception("no member sitOutScheme");
+        throw std::exception(u8"no member sitOutScheme");
     }
 
     if(!(*data)[KeySitOutScheme].IsArray())
     {
-        throw std::exception("sitOutScheme is not array");
+        throw std::exception(u8"sitOutScheme is not array");
     }
 
     auto & scheme = (*data)[KeySitOutScheme];
@@ -299,7 +299,7 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(rap
     {
         if(!schemeIt->IsInt())
         {
-            throw std::exception("sit out scheme item is not an int");
+            throw std::exception(u8"sit out scheme item is not an int");
         }
 
         sitOutScheme.emplace(schemeIt->GetInt());
@@ -307,12 +307,12 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(rap
 
     if(!data->HasMember(KeyPreviousDealerName))
     {
-        throw std::exception("no member previousDealerName");
+        throw std::exception(u8"no member previousDealerName");
     }
 
     if(!(*data)[KeyPreviousDealerName].IsString())
     {
-        throw std::exception("previousDealerName is not string");
+        throw std::exception(u8"previousDealerName is not string");
     }
 
     auto previousDealer = (*data)[KeyPreviousDealerName].GetString();
@@ -320,80 +320,80 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(rap
     return std::make_shared<PlayersSet>(players, dealer, sitOutScheme, previousDealer);
 }
 
-std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializeDeal(rapidjson::GenericValue<rapidjson::UTF16<wchar_t>> * data)
+std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializeDeal(rapidjson::GenericValue<rapidjson::UTF8<char>> * data)
 {
     if(!data->HasMember(KeyPlayers))
     {
-        throw std::exception("no member players");
+        throw std::exception(u8"no member players");
     }
 
     if(!(*data)[KeyPlayers].IsInt())
     {
-        throw std::exception("players is not int");
+        throw std::exception(u8"players is not int");
     }
 
     unsigned int players = (*data)[KeyPlayers].GetInt();
 
     if(!data->HasMember(KeyNumberOfEvents))
     {
-        throw std::exception("no member numberOfEvents");
+        throw std::exception(u8"no member numberOfEvents");
     }
 
     if(!(*data)[KeyNumberOfEvents].IsInt())
     {
-        throw std::exception("numberOfEvents is not int");
+        throw std::exception(u8"numberOfEvents is not int");
     }
 
     unsigned int numberOfEvents = (*data)[KeyNumberOfEvents].GetInt();
 
     if(!data->HasMember(KeyChanges))
     {
-        throw std::exception("no member changes");
+        throw std::exception(u8"no member changes");
     }
 
     if(!(*data)[KeyChanges].IsArray())
     {
-        throw std::exception("changes is not array");
+        throw std::exception(u8"changes is not array");
     }
 
     auto & list = (*data)[KeyChanges];
     auto changesIt = list.Begin();
     auto changesEnd = list.End();
 
-    std::vector<std::pair<std::wstring, int>> changes;
+    std::vector<std::pair<std::string, int>> changes;
 
     for(; changesIt != changesEnd; ++changesIt)
     {
         if(!changesIt->IsObject())
         {
-            throw std::exception("changes item is not an object");
+            throw std::exception(u8"changes item is not an object");
         }
 
         if(!changesIt->HasMember(KeyChangeName))
         {
-            throw std::exception("changes item does not have a name member");
+            throw std::exception(u8"changes item does not have a name member");
         }
 
         if(!(*changesIt)[KeyChangeName].IsString())
         {
-            throw std::exception("change member name is not a string");
+            throw std::exception(u8"change member name is not a string");
         }
 
-        std::wstring name = (*changesIt)[KeyChangeName].GetString();
+        std::string name = (*changesIt)[KeyChangeName].GetString();
 
         if(!changesIt->HasMember(KeyChangeDiff))
         {
-            throw std::exception("changes item does not have a diff member");
+            throw std::exception(u8"changes item does not have a diff member");
         }
 
         if(!(*changesIt)[KeyChangeDiff].IsInt())
         {
-            throw std::exception("change member diff is not an int");
+            throw std::exception(u8"change member diff is not an int");
         }
 
         int diff = (*changesIt)[KeyChangeDiff].GetInt();
 
-        changes.emplace_back(std::pair<std::wstring, int>(name, diff));
+        changes.emplace_back(std::pair<std::string, int>(name, diff));
     }
 
     return std::make_shared<Deal>(changes, NumberOfEvents(numberOfEvents), Players(players));

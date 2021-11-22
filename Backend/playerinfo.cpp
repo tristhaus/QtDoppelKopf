@@ -23,7 +23,7 @@
 
 namespace Backend
 {
-    PlayerInfo::PlayerInfo(std::wstring name,
+    PlayerInfo::PlayerInfo(std::string name,
                            std::function<unsigned short(unsigned int)> multiplierAccessor,
                            std::function<int()> maxCurrentScoreAccessor)
         : name(name),
@@ -35,7 +35,7 @@ namespace Backend
     {
     }
 
-    std::wstring PlayerInfo::Name() const
+    std::string PlayerInfo::Name() const
     {
         return this->name;
     }
@@ -70,9 +70,9 @@ namespace Backend
         return this->multipliedResults.back();
     }
 
-    std::wstring PlayerInfo::InputInLastDeal() const
+    std::string PlayerInfo::InputInLastDeal() const
     {
-        return !this->dealInput.empty() ? this->dealInput.back() : std::wstring(L"");
+        return !this->dealInput.empty() ? this->dealInput.back() : std::string(u8"");
     }
 
     unsigned int PlayerInfo::CashCents() const

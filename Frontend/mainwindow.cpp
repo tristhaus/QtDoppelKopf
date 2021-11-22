@@ -109,7 +109,7 @@ void MainWindow::UpdateDisplay()
     {
         auto playerInfo = playerInfos[index];
 
-        QString name = QString::fromStdWString(playerInfo->Name());
+        QString name = QString::fromUtf8(playerInfo->Name());
         ui->names[index]->setText(name);
         if(dealer && playerInfo->Name().compare(dealer->Name()) == 0)
         {
@@ -126,9 +126,9 @@ void MainWindow::UpdateDisplay()
         ui->actuals[index]->setEnabled(playerInfo->IsPlaying());
         ui->actuals[index]->clear();
 
-        ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString("%1").arg(playerInfo->ScoreInLastDeal()) : QString(""));
+        ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString(u8"%1").arg(playerInfo->ScoreInLastDeal()) : QString(u8""));
 
-        ui->cashs[index]->setText(QString("%1,%2").arg(playerInfo->CashCents()/100).arg(playerInfo->CashCents()%100, 2, 10, QLatin1Char('0')));
+        ui->cashs[index]->setText(QString(u8"%1,%2").arg(playerInfo->CashCents()/100).arg(playerInfo->CashCents()%100, 2, 10, QLatin1Char('0')));
 
         ui->numberWons[index]->setText(QString().setNum(playerInfo->NumberGamesWon()));
         ui->numberLosts[index]->setText(QString().setNum(playerInfo->NumberGamesLost()));
@@ -140,7 +140,7 @@ void MainWindow::UpdateDisplay()
         ui->maxSingleLosss[index]->setText(QString().setNum(playerInfo->MaxSingleLoss()));
         ui->unmultipliedScores[index]->setText(QString().setNum(playerInfo->UnmultipliedScore()));
 
-        ui->playerHistorySelectionLabels[index]->setText(QString::asprintf("<font color=\"#%02x%02x%02x\">■</font> %s",
+        ui->playerHistorySelectionLabels[index]->setText(QString::asprintf(u8"<font color=\"#%02x%02x%02x\">■</font> %s",
                                                                            this->htmlColors[index].red(),
                                                                            this->htmlColors[index].green(),
                                                                            this->htmlColors[index].blue(),
@@ -149,7 +149,7 @@ void MainWindow::UpdateDisplay()
 
     ui->spinBox->setValue(0);
 
-    ui->totalCash->setText(QString("%1,%2 (inkl. %3,%4 pro Abwesender)")
+    ui->totalCash->setText(QString(u8"%1,%2 (inkl. %3,%4 pro Abwesender)")
                            .arg(gameInfo.TotalCashCents()/100)
                            .arg(gameInfo.TotalCashCents()%100, 2, 10, QLatin1Char('0'))
                            .arg(gameInfo.AbsentPlayerCashCents()/100)
@@ -183,7 +183,7 @@ void MainWindow::UpdateDisplay()
     }
 
     default:
-        throw std::exception("value of Backend::GameInfo::PoppableEntry not handled");
+        throw std::exception(u8"value of Backend::GameInfo::PoppableEntry not handled");
     }
 
     ui->saveButton->setEnabled(this->gameInfo.HasPlayersSet());
@@ -207,10 +207,10 @@ void MainWindow::ShowPlayerSelection()
 
         for(auto playerInfosIt = playerInfos.begin(); playerInfosIt != playerInfos.end(); ++playerInfosIt)
         {
-            currentPlayers.emplace_back(std::pair<QString, bool>(QString::fromStdWString((*playerInfosIt)->Name()), (*playerInfosIt)->IsPresent()));
+            currentPlayers.emplace_back(std::pair<QString, bool>(QString::fromUtf8((*playerInfosIt)->Name()), (*playerInfosIt)->IsPresent()));
         }
 
-        std::wstring dealerName = gameInfo.Dealer()->Name();
+        std::string dealerName = gameInfo.Dealer()->Name();
         auto dealerIt = std::find_if(playerInfos.cbegin(), playerInfos.cend(), [&](std::shared_ptr<Backend::PlayerInfo> left){ return left->Name().compare(dealerName) == 0; });
         this->dealerIndex = dealerIt - playerInfos.cbegin();
 
@@ -238,14 +238,15 @@ void MainWindow::ShowPlayerSelection()
     auto result = this->playerSelection->GetResults();
     this->playerSelection.reset();
 
-    std::vector<std::wstring> players;
+    std::vector<std::string> players;
 
     std::transform(std::get<0>(result).begin(),
                    std::get<0>(result).end(),
                    std::back_inserter(players),
-                   [](QString qs) { return qs.toStdWString(); });
+                   [](QString qs) { auto bytes = qs.toUtf8(); return std::string(bytes.constData(), bytes.length()); });
 
-    auto dealer = std::get<1>(result).toStdWString();
+    auto dealerBytes = std::get<1>(result).toUtf8();
+    std::string dealer(dealerBytes.constData(), dealerBytes.length());
 
     auto sitOutScheme = std::get<2>(result);
 
@@ -256,53 +257,49 @@ void MainWindow::ShowPlayerSelection()
 
 std::vector<std::pair<QString, bool>> MainWindow::GetDefaultPlayers()
 {
-#define PASTE(x, y) x##y
-#define MAKEWIDE(x) PASTE(L,x)
     return std::vector<std::pair<QString, bool>>
     {
 #ifdef MY_PLAYER_A
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_A)), true),
+        std::pair<QString, bool>(QString::fromUtf8(MY_PLAYER_A), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler A"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler A"), true),
 #endif
 #ifdef MY_PLAYER_B
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_B)), true),
+        std::pair<QString, bool>(QString::fromUtf8((MY_PLAYER_B)), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler B"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler B"), true),
 #endif
 #ifdef MY_PLAYER_C
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_C)), true),
+        std::pair<QString, bool>(QString::fromUtf8((MY_PLAYER_C)), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler C"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler C"), true),
 #endif
 #ifdef MY_PLAYER_D
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_D)), true),
+        std::pair<QString, bool>(QString::fromUtf8((MY_PLAYER_D)), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler D"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler D"), true),
 #endif
 #ifdef MY_PLAYER_E
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_E)), true),
+        std::pair<QString, bool>(QString::fromUtf8((MY_PLAYER_E)), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler E"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler E"), true),
 #endif
 #ifdef MY_PLAYER_F
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_F)), true),
+        std::pair<QString, bool>(QString::fromUtf8((MY_PLAYER_F)), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler F"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler F"), true),
 #endif
 #ifdef MY_PLAYER_G
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_G)), true),
+        std::pair<QString, bool>(QString::fromUtf8((MY_PLAYER_G)), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler G"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler G"), true),
 #endif
 #ifdef MY_PLAYER_H
-        std::pair<QString, bool>(QString::fromStdWString(MAKEWIDE(MY_PLAYER_H)), true),
+        std::pair<QString, bool>(QString::fromUtf8((MY_PLAYER_H)), true),
 #else
-        std::pair<QString, bool>(QString::fromStdWString(L"Spieler H"), true),
+        std::pair<QString, bool>(QString::fromUtf8(u8"Spieler H"), true),
 #endif
     };
-#undef PASTE
-#undef MAKEWIDE
 }
 
 void MainWindow::RedrawPlayerHistory()
@@ -322,7 +319,7 @@ void MainWindow::RedrawPlayerHistory()
     {
         if(ui->playerHistorySelectionCheckboxes[i]->isChecked())
         {
-            auto name = QString::fromStdWString(players[i]->Name());
+            auto name = QString::fromUtf8(players[i]->Name());
             auto data = map[name];
 
             QVector<double> dataX(data.first.begin(), data.first.end());
@@ -359,7 +356,7 @@ std::map<QString, std::pair<std::vector<int>, std::vector<int>>> MainWindow::Get
 
     for (auto & player : players)
     {
-        map[QString::fromStdWString(player->Name())] = std::make_pair(x, player->ScoreHistory());
+        map[QString::fromUtf8(player->Name())] = std::make_pair(x, player->ScoreHistory());
     }
 
     return map;
@@ -367,9 +364,9 @@ std::map<QString, std::pair<std::vector<int>, std::vector<int>>> MainWindow::Get
 
 void MainWindow::ShowAboutDialog()
 {
-    QString messageBoxTitle = QString::fromUtf8("Über QtDoppelKopf");
+    QString messageBoxTitle = QString::fromUtf8(u8"Über QtDoppelKopf");
 
-    QString messageBoxText = QString::fromUtf8("Ein Programm zum Nachhalten des Spielstandes beim Doppelkopf nach den Hausregeln von Freunden.<br /><br />QtDoppelKopf Copyright (C) 2021 und später, tristhaus<br />Für dieses Programm besteht KEINERLEI GARANTIE.<br />Dies ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen. Siehe beigefügte LICENSE Datei für Details.<br /><br />Graphische Nutzeroberfläche mit <a href=\"https://doc.qt.io/\">Qt</a> gebaut.<br />Icon (Farbsymbole und Buchstaben) von tristhaus.<br /><a href=\"https://www.qcustomplot.com/\">QCustomPlot</a> Bibliothek (Version 2.1.0) von Emanuel Eichhammer benutzt unter der <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GPL v3</a> Lizenz.<br />JSON De/Serialisierung via <a href=\"https://rapidjson.org/\">rapidjson</a> bereitgestellt von THL A29 Limited, eine Tencent Firma, und Milo Yip benutzt unter der <a href=\"http://opensource.org/licenses/MIT\">MIT Lizenz</a>.");
+    QString messageBoxText = QString::fromUtf8(u8"Ein Programm zum Nachhalten des Spielstandes beim Doppelkopf nach den Hausregeln von Freunden.<br /><br />QtDoppelKopf Copyright (C) 2021 und später, tristhaus<br />Für dieses Programm besteht KEINERLEI GARANTIE.<br />Dies ist freie Software, die Sie unter bestimmten Bedingungen weitergeben dürfen. Siehe beigefügte LICENSE Datei für Details.<br /><br />Graphische Nutzeroberfläche mit <a href=\"https://doc.qt.io/\">Qt</a> gebaut.<br />Icon (Farbsymbole und Buchstaben) von tristhaus.<br /><a href=\"https://www.qcustomplot.com/\">QCustomPlot</a> Bibliothek (Version 2.1.0) von Emanuel Eichhammer benutzt unter der <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GPL v3</a> Lizenz.<br />JSON De/Serialisierung via <a href=\"https://rapidjson.org/\">rapidjson</a> bereitgestellt von THL A29 Limited, eine Tencent Firma, und Milo Yip benutzt unter der <a href=\"http://opensource.org/licenses/MIT\">MIT Lizenz</a>.");
 
     this->aboutMessageBox = std::make_unique<QMessageBox>(
                     QMessageBox::Icon::NoIcon,
@@ -390,23 +387,23 @@ void MainWindow::DetermineAndSetMultiplierLabels()
 
     if(this->gameInfo.MandatorySolo() == Backend::GameInfo::MandatorySolo::Active)
     {
-        ui->currentGameMultiplier->setText(QString("Pflichtsolorunde"));
+        ui->currentGameMultiplier->setText(QString(u8"Pflichtsolorunde"));
     }
     else if(preview[2] > 0)
     {
-        ui->currentGameMultiplier->setText(QString("Dreifachbock"));
+        ui->currentGameMultiplier->setText(QString(u8"Dreifachbock"));
     }
     else if(preview[1] > 0)
     {
-        ui->currentGameMultiplier->setText(QString("Doppelbock"));
+        ui->currentGameMultiplier->setText(QString(u8"Doppelbock"));
     }
     else if(preview[0] > 0)
     {
-        ui->currentGameMultiplier->setText(QString("Einfachbock"));
+        ui->currentGameMultiplier->setText(QString(u8"Einfachbock"));
     }
     else
     {
-        ui->currentGameMultiplier->setText(QString("Kein Bock"));
+        ui->currentGameMultiplier->setText(QString(u8"Kein Bock"));
     }
 
     ui->tripleMultiplier->setText(QString().number(preview[2]));
@@ -424,7 +421,7 @@ void MainWindow::OnLoadGamePressed()
     Resetter resetter([&](){ this->presetFilename.clear(); });
 
     auto folder = this->GetFolderForFileDialog();
-    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getOpenFileName(this, "", folder, FileFilter, nullptr, QFileDialog::Options());
+    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getOpenFileName(this, u8"", folder, FileFilter, nullptr, QFileDialog::Options());
 
     if(fileName.isEmpty())
     {
@@ -433,13 +430,15 @@ void MainWindow::OnLoadGamePressed()
 
     try
     {
-        this->gameInfo.LoadFrom(fileName.toStdWString());
+        auto filenameBytes = fileName.toUtf8();
+        std::string filename(filenameBytes.constData(), filenameBytes.length());
+        this->gameInfo.LoadFrom(filename);
     }
     catch(std::exception & exception)
     {
-        QString messageBoxTitle = QString::fromUtf8("Fehler");
+        QString messageBoxTitle = QString::fromUtf8(u8"Fehler");
 
-        QString messageBoxTextTemplate = QString::fromUtf8("Beim Ladeversuch aufgetretener Fehler: %1");
+        QString messageBoxTextTemplate = QString::fromUtf8(u8"Beim Ladeversuch aufgetretener Fehler: %1");
         QString errorMesssage = QString::fromUtf8(exception.what());
         QString messageBoxText = messageBoxTextTemplate.arg(errorMesssage);
 
@@ -461,7 +460,7 @@ void MainWindow::OnSaveGamePressed()
     Resetter resetter([&](){ this->presetFilename.clear(); });
 
     auto folder = this->GetFolderForFileDialog();
-    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getSaveFileName(this, "", folder, this->FileFilter, nullptr, QFileDialog::Options());
+    QString fileName = !this->presetFilename.isEmpty() ? this->presetFilename : QFileDialog::getSaveFileName(this, u8"", folder, this->FileFilter, nullptr, QFileDialog::Options());
 
     if(fileName.isEmpty())
     {
@@ -470,13 +469,15 @@ void MainWindow::OnSaveGamePressed()
 
     try
     {
-        this->gameInfo.SaveTo(fileName.toStdWString());
+        auto filenameBytes = fileName.toUtf8();
+        std::string filename(filenameBytes.constData(), filenameBytes.length());
+        this->gameInfo.SaveTo(filename);
     }
     catch(std::exception & exception)
     {
-        QString messageBoxTitle = QString::fromUtf8("Fehler");
+        QString messageBoxTitle = QString::fromUtf8(u8"Fehler");
 
-        QString messageBoxTextTemplate = QString::fromUtf8("Beim Speicherversuch aufgetretener Fehler: %1");
+        QString messageBoxTextTemplate = QString::fromUtf8(u8"Beim Speicherversuch aufgetretener Fehler: %1");
         QString errorMesssage = QString::fromUtf8(exception.what());
         QString messageBoxText = messageBoxTextTemplate.arg(errorMesssage);
 
@@ -506,7 +507,7 @@ void MainWindow::OnMandatorySoloPressed()
 
 void MainWindow::OnCommitPressed()
 {
-    std::vector<std::pair<std::wstring, int>> changes;
+    std::vector<std::pair<std::string, int>> changes;
 
     for (unsigned int index = 0; index < this->MaxPlayers; ++index)
     {
@@ -521,7 +522,8 @@ void MainWindow::OnCommitPressed()
                 return;
             }
 
-            std::wstring name = ui->names[index]->text().toStdWString();
+            auto nameBytes = ui->names[index]->text().toUtf8();
+            std::string name(nameBytes.constData(), nameBytes.length());
             changes.emplace_back(std::make_pair(name, value));
         }
     }
@@ -542,7 +544,7 @@ void MainWindow::OnResetPressed()
 {
     auto playerInfos = this->gameInfo.PlayerInfos();
 
-    std::vector<std::wstring> resetActuals;
+    std::vector<std::string> resetActuals;
     std::transform(playerInfos.begin(),
                    playerInfos.end(),
                    std::back_inserter(resetActuals),
@@ -559,7 +561,7 @@ void MainWindow::OnResetPressed()
     {
         for (unsigned int index = 0; index < resetActuals.size(); ++index)
         {
-            this->ui->actuals[index]->setText(QString::fromStdWString(resetActuals[index]));
+            this->ui->actuals[index]->setText(QString::fromUtf8(resetActuals[index]));
         }
 
         this->ui->spinBox->setValue(static_cast<int>(numberOfEvents));
