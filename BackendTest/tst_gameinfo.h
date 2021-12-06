@@ -1644,6 +1644,8 @@ TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository)
 
     EXPECT_STREQ(u8"D", gameInfo.Dealer()->Name().c_str());
 
+    EXPECT_EQ(6u, gameInfo.RemainingGamesInRound());
+
     EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
     EXPECT_EQ( 0, playerInfos[2]->CurrentScore());
@@ -1698,6 +1700,8 @@ TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository)
     gameInfo.LoadFrom(id);
 
     // Assert
+    EXPECT_EQ(3u, gameInfo.RemainingGamesInRound());
+
     ASSERT_EQ(1, playerInfos[0]->NumberGames());
     ASSERT_EQ(1, playerInfos[1]->NumberGames());
     ASSERT_EQ(1, playerInfos[2]->NumberGames());
@@ -1776,6 +1780,126 @@ TEST(BackendTest, GameInfoShallCorrectlyHandleBadLoad)
     auto mandatorySolo = gameInfo.MandatorySolo();
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, mandatorySolo);
+}
+
+TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRound)
+{
+    // Arrange
+    auto repository = std::make_shared<MemoryRepository>();
+
+    Backend::GameInfo gameInfo(repository);
+    std::set<unsigned int> sitOutScheme { };
+    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"C", sitOutScheme);
+
+    // Act, Assert
+    auto remaining1 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(0u, remaining1);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining2 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(3u, remaining2);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining3 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(2u, remaining3);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining4 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(1u, remaining4);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining5 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(0u, remaining5);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining6 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(3u, remaining6);
+
+    gameInfo.TriggerMandatorySolo();
+    auto remaining7 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(3u, remaining7);
+
+    gameInfo.PopLastEntry();
+    auto remaining8 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(3u, remaining8);
+
+    gameInfo.PopLastEntry();
+    auto remaining9 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(0u, remaining9);
+
+    gameInfo.PopLastEntry();
+    auto remaining10 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(1u, remaining10);
+}
+
+TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRoundAfterPoppingPlayerSet)
+{
+    // Arrange
+    auto repository = std::make_shared<MemoryRepository>();
+
+    Backend::GameInfo gameInfo(repository);
+    std::set<unsigned int> sitOutScheme { };
+    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"C", sitOutScheme);
+
+    // Act, Assert
+    auto remaining1 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(0u, remaining1);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining2 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(3u, remaining2);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining3 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(2u, remaining3);
+
+    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"E", sitOutScheme);
+    auto remaining4 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(0u, remaining4);
+
+    gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+                      {
+                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>(u8"C", 1),
+                      }, 1u);
+    auto remaining5 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(4u, remaining5);
+
+    gameInfo.PopLastEntry();
+    auto remaining6 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(0u, remaining6);
+
+    gameInfo.PopLastEntry();
+    auto remaining7 = gameInfo.RemainingGamesInRound();
+    EXPECT_EQ(2u, remaining7);
 }
 
 #endif // TST_GAMEINFO_H

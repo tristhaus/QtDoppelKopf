@@ -122,12 +122,27 @@ namespace Backend
 
             if(lastPlayerSetEntry == entries.rend())
             {
-                throw std::exception(u8"must never happen");
+                throw std::exception(u8"must never happen 1");
             }
 
             this->SetPlayersInternal(std::static_pointer_cast<Backend::PlayersSet>(*lastPlayerSetEntry));
 
             this->SetDealer(std::static_pointer_cast<Backend::PlayersSet>(entry)->PreviousDealer());
+
+            auto relevantPlayerSetEntry = std::find_if(entries.rbegin(), entries.rend(), [](std::shared_ptr<Backend::Entry> x){ return  x->Kind() == Backend::Entry::Kind::PlayersSet; });
+            if(relevantPlayerSetEntry == entries.rend())
+            {
+                throw std::exception(u8"must never happen 2");
+            }
+
+            auto relevantInitialDealerName = std::static_pointer_cast<Backend::PlayersSet>(*relevantPlayerSetEntry)->Dealer();
+            auto relevantInitialDealerInfo = std::find_if(this->playerInfos.begin(), this->playerInfos.end(), [&relevantInitialDealerName](std::shared_ptr<PlayerInfoInternal> playerInfo) { return playerInfo->Name() == relevantInitialDealerName; });
+            if(relevantInitialDealerInfo == this->playerInfos.end())
+            {
+                throw std::exception(u8"must never happen 3");
+            }
+
+            this->initialDealerIndex = static_cast<unsigned int>(relevantInitialDealerInfo - this->playerInfos.begin());
         }
         else if(entry->Kind() == Entry::Kind::Deal)
         {
@@ -262,6 +277,11 @@ namespace Backend
         return this->multiplierInfo.GetIsMandatorySolo(count) ? MandatorySolo::Active : MandatorySolo::Ready;
     }
 
+    unsigned int GameInfo::RemainingGamesInRound() const
+    {
+        return (2 * this->numberOfPresentPlayers + this->initialDealerIndex - this->currentDealerIndex) % this->numberOfPresentPlayers;
+    }
+
     void Backend::GameInfo::SetPlayersInternal(std::shared_ptr<PlayersSet> playersSet)
     {
         bool dealerFound = false;
@@ -302,6 +322,7 @@ namespace Backend
 
         this->SortAndSetPlayerInfos(playersSet->Players());
         this->SetDealer(playersSet->Dealer());
+        this->initialDealerIndex = this->currentDealerIndex;
         this->SetAndApplyScheme(playersSet->SitOutScheme());
     }
 

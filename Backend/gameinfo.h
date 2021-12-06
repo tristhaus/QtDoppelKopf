@@ -79,6 +79,7 @@ namespace Backend
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         std::map<std::string, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
         unsigned int numberOfPresentPlayers;
+        unsigned int initialDealerIndex;
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;
         MultiplierInfo multiplierInfo;
@@ -194,6 +195,12 @@ namespace Backend
          * \return The state of the mandatory solo round.
          */
         enum MandatorySolo MandatorySolo() const;
+
+        /*!
+         * \brief Gets the number games remaining in the current round.
+         * \return The number games remaining in the current round.
+         */
+        unsigned int RemainingGamesInRound() const;
 
     private:
         void SetPlayersInternal(std::shared_ptr<PlayersSet> playersSet);

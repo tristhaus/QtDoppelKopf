@@ -117,10 +117,12 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(mw.ui->horizontalLayout, qPrintable(QString::fromUtf8(u8"not created horizontal layout")));
         QVERIFY2(mw.ui->bockereignisseLabel, qPrintable(QString::fromUtf8(u8"not created bockereignisse label")));
         QVERIFY2(mw.ui->spinBox, qPrintable(QString::fromUtf8(u8"not created spin box")));
-        QVERIFY2(mw.ui->commitButton, qPrintable(QString::fromUtf8(u8"not created commit button")));
-        QVERIFY2(mw.ui->resetButton, qPrintable(QString::fromUtf8(u8"not created reset button")));
         QVERIFY2(mw.ui->controlSpacer0, qPrintable(QString::fromUtf8(u8"not created control spacer 0")));
+        QVERIFY2(mw.ui->remainingGamesInRound, qPrintable(QString::fromUtf8(u8"not created remaining games in round")));
         QVERIFY2(mw.ui->controlSpacer1, qPrintable(QString::fromUtf8(u8"not created control spacer 1")));
+        QVERIFY2(mw.ui->commitButton, qPrintable(QString::fromUtf8(u8"not created commit button")));
+        QVERIFY2(mw.ui->controlSpacer2, qPrintable(QString::fromUtf8(u8"not created control spacer 2")));
+        QVERIFY2(mw.ui->resetButton, qPrintable(QString::fromUtf8(u8"not created reset button")));
 
         QVERIFY2(mw.ui->spielstandLabel, qPrintable(QString::fromUtf8(u8"not created spielstand label")));
         QVERIFY2(mw.ui->scores.size() > 0, qPrintable(QString::fromUtf8(u8"there must be scores labels")));
@@ -322,6 +324,8 @@ void FrontendTest::SetDataShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[4]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
     QVERIFY2(mw.ui->actuals[5]->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
 
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"Neue Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
+
     QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 0")));
     QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 1")));
     QVERIFY2(mw.ui->scores[2]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 2")));
@@ -438,6 +442,8 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[4]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
     QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
 
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"5 Spiele in Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
+
     QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 0")));
     QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"-2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 1")));
     QVERIFY2(mw.ui->scores[2]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 2")));
@@ -532,6 +538,8 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[3]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 3")));
     QVERIFY2(mw.ui->actuals[4]->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
     QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
+
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"4 Spiele in Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
 
     QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 0")));
     QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"1")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 1")));
@@ -631,6 +639,8 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[4]->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
     QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
 
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"4 Spiele in Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
+
     QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 0")));
     QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"4")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 1")));
     QVERIFY2(mw.ui->scores[2]->text().compare(QString::fromUtf8(u8"-6")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 2")));
@@ -689,6 +699,8 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[4]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
     QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
 
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"5 Spiele in Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
+
     QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 0")));
     QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"-2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 1")));
     QVERIFY2(mw.ui->scores[2]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 2")));
@@ -744,6 +756,8 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(mw.ui->actuals[3]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 3")));
     QVERIFY2(mw.ui->actuals[4]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
     QVERIFY2(mw.ui->actuals[5]->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
+
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"Neue Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
 
     QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 0")));
     QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 1")));
@@ -902,6 +916,8 @@ void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
     QVERIFY2(mw.ui->names[2]->text().compare(QString::fromUtf8(u8"C")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 2")));
     QVERIFY2(mw.ui->names[3]->text().compare(QString::fromUtf8(u8"D")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 3")));
     QVERIFY2(mw.ui->names[4]->text().compare(QString::fromUtf8(u8"E")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 4")));
+
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"1 Spiel in Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
 
     QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"13")) == 0, qPrintable(QString::fromUtf8(u8"incorrect score 0")));
     QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"-3")) == 0, qPrintable(QString::fromUtf8(u8"incorrect score 1")));

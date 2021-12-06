@@ -149,6 +149,31 @@ void MainWindow::UpdateDisplay()
 
     ui->spinBox->setValue(0);
 
+    auto remaining = this->gameInfo.RemainingGamesInRound();
+    QString remainingText;
+    switch (remaining)
+    {
+    case 0:
+        {
+            remainingText = QString::fromUtf8(u8"Neue Runde");
+            break;
+        }
+
+    case 1:
+        {
+            remainingText = QString::fromUtf8(u8"1 Spiel in Runde");
+            break;
+        }
+
+    default:
+        {
+            remainingText = QString::fromUtf8(u8"%1 Spiele in Runde").arg(remaining);
+            break;
+        }
+    }
+
+    ui->remainingGamesInRound->setText(remainingText);
+
     ui->totalCash->setText(QString(u8"%1,%2 (inkl. %3,%4 pro Abwesender)")
                            .arg(gameInfo.TotalCashCents()/100)
                            .arg(gameInfo.TotalCashCents()%100, 2, 10, QLatin1Char('0'))

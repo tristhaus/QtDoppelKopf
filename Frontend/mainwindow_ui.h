@@ -88,10 +88,12 @@ private:
     QHBoxLayout *horizontalLayout;
     QLabel *bockereignisseLabel;
     QSpinBox *spinBox;
-    QPushButton *commitButton;
-    QPushButton *resetButton;
     QSpacerItem *controlSpacer0;
+    QLabel *remainingGamesInRound;
     QSpacerItem *controlSpacer1;
+    QPushButton *commitButton;
+    QSpacerItem *controlSpacer2;
+    QPushButton *resetButton;
 
     QLabel *spielstandLabel;
     std::vector<QLabel*> scores;
@@ -313,14 +315,23 @@ public:
 
         horizontalLayout->addItem(controlSpacer0);
 
+        remainingGamesInRound = new QLabel();
+        remainingGamesInRound->setObjectName(QString::fromUtf8(u8"remainingGamesInRound"));
+
+        horizontalLayout->addWidget(remainingGamesInRound);
+
+        controlSpacer1 = new QSpacerItem(40, 20, QSizePolicy::Preferred, QSizePolicy::Minimum);
+
+        horizontalLayout->addItem(controlSpacer1);
+
         commitButton = new QPushButton(controlWidget);
         commitButton->setObjectName(QString::fromUtf8(u8"commitButton"));
 
         horizontalLayout->addWidget(commitButton);
 
-        controlSpacer1 = new QSpacerItem(40, 20, QSizePolicy::Preferred, QSizePolicy::Minimum);
+        controlSpacer2 = new QSpacerItem(40, 20, QSizePolicy::Preferred, QSizePolicy::Minimum);
 
-        horizontalLayout->addItem(controlSpacer1);
+        horizontalLayout->addItem(controlSpacer2);
 
         resetButton = new QPushButton(controlWidget);
         resetButton->setObjectName(QString::fromUtf8(u8"resetButton"));
@@ -637,6 +648,7 @@ public:
         aktuellesLabel->setText(QCoreApplication::translate("MainWindow", u8"Aktuelles Spiel", nullptr));
 
         bockereignisseLabel->setText(QCoreApplication::translate("MainWindow", u8"Bockereignisse", nullptr));
+        remainingGamesInRound->setText(QCoreApplication::translate("MainWindow", u8"Neue Runde", nullptr));
         commitButton->setText(QCoreApplication::translate("MainWindow", u8"Übernehmen", nullptr));
         resetButton->setText(QCoreApplication::translate("MainWindow", u8"Zurücksetzen", nullptr));
 
