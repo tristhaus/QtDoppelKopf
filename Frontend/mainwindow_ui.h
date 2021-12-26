@@ -33,6 +33,7 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 #include "qcustomplot.h"
+#include "scorelineedit.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -82,7 +83,7 @@ private:
     std::vector<QLabel*> lastGames;
 
     QLabel *aktuellesLabel;
-    std::vector<QLineEdit*> actuals;
+    std::vector<ScoreLineEdit*> actuals;
 
     QWidget *controlWidget;
     QHBoxLayout *horizontalLayout;
@@ -281,7 +282,7 @@ public:
             namesLayout->addWidget(lastGame, 2, i+1, 1, 1);
             lastGames.push_back(lastGame);
 
-            QLineEdit * actual = new QLineEdit(centralwidget);
+            ScoreLineEdit * actual = new ScoreLineEdit(centralwidget);
             actual->setObjectName(QString::fromUtf8(u8"actuals%1").arg(i));
             actual->setMaximumWidth(leftMainMaxWidth);
             namesLayout->addWidget(actual, 3, i+1, 1, 1);

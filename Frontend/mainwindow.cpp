@@ -53,6 +53,8 @@ MainWindow::MainWindow(const unsigned int maxPlayers, std::shared_ptr<Backend::R
 
     for(unsigned int i = 0; i < MaxPlayers; ++i)
     {
+        connect(this->ui->actuals[i], &ScoreLineEdit::mouseFocused, this, &MainWindow::OnScoreInputFocused);
+        connect(this->ui->actuals[i], &ScoreLineEdit::returnPressed, this, &MainWindow::OnScoreInputReturnKeyPressed);
         connect(this->ui->playerHistorySelectionCheckboxes[i], &QCheckBox::stateChanged, this, &MainWindow::OnHistoryPlayerSelected);
     }
 
@@ -436,6 +438,47 @@ void MainWindow::DetermineAndSetMultiplierLabels()
     ui->singleMultiplier->setText(QString().number(preview[0]));
 }
 
+QString MainWindow::GetFolderForFileDialog()
+{
+    auto list = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
+    return QString(list.first());
+}
+
+void MainWindow::CommitDeal()
+{
+    std::vector<std::pair<std::string, int>> changes;
+
+    for (unsigned int index = 0; index < this->MaxPlayers; ++index)
+    {
+        auto & actual = ui->actuals[index];
+
+        if(actual->isEnabled() && !actual->text().isEmpty())
+        {
+            bool intConversionOK = true;
+            int value = actual->text().toInt(&intConversionOK);
+            if(!intConversionOK)
+            {
+                return;
+            }
+
+            auto nameBytes = ui->names[index]->text().toUtf8();
+            std::string name(nameBytes.constData(), nameBytes.length());
+            changes.emplace_back(std::make_pair(name, value));
+        }
+    }
+
+    if(changes.size() == 0)
+    {
+        return;
+    }
+
+    auto numberOfEvents = static_cast<unsigned int>(ui->spinBox->value());
+
+    this->gameInfo.PushDeal(changes, numberOfEvents);
+
+    this->UpdateDisplay();
+}
+
 void MainWindow::OnChangePlayerPressed()
 {
     this->ShowPlayerSelection();
@@ -517,12 +560,6 @@ void MainWindow::OnSaveGamePressed()
     }
 }
 
-QString MainWindow::GetFolderForFileDialog()
-{
-    auto list = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-    return QString(list.first());
-}
-
 void MainWindow::OnMandatorySoloPressed()
 {
     this->gameInfo.TriggerMandatorySolo();
@@ -532,37 +569,7 @@ void MainWindow::OnMandatorySoloPressed()
 
 void MainWindow::OnCommitPressed()
 {
-    std::vector<std::pair<std::string, int>> changes;
-
-    for (unsigned int index = 0; index < this->MaxPlayers; ++index)
-    {
-        auto & actual = ui->actuals[index];
-
-        if(actual->isEnabled() && !actual->text().isEmpty())
-        {
-            bool intConversionOK = true;
-            int value = actual->text().toInt(&intConversionOK);
-            if(!intConversionOK)
-            {
-                return;
-            }
-
-            auto nameBytes = ui->names[index]->text().toUtf8();
-            std::string name(nameBytes.constData(), nameBytes.length());
-            changes.emplace_back(std::make_pair(name, value));
-        }
-    }
-
-    if(changes.size() == 0)
-    {
-        return;
-    }
-
-    auto numberOfEvents = static_cast<unsigned int>(ui->spinBox->value());
-
-    this->gameInfo.PushDeal(changes, numberOfEvents);
-
-    this->UpdateDisplay();
+    this->CommitDeal();
 }
 
 void MainWindow::OnResetPressed()
@@ -601,4 +608,39 @@ void MainWindow::OnHistoryPlayerSelected()
 void MainWindow::OnAboutPressed()
 {
     this->ShowAboutDialog();
+}
+
+void MainWindow::OnScoreInputFocused(ScoreLineEdit * scoreLineEdit, bool hasFocus)
+{
+    if(hasFocus)
+    {
+        QSet<QString> set;
+
+        for(unsigned int i = 0; i < MaxPlayers; ++i)
+        {
+            if(!this->ui->actuals[i]->isEnabled())
+            {
+                continue;
+            }
+
+            auto text = this->ui->actuals[i]->text();
+            if(text.isEmpty())
+            {
+                continue;
+            }
+
+            set.insert(text);
+        }
+
+        if(set.count() == 1)
+        {
+            scoreLineEdit->setText(*(set.begin()));
+            QTimer::singleShot(0, scoreLineEdit, &QLineEdit::selectAll);
+        }
+    }
+}
+
+void MainWindow::OnScoreInputReturnKeyPressed()
+{
+    this->CommitDeal();
 }

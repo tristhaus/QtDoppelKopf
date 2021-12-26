@@ -19,13 +19,15 @@
 SOURCES += \
     $$PWD/mainwindow.cpp \
     $$PWD/playerselection_ui.cpp \
-    $$PWD/qcustomplot.cpp
+    $$PWD/qcustomplot.cpp \
+    $$PWD/scorelineedit.cpp
 
 HEADERS += \
     $$PWD/mainwindow.h \
     $$PWD/mainwindow_ui.h \
     $$PWD/playerselection_ui.h \
-    $$PWD/qcustomplot.h
+    $$PWD/qcustomplot.h \
+    $$PWD/scorelineedit.h
 
 
 FORMS +=

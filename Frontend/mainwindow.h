@@ -24,6 +24,7 @@
 #include "../Backend/gameinfo.h"
 #include "../Backend/playerinfo.h"
 #include "playerselection_ui.h"
+#include "scorelineedit.h"
 
 class FrontendTest;
 
@@ -75,6 +76,7 @@ private:
     void ShowAboutDialog();
     void DetermineAndSetMultiplierLabels();
     QString GetFolderForFileDialog();
+    void CommitDeal();
 
 private slots:
     void OnChangePlayerPressed();
@@ -85,6 +87,8 @@ private slots:
     void OnResetPressed();
     void OnHistoryPlayerSelected();
     void OnAboutPressed();
+    void OnScoreInputFocused(ScoreLineEdit * scoreLineEdit, bool hasFocus);
+    void OnScoreInputReturnKeyPressed();
 
 private:
     /*!

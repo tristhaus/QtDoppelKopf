@@ -58,6 +58,8 @@ private slots:
     void EveryOptionOfResetButtonShallBeDisplayed();
     void SaveGameShallWorkWithPresetValueAndPersist();
     void LoadGameShallWorkWithPresetValueAndDisplayGame();
+    void FocusOnActualShallTriggerAutofill();
+    void ReturnKeyShallCommitGame();
 #endif // _USE_LONG_TEST
 };
 
@@ -1329,6 +1331,177 @@ void FrontendTest::LoadGameShallWorkWithPresetValueAndDisplayGame()
     QVERIFY2(mw.ui->tripleMultiplier->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"triple multiplier label incorrect")));
     QVERIFY2(mw.ui->doubleMultiplier->text().compare(QString::fromUtf8(u8"1")) == 0, qPrintable(QString::fromUtf8(u8"double multiplier label incorrect")));
     QVERIFY2(mw.ui->singleMultiplier->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"single multiplier label incorrect")));
+}
+
+void FrontendTest::FocusOnActualShallTriggerAutofill()
+{
+    // Arrange
+    std::vector<std::string> players
+    {
+        u8"A",
+        u8"B",
+        u8"C",
+        u8"D",
+        u8"E",
+        u8"F"
+    };
+
+    std::string dealer(u8"C");
+    std::set<unsigned int> sitOutScheme
+    {
+        3
+    };
+
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    QApplication::setActiveWindow(&mw);
+
+    // Act 1
+    mw.ui->actuals[0]->setText(QString::fromUtf8(u8"2"));
+    QTest::mouseClick(mw.ui->actuals[3], Qt::LeftButton);
+    QTest::qWait(10);
+
+    // Assert 1
+    QVERIFY2(mw.ui->actuals[0]->selectedText().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect selected text actuals 0")));
+    QVERIFY2(mw.ui->actuals[3]->selectedText().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect selected text actuals 3")));
+
+    QVERIFY2(mw.ui->actuals[0]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 0")));
+    QVERIFY2(mw.ui->actuals[1]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 1")));
+    QVERIFY2(mw.ui->actuals[2]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 2")));
+    QVERIFY2(mw.ui->actuals[3]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 3")));
+    QVERIFY2(mw.ui->actuals[4]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 4")));
+    QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
+
+    // Reset
+    for(unsigned char i = 0; i < players.size(); ++i)
+    {
+        mw.ui->actuals[i]->clear();
+    }
+    mw.ui->actuals[0]->setFocus();
+
+    // Act 2
+    mw.ui->actuals[0]->setText(QString::fromUtf8(u8"3"));
+    QTest::mouseClick(mw.ui->actuals[3], Qt::LeftButton);
+    QTest::mouseClick(mw.ui->actuals[4], Qt::LeftButton);
+
+    // Assert 2
+    QVERIFY2(mw.ui->actuals[0]->text().compare(QString::fromUtf8(u8"3")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 0")));
+    QVERIFY2(mw.ui->actuals[1]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 1")));
+    QVERIFY2(mw.ui->actuals[2]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 2")));
+    QVERIFY2(mw.ui->actuals[3]->text().compare(QString::fromUtf8(u8"3")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 3")));
+    QVERIFY2(mw.ui->actuals[4]->text().compare(QString::fromUtf8(u8"3")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 4")));
+    QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
+
+    // Reset
+    for(unsigned char i = 0; i < players.size(); ++i)
+    {
+        mw.ui->actuals[i]->clear();
+    }
+    mw.ui->actuals[0]->setFocus();
+
+    // Act 3
+    mw.ui->actuals[0]->setText(QString::fromUtf8(u8"4"));
+    mw.ui->actuals[4]->setText(QString::fromUtf8(u8"5"));
+    QTest::mouseClick(mw.ui->actuals[1], Qt::LeftButton);
+
+    // Assert 3
+    QVERIFY2(mw.ui->actuals[0]->text().compare(QString::fromUtf8(u8"4")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 0")));
+    QVERIFY2(mw.ui->actuals[1]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 1")));
+    QVERIFY2(mw.ui->actuals[2]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 2")));
+    QVERIFY2(mw.ui->actuals[3]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 3")));
+    QVERIFY2(mw.ui->actuals[4]->text().compare(QString::fromUtf8(u8"5")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 4")));
+    QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
+
+    // Reset
+    for(unsigned char i = 0; i < players.size(); ++i)
+    {
+        mw.ui->actuals[i]->clear();
+    }
+    mw.ui->actuals[0]->setFocus();
+
+    // Act 4
+    mw.ui->actuals[0]->setText(QString::fromUtf8(u8"6"));
+    QTest::keyClick(&mw, Qt::Key_Tab);
+
+    // Assert 4
+    QVERIFY2(mw.ui->actuals[1]->hasFocus(), qPrintable(QString::fromUtf8(u8"actuals 1 does not have focus")));
+
+    QVERIFY2(mw.ui->actuals[0]->text().compare(QString::fromUtf8(u8"6")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 0")));
+    QVERIFY2(mw.ui->actuals[1]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 1")));
+    QVERIFY2(mw.ui->actuals[2]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 2")));
+    QVERIFY2(mw.ui->actuals[3]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 3")));
+    QVERIFY2(mw.ui->actuals[4]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 4")));
+    QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
+}
+
+void FrontendTest::ReturnKeyShallCommitGame()
+{
+    // Arrange
+    std::vector<std::string> players
+    {
+        u8"A",
+        u8"B",
+        u8"C",
+        u8"D",
+        u8"E",
+        u8"F"
+    };
+
+    std::string dealer(u8"C");
+    std::set<unsigned int> sitOutScheme
+    {
+        3
+    };
+
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+
+    QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
+
+    mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
+    mw.UpdateDisplay();
+
+    // Act
+    mw.ui->actuals[0]->setText(QString::fromUtf8(u8"2"));
+    mw.ui->actuals[3]->setText(QString::fromUtf8(u8"2"));
+    QTest::keyClick(mw.ui->actuals[3], Qt::Key_Return);
+
+    // Assert
+    QVERIFY2(mw.ui->names[0]->text().compare(QString::fromUtf8(u8"A")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 0")));
+    QVERIFY2(mw.ui->names[1]->text().compare(QString::fromUtf8(u8"B")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 1")));
+    QVERIFY2(mw.ui->names[2]->text().compare(QString::fromUtf8(u8"C")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 2")));
+    QVERIFY2(mw.ui->names[3]->text().compare(QString::fromUtf8(u8"D")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 3")));
+    QVERIFY2(mw.ui->names[4]->text().compare(QString::fromUtf8(u8"E")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 4")));
+    QVERIFY2(mw.ui->names[5]->text().compare(QString::fromUtf8(u8"F")) == 0, qPrintable(QString::fromUtf8(u8"incorrect player name 5")));
+
+    QVERIFY2(mw.ui->actuals[0]->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 0")));
+    QVERIFY2(mw.ui->actuals[1]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 1")));
+    QVERIFY2(mw.ui->actuals[2]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 2")));
+    QVERIFY2(mw.ui->actuals[3]->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 3")));
+    QVERIFY2(mw.ui->actuals[4]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
+    QVERIFY2(mw.ui->actuals[5]->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
+
+    QVERIFY2(mw.ui->scores[0]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 0")));
+    QVERIFY2(mw.ui->scores[1]->text().compare(QString::fromUtf8(u8"-2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 1")));
+    QVERIFY2(mw.ui->scores[2]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 2")));
+    QVERIFY2(mw.ui->scores[3]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 3")));
+    QVERIFY2(mw.ui->scores[4]->text().compare(QString::fromUtf8(u8"-2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 4")));
+    QVERIFY2(mw.ui->scores[5]->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"incorrect scores 5")));
+
+    QVERIFY2(mw.ui->lastGames[0]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect last games 0")));
+    QVERIFY2(mw.ui->lastGames[1]->text().compare(QString::fromUtf8(u8"-2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect last games 1")));
+    QVERIFY2(mw.ui->lastGames[2]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect last games 2")));
+    QVERIFY2(mw.ui->lastGames[3]->text().compare(QString::fromUtf8(u8"2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect last games 3")));
+    QVERIFY2(mw.ui->lastGames[4]->text().compare(QString::fromUtf8(u8"-2")) == 0, qPrintable(QString::fromUtf8(u8"incorrect last games 4")));
+    QVERIFY2(mw.ui->lastGames[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect last games 5")));
+
+    QVERIFY2(mw.ui->actuals[0]->text().isEmpty(), qPrintable(QString::fromUtf8(u8"actuals 0 not empty")));
+    QVERIFY2(mw.ui->actuals[1]->text().isEmpty(), qPrintable(QString::fromUtf8(u8"actuals 1 not empty")));
+    QVERIFY2(mw.ui->actuals[2]->text().isEmpty(), qPrintable(QString::fromUtf8(u8"actuals 2 not empty")));
+    QVERIFY2(mw.ui->actuals[3]->text().isEmpty(), qPrintable(QString::fromUtf8(u8"actuals 3 not empty")));
+    QVERIFY2(mw.ui->actuals[4]->text().isEmpty(), qPrintable(QString::fromUtf8(u8"actuals 4 not empty")));
+    QVERIFY2(mw.ui->actuals[5]->text().isEmpty(), qPrintable(QString::fromUtf8(u8"actuals 5 not empty")));
 }
 
 #endif // _USE_LONG_TEST
