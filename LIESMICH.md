@@ -8,12 +8,10 @@ Ein Programm zum Nachhalten des Spielstandes beim Doppelkopf nach den Hausregeln
 
 ## Für Nutzer
 
-Zur Zeit ist dies eine Alpha-Version zur Demonstration was mit QtDoppelKopf möglich sein soll. Eine lauffähige Testversion ist verfügbar.
+Die Entwicklung ist weitgehend abgeschlossen. Ich bin für Vorschläge bzgl. neuer Features offen.
 
-Nach Auswahl der Spieler:innen muss nur noch das Minimum an Daten pro Spiel eingegeben werden, die fehlenden Punkte werden ergänzt, wenn möglich.
-Bockrunden werden bis zu Dreifachbock unterstützt und es ist möglich das jeweils letzte Spiel zurückzunehmen und geändert wieder zu übernehmen.
-Eine Änderung der Spielerzusammensetzung hebt diese Möglichkeit jedoch auf. Dauerhaft ausgegraute Schaltflächen funktionieren noch nicht.
-Der beste Weg, dies zu ändern, ist Nutzung und Feedback.
+Nach Auswahl der Spieler:innen muss nur noch das Minimum an Daten pro Spiel eingegeben werden, die fehlenden Punkte werden ergänzt, wenn möglich, tw. schon in der UI.
+Bockrunden werden bis zu Dreifachbock unterstützt und es ist möglich die jeweils letzte Aktion (Änderung Spieler, Eintrag Spiel, Start Pflichtsolorunde) zurückzunehmen und geändert wieder zu übernehmen.
 
 ## Für Entwickler
 

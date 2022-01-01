@@ -8,7 +8,7 @@ A program to note down the scores in a game of Doppelkopf following the house ru
 
 ## For Users
 
-Currently, this is an alpha-stage demo of what QtDoppelKopf shall become. A pre-release of the current status has been made available.
+Development is largely finished. I am now open to suggestions for new features.
 
 ## For Developers
 
