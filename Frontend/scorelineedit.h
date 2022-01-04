@@ -35,7 +35,7 @@ public:
    * \brief Initializes a new instance.
    * \param parent Is sent to the QWidget ctor.
    */
-  ScoreLineEdit(QWidget *parent = 0);
+  explicit ScoreLineEdit(QWidget *parent = nullptr);
 
 Q_SIGNALS:
   /*!
@@ -49,12 +49,12 @@ protected:
   /*!
    * \reimp
    */
-  virtual void focusInEvent(QFocusEvent *e);
+  void focusInEvent(QFocusEvent *e) override;
 
   /*!
    * \reimp
    */
-  virtual void focusOutEvent(QFocusEvent *e);
+  void focusOutEvent(QFocusEvent *e) override;
 };
 
 #endif // SCORELINEEDIT_H

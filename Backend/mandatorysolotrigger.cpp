@@ -19,8 +19,7 @@
 #include "mandatorysolotrigger.h"
 
 Backend::MandatorySoloTrigger::MandatorySoloTrigger()
-{
-}
+= default;
 
 enum Backend::Entry::Kind Backend::MandatorySoloTrigger::Kind() const
 {

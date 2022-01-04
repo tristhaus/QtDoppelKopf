@@ -33,7 +33,7 @@ namespace Backend
          * \brief Initializes a new instance.
          * \param The value to contain.
          */
-        NamedNumber(T value)
+        explicit NamedNumber(T value)
             : value(value)
         {
         }
@@ -42,15 +42,15 @@ namespace Backend
          * \brief Get the contained value.
          * \return The contained value.
          */
-        T Value() const
+        [[nodiscard]] T Value() const
         {
             return value;
         }
     };
 
-    typedef NamedNumber<unsigned int> NumberOfEvents;
-    typedef NamedNumber<unsigned int> Players;
-    typedef bool MandatorySolo;
+    using NumberOfEvents = NamedNumber<unsigned int>;
+    using Players = NamedNumber<unsigned int>;
+    using MandatorySolo = bool;
 
     /*!
      * \brief The EventInfo struct collects information regarding

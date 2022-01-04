@@ -21,8 +21,7 @@
 #include <sstream>
 
 MemoryRepository::MemoryRepository()
-{
-}
+= default;
 
 void MemoryRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier)
 {

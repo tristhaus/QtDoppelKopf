@@ -16,17 +16,17 @@
  *
  */
 
+#include "../Backend/diskrepository.h"
 #include <filesystem>
 #include <fstream>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "../Backend/diskrepository.h"
 
 #ifndef TST_DISKREPOSITORY_H
 #define TST_DISKREPOSITORY_H
 
 #if defined(_USE_LONG_TEST)
-TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame)
+TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     auto tempFile = std::filesystem::temp_directory_path() / std::filesystem::u8path(u8"qtdoppelkopf.testing.文字.temp.file");

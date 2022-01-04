@@ -19,28 +19,28 @@
 #ifndef TST_MULTIPLIERINFO_H
 #define TST_MULTIPLIERINFO_H
 
-#include <gtest/gtest.h>
 #include "../Backend/multiplierinfo.h"
+#include <gtest/gtest.h>
 
-TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset1)
+TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset1) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::MultiplierInfo mi;
     std::vector<Backend::EventInfo> events
     {
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1U), Backend::Players(4U), Backend::MandatorySolo(false) }
     };
 
     /* // 4 players throughout
-     * 0 0u, 0
-     * 1 1u, 0
-     * 2 0u, 1
-     * 3 0u, 1
-     * 4 1u  1
+     * 0 0U, 0
+     * 1 1U, 0
+     * 2 0U, 1
+     * 3 0U, 1
+     * 4 1U  1
      * 5     1 +1
      * 6        1
      * 7        1
@@ -75,25 +75,25 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset1)
     EXPECT_EQ(false, mi.GetIsMandatorySolo(8));
 }
 
-TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset2)
+TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset2) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::MultiplierInfo mi;
     std::vector<Backend::EventInfo> events
     {
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1U), Backend::Players(4U), Backend::MandatorySolo(false) }
     };
 
     /* // 4 players throughout
-     * 0 0u, 0
-     * 1 2u, 0
-     * 2 2u, 2
-     * 3 0u, 2 +1
-     * 4 1u  2 +1
+     * 0 0U, 0
+     * 1 2U, 0
+     * 2 2U, 2
+     * 3 0U, 2 +1
+     * 4 1U  2 +1
      * 5     2 +1
      * 6       +1 +1 +1
      * 7          +1 +1
@@ -131,25 +131,25 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset2)
     EXPECT_EQ(false, mi.GetIsMandatorySolo(9));
 }
 
-TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset3)
+TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset3) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::MultiplierInfo mi;
     std::vector<Backend::EventInfo> events
     {
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(2u), Backend::Players(5u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(0u), Backend::Players(5u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2U), Backend::Players(5U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(5U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1U), Backend::Players(4U), Backend::MandatorySolo(false) }
     };
 
     /* // 4 (.) or 5 (#) players
-     *  0 0u, 0
-     *  1 2u, 0
-     *  2 2u, . .
-     *  3 0u, . . #
-     *  4 1u  . . #
+     *  0 0U, 0
+     *  1 2U, 0
+     *  2 2U, . .
+     *  3 0U, . . #
+     *  4 1U  . . #
      *  5     . . #
      *  6         # # .
      *  7         # # .
@@ -190,35 +190,35 @@ TEST(BackendTest, MultiplierShallGiveCorrectDataAfterReset3)
     EXPECT_EQ(false, mi.GetIsMandatorySolo(10));
 }
 
-TEST(BackendTest, MultiplierShallGiveCorrectDataAfterResetWithMandatorySolo)
+TEST(BackendTest, MultiplierShallGiveCorrectDataAfterResetWithMandatorySolo) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::MultiplierInfo mi;
     std::vector<Backend::EventInfo> events
     {
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(2u), Backend::Players(4u), Backend::MandatorySolo(true) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(2U), Backend::Players(4U), Backend::MandatorySolo(true) },
 
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
 
-        { Backend::NumberOfEvents(0u), Backend::Players(4u), Backend::MandatorySolo(false) },
-        { Backend::NumberOfEvents(1u), Backend::Players(4u), Backend::MandatorySolo(false) }
+        { Backend::NumberOfEvents(0U), Backend::Players(4U), Backend::MandatorySolo(false) },
+        { Backend::NumberOfEvents(1U), Backend::Players(4U), Backend::MandatorySolo(false) }
     };
 
     /* // 4 players throughout
-     *  0 0u, 0
-     *  1 2u, 0
-     *  2 2u, 2 - trigger mandatory solo
+     *  0 0U, 0
+     *  1 2U, 0
+     *  2 2U, 2 - trigger mandatory solo
      *  3 m
      *  4 m
      *  5 m
      *  6 m
-     *  7 0u, 2 +1
-     *  8 1u  2 +1
+     *  7 0U, 2 +1
+     *  8 1U  2 +1
      *  9     2 +1
      * 10       +1 +1 +1
      * 11          +1 +1

@@ -19,11 +19,11 @@
 #ifndef TST_PLAYERINFO_H
 #define TST_PLAYERINFO_H
 
-#include <gtest/gtest.h>
 #include "../Backend/gameinfo.h"
 #include "../Backend/playerinfo.h"
+#include <gtest/gtest.h>
 
-TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
+TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo;
@@ -50,7 +50,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
                           std::make_pair<std::string, int>(u8"C", 2),
                           std::make_pair<std::string, int>(u8"D", -2),
                           std::make_pair<std::string, int>(u8"E", 2)
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -81,7 +81,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
                           std::make_pair<std::string, int>(u8"C", 1),
                           std::make_pair<std::string, int>(u8"D", 1),
                           std::make_pair<std::string, int>(u8"E", 1)
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -112,7 +112,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
                           std::make_pair<std::string, int>(u8"B", -2),
                           std::make_pair<std::string, int>(u8"D", 6),
                           std::make_pair<std::string, int>(u8"E", -2)
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-4, playerInfos[1]->CurrentScore());
@@ -138,7 +138,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallProvideCorrectScoresAndCashBalance)
     EXPECT_EQ(-2, playerInfos[4]->ScoreInLastDeal());
 }
 
-TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
+TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo;
@@ -157,7 +157,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
                       {
                           std::make_pair<std::string, int>(u8"B", -2),
                           std::make_pair<std::string, int>(u8"D", -2),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -181,7 +181,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
                           std::make_pair<std::string, int>(u8"C", 1),
                           std::make_pair<std::string, int>(u8"D", 1),
                           std::make_pair<std::string, int>(u8"E", 1)
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -203,7 +203,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"D", 6),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-4, playerInfos[1]->CurrentScore());
@@ -225,7 +225,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"E", -9),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-2, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[1]->CurrentScore());
@@ -245,7 +245,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallAutoCompleteChanges)
     EXPECT_EQ(-9, playerInfos[4]->ScoreInLastDeal());
 }
 
-TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCompleted)
+TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCompleted) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo;
@@ -256,18 +256,19 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 0),
-                      }, 0u);
+                      }, 0U);
 
     gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", emptySitOutScheme);
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                          {
                              std::make_pair<std::string, int>(u8"B", -2),
                              std::make_pair<std::string, int>(u8"C", 2)
-                         }, 0u);
+                         }, 0U);
         }
         catch( const std::exception& e )
         {
@@ -276,14 +277,15 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
         }
     }, std::exception);
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                          {
                              std::make_pair<std::string, int>(u8"B", 1),
                              std::make_pair<std::string, int>(u8"C", 2)
-                         }, 0u);
+                         }, 0U);
         }
         catch( const std::exception& e )
         {
@@ -292,7 +294,8 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
         }
     }, std::exception);
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
@@ -302,7 +305,7 @@ TEST(BackendTest, PlayerInfoAndGameInfoShallThrowOnPushingChangesThatCannotBeCom
                              std::make_pair<std::string, int>(u8"A", 2),
                              std::make_pair<std::string, int>(u8"D", 2),
                              std::make_pair<std::string, int>(u8"E", 2)
-                         }, 0u);
+                         }, 0U);
         }
         catch( const std::exception& e )
         {

@@ -19,12 +19,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QMessageBox>
 #include "../Backend/gameinfo.h"
 #include "../Backend/playerinfo.h"
 #include "playerselection_ui.h"
 #include "scorelineedit.h"
+#include <QMainWindow>
+#include <QMessageBox>
 
 class FrontendTest;
 
@@ -32,13 +32,16 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow //NOLINT (cppcoreguidelines-special-member-functions)
 {
     Q_OBJECT
 
     friend FrontendTest;
 
 private:
+    const int DecimalBase = 10;
+    const int HexadecimalBase = 16;
+    const unsigned int CentsInEuro = 100;
     const QString StandardNamesStylesheet = QString::fromUtf8(u8"QLabel { }");
     const QString DealerNamesStylesheet = QString::fromUtf8(u8"QLabel { border: 3px solid orange ; border-radius : 6px }");
     const QString FileFilter = QString::fromUtf8(u8"Spiele (*.qdk)");
@@ -52,7 +55,7 @@ private:
     std::unique_ptr<Ui::PlayerSelection> playerSelection;
     std::unique_ptr<QMessageBox> aboutMessageBox;
     Backend::GameInfo gameInfo;
-    unsigned int dealerIndex;
+    unsigned int dealerIndex{};
 
     /*!
      * \brief presetFilename allows to set a filename and
@@ -61,21 +64,21 @@ private:
     QString presetFilename;
 
 public:
-    MainWindow(unsigned int maxPlayers,
+    explicit MainWindow(unsigned int maxPlayers,
                std::shared_ptr<Backend::Repository> repository = std::make_shared<Backend::DiskRepository>(),
                bool showPlayerSelection = true,
                QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow() override;
 
 private:
     void UpdateDisplay();
     void ShowPlayerSelection();
-    std::vector<std::pair<QString, bool>> GetDefaultPlayers();
+    static std::vector<std::pair<QString, bool>> GetDefaultPlayers();
     std::map<QString, std::pair<std::vector<int>,std::vector<int>>> GetHistoricData();
     void RedrawPlayerHistory();
     void ShowAboutDialog();
     void DetermineAndSetMultiplierLabels();
-    QString GetFolderForFileDialog();
+    static QString GetFolderForFileDialog();
     void CommitDeal();
 
 private slots:
@@ -105,7 +108,7 @@ private:
          * \brief Initializes a new instance holding the supplied action.
          * \param action The action to store and execute on destruction.
          */
-        Resetter(std::function<void()> action) : action(action)
+        explicit Resetter(std::function<void()> action) : action(std::move(action))
         {
         }
         ~Resetter()

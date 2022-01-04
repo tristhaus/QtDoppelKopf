@@ -22,8 +22,8 @@
 #error "you need to make a choice between using or skipping long tests, -D_USE_LONG_TEST -D_SKIP_LONG_TEST"
 #endif
 
-#include <QtTest>
 #include <QTest>
+#include <QtTest>
 #include <QtWidgets/QMenuBar>
 
 #include "../Frontend/playerselection_ui.h"
@@ -32,14 +32,19 @@ class FrontendTest : public QObject
 {
     Q_OBJECT
 
+private:
+    const int SingleShotInterval = 200;
+    const int WaitingInterval = 300;
+    const unsigned int MaxPlayers = 8U;
+    const unsigned int DefaultPlayers = 8U;
+
 public:
     FrontendTest();
-    ~FrontendTest();
 
 private slots:
-    void ConstructionShallWorkCompletely();
-    void ConstructionShallThrowOnBadDealer1();
-    void ConstructionShallThrowOnBadDealer2();
+    void ConstructionShallWorkCompletely() const;
+    void ConstructionShallThrowOnBadDealer1() const;
+    void ConstructionShallThrowOnBadDealer2() const;
 #ifdef _USE_LONG_TEST
     void InputDataWithoutActionShallBeReturned();
     void AfterLoweringPlayerCountCorrectDataShallBeReturned();
@@ -48,14 +53,9 @@ private slots:
 };
 
 FrontendTest::FrontendTest()
-{
-}
+= default;
 
-FrontendTest::~FrontendTest()
-{
-}
-
-void FrontendTest::ConstructionShallWorkCompletely()
+void FrontendTest::ConstructionShallWorkCompletely() const
 {
     // Arrange
     std::vector<std::pair<QString, bool>> players
@@ -79,7 +79,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
     try
     {
         // Act
-        Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+        Ui::PlayerSelection ps(MaxPlayers, players, dealer, sitOutScheme, nullptr);
 
         // Assert
         QVERIFY2(ps.verticalDialogLayout, qPrintable(QString::fromUtf8(u8"main layout not created")));
@@ -88,7 +88,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(ps.dialogNumberOfPresentPlayers, qPrintable(QString::fromUtf8(u8"spinbox for players not created")));
         QVERIFY2(ps.dialogAnzahlSpielerLabel, qPrintable(QString::fromUtf8(u8"anzahl spieler label not created")));
 
-        QVERIFY2(ps.dialogNames.size() > 0, qPrintable(QString::fromUtf8(u8"there must be name inputs")));
+        QVERIFY2(!ps.dialogNames.empty(), qPrintable(QString::fromUtf8(u8"there must be name inputs")));
         QVERIFY2(ps.dialogNames.size() == ps.dealerButtons.size(), qPrintable(QString::fromUtf8(u8"size of names unequal to size of radio buttons")));
 
         for(size_t i = 0; i < ps.dialogNames.size(); ++i)
@@ -102,11 +102,11 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(ps.dialogAussitzenLabel, qPrintable(QString::fromUtf8(u8"dialog aussitzen not created")));
         QVERIFY2(ps.dialogAcceptButton, qPrintable(QString::fromUtf8(u8"accept button not created")));
 
-        QVERIFY2(ps.dialogSittingOuts.size() > 0, qPrintable(QString::fromUtf8(u8"there must be inputs for the sitting out scheme")));
+        QVERIFY2(!ps.dialogSittingOuts.empty(), qPrintable(QString::fromUtf8(u8"there must be inputs for the sitting out scheme")));
 
-        for(size_t i = 0; i < ps.dialogSittingOuts.size(); ++i)
+        for(auto & dialogSittingOut : ps.dialogSittingOuts)
         {
-            QVERIFY2(ps.dialogSittingOuts[i], qPrintable(QString::fromUtf8(u8"sitting out scheme input not created")));
+            QVERIFY2(dialogSittingOut, qPrintable(QString::fromUtf8(u8"sitting out scheme input not created")));
         }
     }
     catch (std::exception & ex)
@@ -115,7 +115,7 @@ void FrontendTest::ConstructionShallWorkCompletely()
     }
 }
 
-void FrontendTest::ConstructionShallThrowOnBadDealer1()
+void FrontendTest::ConstructionShallThrowOnBadDealer1() const
 {
     std::vector<std::pair<QString, bool>> players
     {
@@ -138,7 +138,7 @@ void FrontendTest::ConstructionShallThrowOnBadDealer1()
     QVERIFY_EXCEPTION_THROWN(
         try
         {
-            Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+            Ui::PlayerSelection ps(MaxPlayers, players, dealer, sitOutScheme, nullptr);
         }
         catch( const std::exception& e )
         {
@@ -150,7 +150,7 @@ void FrontendTest::ConstructionShallThrowOnBadDealer1()
     , std::exception);
 }
 
-void FrontendTest::ConstructionShallThrowOnBadDealer2()
+void FrontendTest::ConstructionShallThrowOnBadDealer2() const
 {
     std::vector<std::pair<QString, bool>> players
     {
@@ -173,7 +173,7 @@ void FrontendTest::ConstructionShallThrowOnBadDealer2()
     QVERIFY_EXCEPTION_THROWN(
         try
         {
-            Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+            Ui::PlayerSelection ps(MaxPlayers, players, dealer, sitOutScheme, nullptr);
         }
         catch( const std::exception& e )
         {
@@ -208,21 +208,21 @@ void FrontendTest::InputDataWithoutActionShallBeReturned()
         3
     };
 
-    Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+    Ui::PlayerSelection ps(this->DefaultPlayers, players, dealer, sitOutScheme, nullptr);
     ps.setModal(true);
     ps.show();
 
     QSignalSpy acceptButtonSpy(ps.dialogAcceptButton, &QPushButton::clicked);
 
     // Act
-    QTimer::singleShot(200, [&]()
+    QTimer::singleShot(this->SingleShotInterval, this, [&]()
     {
         QTest::mouseClick(ps.dialogAcceptButton, Qt::LeftButton);
     });
 
     int dialogCode = ps.exec();
 
-    acceptButtonSpy.wait(300);
+    acceptButtonSpy.wait(this->WaitingInterval);
 
     auto result = ps.GetResults();
 
@@ -269,7 +269,7 @@ void FrontendTest::AfterLoweringPlayerCountCorrectDataShallBeReturned()
         3
     };
 
-    Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+    Ui::PlayerSelection ps(this->DefaultPlayers, players, dealer, sitOutScheme, nullptr);
     ps.setModal(true);
     ps.show();
 
@@ -279,7 +279,7 @@ void FrontendTest::AfterLoweringPlayerCountCorrectDataShallBeReturned()
     bool dealerInput5visible = true;
 
     // Act
-    QTimer::singleShot(200, [&]()
+    QTimer::singleShot(this->SingleShotInterval, this, [&]()
     {
         ps.dialogNumberOfPresentPlayers->clear();
         QTest::keyClicks(ps.dialogNumberOfPresentPlayers, QString::fromUtf8(u8"5"));
@@ -290,7 +290,7 @@ void FrontendTest::AfterLoweringPlayerCountCorrectDataShallBeReturned()
 
     int dialogCode = ps.exec();
 
-    acceptButtonSpy.wait(300);
+    acceptButtonSpy.wait(this->WaitingInterval);
 
     auto result = ps.GetResults();
 
@@ -311,7 +311,7 @@ void FrontendTest::AfterLoweringPlayerCountCorrectDataShallBeReturned()
 
     QVERIFY2(resultDealer.compare(QString::fromUtf8(u8"C")) == 0, qPrintable(QString::fromUtf8(u8"wrong dealer")));
 
-    QVERIFY2(resultSitOutScheme.size() == 0, qPrintable(QString::fromUtf8(u8"wrong size of sit out scheme")));
+    QVERIFY2(resultSitOutScheme.empty(), qPrintable(QString::fromUtf8(u8"wrong size of sit out scheme")));
 
     QVERIFY2(!playerNameInput5visible, qPrintable(QString::fromUtf8(u8"player name input incorrectly visible")));
     QVERIFY2(!dealerInput5visible, qPrintable(QString::fromUtf8(u8"dealer input incorrectly visible")));
@@ -338,7 +338,7 @@ void FrontendTest::AfterRaisingPlayerCountAndInteractingCorrectDataShallBeReturn
         3
     };
 
-    Ui::PlayerSelection ps(8u, players, dealer, sitOutScheme, nullptr);
+    Ui::PlayerSelection ps(this->DefaultPlayers, players, dealer, sitOutScheme, nullptr);
     ps.setModal(true);
     ps.show();
 
@@ -348,7 +348,7 @@ void FrontendTest::AfterRaisingPlayerCountAndInteractingCorrectDataShallBeReturn
     bool dealerInput6visible = false;
 
     // Act
-    QTimer::singleShot(200, [&]()
+    QTimer::singleShot(this->SingleShotInterval, this, [&]()
     {
         ps.dialogNumberOfPresentPlayers->clear();
         QTest::keyClicks(ps.dialogNumberOfPresentPlayers, QString::fromUtf8(u8"7"));
@@ -377,7 +377,7 @@ void FrontendTest::AfterRaisingPlayerCountAndInteractingCorrectDataShallBeReturn
 
     int dialogCode = ps.exec();
 
-    acceptButtonSpy.wait(300);
+    acceptButtonSpy.wait(this->WaitingInterval);
 
     auto result = ps.GetResults();
 

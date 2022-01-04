@@ -16,15 +16,15 @@
  *
  */
 
-#include <regex>
+#include "../TestHelper/memoryrepository.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include "../TestHelper/memoryrepository.h"
+#include <regex>
 
 #ifndef TST_MEMORYREPOSITORY_H
 #define TST_MEMORYREPOSITORY_H
 
-TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries)
+TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     std::vector<std::shared_ptr<Backend::Entry>> entries;
@@ -103,7 +103,7 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries)
     EXPECT_TRUE(std::regex_search(persisted, mandatorySoloTriggerKindRegex));
 }
 
-TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries)
+TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     std::string content(u8R"foo({
     "dataVersion": "2",
@@ -188,7 +188,7 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries)
     EXPECT_EQ(Backend::Entry::Kind::MandatorySoloTrigger, mandatorySoloTrigger->Kind());
 }
 
-TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly)
+TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     std::vector<std::shared_ptr<Backend::Entry>> entries;
@@ -252,13 +252,14 @@ TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly)
     EXPECT_EQ(Backend::Entry::Kind::MandatorySoloTrigger, mandatorySoloTrigger->Kind());
 }
 
-TEST(BackendTest, MemoryRepositoryShallThrowIfNoContentFound)
+TEST(BackendTest, MemoryRepositoryShallThrowIfNoContentFound) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     MemoryRepository repo;
     std::string id = u8"someId ä 文字";
 
     // Act, Assert
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             auto result = repo.Load(id);

@@ -39,7 +39,7 @@ namespace Backend
         /*!
          * \reimp
          */
-        virtual enum Entry::Kind Kind() const;
+        [[nodiscard]] enum Entry::Kind Kind() const override;
     };
 }
 

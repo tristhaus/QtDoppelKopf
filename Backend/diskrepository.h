@@ -37,12 +37,12 @@ namespace Backend
         /*!
          * \reimp
          */
-        virtual void Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier);
+        void Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier) override;
 
         /*!
          * \reimp
          */
-        virtual std::vector<std::shared_ptr<Backend::Entry>> Load(const std::string & identifier);
+        std::vector<std::shared_ptr<Backend::Entry>> Load(const std::string & identifier) override;
     };
 }
 

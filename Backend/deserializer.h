@@ -16,13 +16,13 @@
  *
  */
 
+#include "deal.h"
+#include "entry.h"
+#include "mandatorysolotrigger.h"
+#include "playersset.h"
+#include "rapidjson/document.h"
 #include <iostream>
 #include <vector>
-#include "rapidjson/document.h"
-#include "entry.h"
-#include "playersset.h"
-#include "deal.h"
-#include "mandatorysolotrigger.h"
 
 #ifndef DESERIALIZER_H
 #define DESERIALIZER_H
@@ -66,7 +66,7 @@ namespace Backend
          * \param entries The entries to serialize.
          * \param wos The stream to serialize into.
          */
-        void Serialize(std::vector<std::shared_ptr<Entry>> entries, std::ostream & os);
+        void Serialize(const std::vector<std::shared_ptr<Entry>> & entries, std::ostream & os);
 
         /*!
          * \brief Deserialize from the stream into the return value.
@@ -76,20 +76,20 @@ namespace Backend
         std::vector<std::shared_ptr<Entry>> Deserialize(std::istream & is);
 
     private:
-        void SerializeEntry(std::shared_ptr<Entry> entry,
-                            rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
-                            rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
-        void SerializePlayersSet(std::shared_ptr<Backend::PlayersSet> playersSet,
-                                 rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
-                                 rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
-        void SerializeDeal(std::shared_ptr<Backend::Deal> deal,
-                           rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
-                           rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
-        void SerializeMandatorySoloTrigger(rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry,
-                                           rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator);
+        static void SerializeEntry(const std::shared_ptr<Entry> & entry,
+                            rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry, //NOLINT (google-runtime-references)
+                            rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator); //NOLINT (google-runtime-references)
+        static void SerializePlayersSet(const std::shared_ptr<Backend::PlayersSet> & playersSet,
+                                 rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry, //NOLINT (google-runtime-references)
+                                 rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator); //NOLINT (google-runtime-references)
+        static void SerializeDeal(const std::shared_ptr<Backend::Deal>& deal,
+                           rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry, //NOLINT (google-runtime-references)
+                           rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator); //NOLINT (google-runtime-references)
+        static void SerializeMandatorySoloTrigger(rapidjson::GenericValue<rapidjson::UTF8<char>> & serializedEntry, //NOLINT (google-runtime-references)
+                                           rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> & allocator); //NOLINT (google-runtime-references)
 
-        std::shared_ptr<Entry> DeserializePlayersSet(rapidjson::GenericValue<rapidjson::UTF8<char>> * data);
-        std::shared_ptr<Entry> DeserializeDeal(rapidjson::GenericValue<rapidjson::UTF8<char>> * data);
+        static std::shared_ptr<Entry> DeserializePlayersSet(const rapidjson::GenericValue<rapidjson::UTF8<char>> & data);
+        static std::shared_ptr<Entry> DeserializeDeal(const rapidjson::GenericValue<rapidjson::UTF8<char>> & data);
     };
 }
 

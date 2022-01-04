@@ -19,20 +19,20 @@
 #ifndef GAMEINFO_H
 #define GAMEINFO_H
 
-#include <memory>
-#include <vector>
-#include <set>
-#include <map>
-#include <string>
-#include "playerinfo.h"
-#include "eventinfo.h"
-#include "multiplierinfo.h"
-#include "entry.h"
-#include "mandatorysolotrigger.h"
 #include "deal.h"
+#include "diskrepository.h"
+#include "entry.h"
+#include "eventinfo.h"
+#include "mandatorysolotrigger.h"
+#include "multiplierinfo.h"
+#include "playerinfo.h"
 #include "playersset.h"
 #include "repository.h"
-#include "diskrepository.h"
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
 
 namespace Backend
 {
@@ -79,8 +79,8 @@ namespace Backend
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         std::map<std::string, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
         unsigned int numberOfPresentPlayers{};
-        unsigned int initialDealerIndex;
-        unsigned int currentDealerIndex;
+        unsigned int initialDealerIndex{};
+        unsigned int currentDealerIndex{};
         std::set<unsigned int> sitOutScheme;
         MultiplierInfo multiplierInfo;
 
@@ -93,26 +93,26 @@ namespace Backend
          * \param repository The repository to be used for permanent storage.
          * \param maxPlayers The maximum number of players that will be kept in this instance.
          */
-        GameInfo(std::shared_ptr<Repository> repository = std::make_shared<DiskRepository>(),
-                 const unsigned int maxPlayers = 8u);
+        explicit GameInfo(std::shared_ptr<Repository> repository = std::make_shared<DiskRepository>(),
+                 const unsigned int maxPlayers = 8U); //NOLINT(readability-avoid-const-params-in-decls)
 
         /*!
          * \brief Provides access to the player information.
          * \return The player information.
          */
-        const std::vector<std::shared_ptr<PlayerInfo>> PlayerInfos() const;
+        [[nodiscard]] std::vector<std::shared_ptr<PlayerInfo>> PlayerInfos() const;
 
         /*!
          * \brief Indicates the current dealer, if set.
          * \return A player info about the current dealer or nullptr.
          */
-        const std::shared_ptr<PlayerInfo> Dealer() const;
+        [[nodiscard]] std::shared_ptr<PlayerInfo> Dealer() const;
 
         /*!
          * \brief Gets the indices of players that are sitting out.
          * \return The indices of players that are sitting out.
          */
-        const std::set<unsigned int> SitOutScheme() const;
+        [[nodiscard]] std::set<unsigned int> SitOutScheme() const;
 
         /*!
          * \brief Set the name of the current players.
@@ -121,16 +121,16 @@ namespace Backend
          * \param sitOutScheme The positions of players sitting out, necessary for 6 players or more.
          *                     Zero is the dealer, which is always implied.
          */
-        void SetPlayers(std::vector<std::string> players,
-                        std::string dealer,
-                        std::set<unsigned int> sitOutScheme);
+        void SetPlayers(const std::vector<std::string>& players,
+                        const std::string& dealer,
+                        const std::set<unsigned int>& sitOutScheme);
 
         /*!
          * \brief Pushes a game.
          * \param changes Collection of player names and (positive/negative) points awarded.
          * \param events The number of multiplier events in the deal.
          */
-        void PushDeal(std::vector<std::pair<std::string, int>> changes, unsigned int numberOfEvents);
+        void PushDeal(const std::vector<std::pair<std::string, int>>& changes, unsigned int numberOfEvents);
 
         /*!
          * \brief Begins a round of mandatory solo, which suspends the multiplier.
@@ -152,68 +152,68 @@ namespace Backend
          * \brief Saves the state to the ID, which should be a filename.
          * \param id The identifier to save to.
          */
-        void SaveTo(std::string id) const;
+        void SaveTo(const std::string& id) const;
 
         /*!
          * \brief Load the persisted state from the ID, which should be a filename.
          * \param id The identifier to load from.
          */
-        void LoadFrom(std::string id);
+        void LoadFrom(const std::string& id);
 
         /*!
          * \brief Gets a value indicating whether any players are set in this instance.
          * \return A value indicating whether any players are set in this instance.
          */
-        bool HasPlayersSet() const;
+        [[nodiscard]] bool HasPlayersSet() const;
 
         /*!
          * \brief Gets the future levels of multiplication (which are the indices of the vector returned).
          * \return A vector containing counts for single, double ... etc. level of multiplication.
          */
-        std::vector<unsigned int> MultiplierPreview() const;
+        [[nodiscard]] std::vector<unsigned int> MultiplierPreview() const;
 
         /*!
          * \brief Gets the number of events in the last deal.
          * \return The number of events in the last deal.
          */
-        unsigned int LastNumberOfEvents() const;
+        [[nodiscard]] unsigned int LastNumberOfEvents() const;
 
         /*!
          * \brief Gets the total cash from all players who played in Euro cents.
          * \return The total cash from all players who played in Euro cents.
          */
-        unsigned int TotalCashCents() const;
+        [[nodiscard]] unsigned int TotalCashCents() const;
 
         /*!
          * \brief Gets the cash for an absent player in Euro cents;
          * \return The cash for an absent player in Euro cents;
          */
-        unsigned int AbsentPlayerCashCents() const;
+        [[nodiscard]] unsigned int AbsentPlayerCashCents() const;
 
         /*!
          * \brief Gets the state of the mandatory solo round.
          * \return The state of the mandatory solo round.
          */
-        enum MandatorySolo MandatorySolo() const;
+        [[nodiscard]] enum MandatorySolo MandatorySolo() const;
 
         /*!
          * \brief Gets the number games remaining in the current round.
          * \return The number games remaining in the current round.
          */
-        unsigned int RemainingGamesInRound() const;
+        [[nodiscard]] unsigned int RemainingGamesInRound() const;
 
     private:
-        void SetPlayersInternal(std::shared_ptr<PlayersSet> playersSet);
+        void SetPlayersInternal(const std::shared_ptr<PlayersSet>& playersSet);
         void SortAndSetPlayerInfos(std::vector<std::string> players);
         void SetDealer(std::string dealer);
         void SetAndApplyScheme(std::set<unsigned int> newScheme);
         void ApplyScheme();
-        void PushDealInternal(std::shared_ptr<Deal> deal);
+        void PushDealInternal(const std::shared_ptr<Deal>& deal);
         std::vector<std::pair<std::string, int>> AutoCompleteDeal(std::vector<std::pair<std::string, int>> inputChanges);
-        std::string FindSoloPlayer(std::vector<std::pair<std::string, int>> changes) const;
-        int MaximumCurrentScore() const;
+        [[nodiscard]] static std::string FindSoloPlayer(const std::vector<std::pair<std::string, int>>& changes);
+        [[nodiscard]] int MaximumCurrentScore() const;
         void ReconstructEventsForMultiplierInfo();
-        unsigned int DealsRecorded() const;
+        [[nodiscard]] unsigned int DealsRecorded() const;
 
     private:
         class PlayerInfoInternal : public PlayerInfo
@@ -226,7 +226,7 @@ namespace Backend
              * \param maxCurrentScoreAccessor A function to obtain the maximum current score among the players.
              */
             PlayerInfoInternal(std::string name,
-                               std::function<unsigned short(unsigned int)> multiplierAccessor,
+                               std::function<unsigned short(unsigned int)> multiplierAccessor, //NOLINT(google-runtime-int)
                                std::function<int()> maxCurrentScoreAccessor);
 
             /*!
@@ -264,13 +264,13 @@ namespace Backend
              * \brief Sets the input in the last deal, if any.
              * \param input The input in the last deal, if any.
              */
-            void SetInputInDeal(std::string input);
+            void SetInputInDeal(const std::string& input);
 
             /*!
              * \brief Gets the number of recorded deals for this player.
              * \return The number of records.
              */
-            size_t NumberOfRecordedDeals() const;
+            [[nodiscard]] size_t NumberOfRecordedDeals() const;
         };
     };
 }

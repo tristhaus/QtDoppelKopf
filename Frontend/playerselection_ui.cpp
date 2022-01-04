@@ -18,6 +18,7 @@
 
 #include "playerselection_ui.h"
 #include <algorithm>
+#include <utility>
 
 Ui::PlayerSelection::PlayerSelection(unsigned int maxNumberOfPlayers,
                                      std::vector<std::pair<QString, bool>> currentPlayers,
@@ -26,10 +27,10 @@ Ui::PlayerSelection::PlayerSelection(unsigned int maxNumberOfPlayers,
                                      QWidget *parent)
     : QDialog(parent),
       maxNumberOfPlayers(maxNumberOfPlayers),
-      initialNumberOfPlayers(std::count_if(currentPlayers.begin(), currentPlayers.end(), [&](std::pair<QString, bool> item){ return item.second; })),
+      initialNumberOfPlayers(std::count_if(currentPlayers.begin(), currentPlayers.end(), [&](const std::pair<QString, bool>& item){ return item.second; })),
       originalPlayers(currentPlayers),
-      originalDealer(currentDealer),
-      originalSitOutScheme(currentSitOutScheme)
+      originalDealer(std::move(currentDealer)),
+      originalSitOutScheme(std::move(currentSitOutScheme))
 {
     this->SetupUi();
     this->SetOriginalPlayers();
@@ -46,7 +47,7 @@ std::tuple<std::vector<QString>, QString, std::set<unsigned int>> Ui::PlayerSele
 
 void Ui::PlayerSelection::SetupUi()
 {
-    this->resize(500, 500);
+    this->resize(500, 500); //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
 
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     sizePolicy.setHorizontalStretch(0);
@@ -55,61 +56,61 @@ void Ui::PlayerSelection::SetupUi()
 
     this->setSizePolicy(sizePolicy);
 
-    verticalDialogLayout = new QVBoxLayout(this);
+    verticalDialogLayout = new QVBoxLayout(this); //NOLINT(cppcoreguidelines-owning-memory)
     verticalDialogLayout->setObjectName(QString::fromUtf8(u8"verticaldialoglayout"));
 
-    topLayout = new QHBoxLayout();
+    topLayout = new QHBoxLayout(); //NOLINT(cppcoreguidelines-owning-memory)
     topLayout->setObjectName(QString::fromUtf8(u8"toplayout"));
 
-    dialogAnzahlSpielerLabel = new QLabel(QString::fromUtf8(u8"Anzahl Spieler"), this);
+    dialogAnzahlSpielerLabel = new QLabel(QString::fromUtf8(u8"Anzahl Spieler"), this); //NOLINT(cppcoreguidelines-owning-memory)
     dialogAnzahlSpielerLabel->setObjectName(QString::fromUtf8(u8"dialoganzahlspielerlabel"));
     topLayout->addWidget(dialogAnzahlSpielerLabel);
 
-    dialogNumberOfPresentPlayers = new QSpinBox(this);
+    dialogNumberOfPresentPlayers = new QSpinBox(this); //NOLINT(cppcoreguidelines-owning-memory)
     dialogNumberOfPresentPlayers->setObjectName(QString::fromUtf8(u8"dialognumberofpresentplayers"));
-    dialogNumberOfPresentPlayers->setMaximum(maxNumberOfPlayers);
+    dialogNumberOfPresentPlayers->setMaximum(static_cast<int>(maxNumberOfPlayers));
     dialogNumberOfPresentPlayers->setMinimum(4);
-    dialogNumberOfPresentPlayers->setValue(initialNumberOfPlayers);
+    dialogNumberOfPresentPlayers->setValue(static_cast<int>(initialNumberOfPlayers));
     topLayout->addWidget(dialogNumberOfPresentPlayers);
 
     verticalDialogLayout->addLayout(topLayout);
 
-    playerNamesGridLayout = new QGridLayout();
+    playerNamesGridLayout = new QGridLayout(); //NOLINT(cppcoreguidelines-owning-memory)
     playerNamesGridLayout->setObjectName(QString::fromUtf8(u8"playernamesgridlayout"));
 
     for(unsigned int index = 0; index < maxNumberOfPlayers; ++index)
     {
-        dealerButtons.push_back(new QRadioButton(this));
+        dealerButtons.push_back(new QRadioButton(this)); //NOLINT(cppcoreguidelines-owning-memory)
         dealerButtons[index]->setObjectName(QString::fromUtf8(u8"dealerbuttons%1").arg(index));
-        playerNamesGridLayout->addWidget(dealerButtons[index], index, 0, 1, 1);
-        dialogNames.push_back(new QLineEdit(this));
+        playerNamesGridLayout->addWidget(dealerButtons[index], static_cast<int>(index), 0, 1, 1);
+        dialogNames.push_back(new QLineEdit(this)); //NOLINT(cppcoreguidelines-owning-memory)
         dialogNames[index]->setObjectName(QString::fromUtf8(u8"dialognames%1").arg(index));
-        playerNamesGridLayout->addWidget(dialogNames[index], index, 1, 1, 1);
+        playerNamesGridLayout->addWidget(dialogNames[index], static_cast<int>(index), 1, 1, 1);
 
         bool needed = index < static_cast<unsigned int>(dialogNumberOfPresentPlayers->value());
-        dialogNames[index]->setVisible(needed);
-        dialogNames[index]->setEnabled(needed);
         dealerButtons[index]->setVisible(needed);
         dealerButtons[index]->setEnabled(needed);
+        dialogNames[index]->setVisible(needed);
+        dialogNames[index]->setEnabled(needed);
     }
 
     verticalDialogLayout->addLayout(playerNamesGridLayout);
 
-    dialogSpacer = new QSpacerItem(40, 20, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    dialogSpacer = new QSpacerItem(40, 20, QSizePolicy::Minimum, QSizePolicy::Expanding); //NOLINT(cppcoreguidelines-owning-memory,cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     verticalDialogLayout->addItem(dialogSpacer);
 
-    bottomLayout = new QVBoxLayout();
+    bottomLayout = new QVBoxLayout(); //NOLINT(cppcoreguidelines-owning-memory)
     bottomLayout->setObjectName(QString::fromUtf8(u8"bottomLayout"));
 
-    dialogAussitzenLabel = new QLabel(QString::fromUtf8(u8"Aussitzen an Position (1 ist Geber):"), this);
+    dialogAussitzenLabel = new QLabel(QString::fromUtf8(u8"Aussitzen an Position (1 ist Geber):"), this); //NOLINT(cppcoreguidelines-owning-memory)
     dialogAussitzenLabel->setObjectName(QString::fromUtf8(u8"dialogaussitzenlabel"));
     bottomLayout->addWidget(dialogAussitzenLabel);
 
     for(unsigned int index = 0; index < (maxNumberOfPlayers - 4); ++index)
     {
-        dialogSittingOuts.push_back(new QSpinBox(this));
+        dialogSittingOuts.push_back(new QSpinBox(this)); //NOLINT(cppcoreguidelines-owning-memory)
         dialogSittingOuts[index]->setObjectName(QString::fromUtf8(u8"dialogsittingouts%1").arg(index));
-        dialogSittingOuts[index]->setValue(2 * index + 1); // is one-indexed to the user
+        dialogSittingOuts[index]->setValue(2 * static_cast<int>(index) + 1); // is one-indexed to the user
 
         if(index == 0)
         {
@@ -122,7 +123,7 @@ void Ui::PlayerSelection::SetupUi()
         bottomLayout->addWidget(dialogSittingOuts[index]);
     }
 
-    dialogAcceptButton = new QPushButton(QString::fromUtf8(u8"OK"));
+    dialogAcceptButton = new QPushButton(QString::fromUtf8(u8"OK"), this); //NOLINT(cppcoreguidelines-owning-memory)
     dialogAcceptButton->setObjectName(QString::fromUtf8(u8"dialogacceptbutton"));
     bottomLayout->addWidget(dialogAcceptButton);
 
@@ -133,7 +134,7 @@ void Ui::PlayerSelection::SetupUi()
 
 void Ui::PlayerSelection::SetOriginalPlayers()
 {
-    auto dealerIt = std::find_if(originalPlayers.begin(), originalPlayers.end(), [&](std::pair<QString, bool> left) { return originalDealer.compare(left.first) == 0; } );
+    auto dealerIt = std::find_if(originalPlayers.begin(), originalPlayers.end(), [&](const std::pair<QString, bool>& left) { return originalDealer.compare(left.first) == 0; } );
 
     if(dealerIt == originalPlayers.end() || !dealerIt->second)
     {
@@ -160,13 +161,13 @@ void Ui::PlayerSelection::SetOriginalPlayers()
     }
 
     unsigned int index = 1;
-    for(auto schemeIt = originalSitOutScheme.begin(); schemeIt != originalSitOutScheme.end(); ++schemeIt)
+    for(unsigned int schemeIt : originalSitOutScheme)
     {
-        if(*schemeIt == 0){
+        if(schemeIt == 0){
             continue;
         }
 
-        dialogSittingOuts[index]->setValue((*schemeIt) + 1);
+        dialogSittingOuts[index]->setValue(static_cast<int>(schemeIt) + 1);
         ++index;
     }
 }
@@ -192,7 +193,7 @@ void Ui::PlayerSelection::OnOKButtonClicked()
                 return;
             }
 
-            auto it = std::find_if(players.begin(), players.end(), [&](QString left){ return left.compare(value, Qt::CaseSensitivity::CaseInsensitive) == 0; });
+            auto it = std::find_if(players.begin(), players.end(), [&](const QString& left){ return left.compare(value, Qt::CaseSensitivity::CaseInsensitive) == 0; });
             if(it != players.end())
             {
                 return;
@@ -216,7 +217,7 @@ void Ui::PlayerSelection::OnOKButtonClicked()
     {
         if(dialogSittingOuts[index]->isVisible())
         {
-            unsigned int value = static_cast<unsigned int>(dialogSittingOuts[index]->value() - 1); // is one-indexed to user
+            auto value = static_cast<unsigned int>(dialogSittingOuts[index]->value() - 1); // is one-indexed to user
 
             if(value + 1 >= players.size() || sitOutScheme.count(value) > 0)
             {

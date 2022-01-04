@@ -32,7 +32,7 @@ namespace Backend
     {
     private:
         unsigned int dealIndex;
-        std::vector<std::pair<unsigned short, bool>> effective;
+        std::vector<std::pair<unsigned short, bool>> effective; //NOLINT(google-runtime-int)
 
     public:
         /*!
@@ -44,34 +44,34 @@ namespace Backend
          * \brief Pushes the result of a deal.
          * \param eventInfo Collection of the information regarding a deal.
          */
-        void PushDeal(const EventInfo eventInfo);
+        void PushDeal(const EventInfo & eventInfo);
 
         /*!
          * \brief Reinitializes the contained data based on the provided events.
          *        Typically used after the events were rewritten in some fashion.
          * \param events The new collection of events to consider.
          */
-        void ResetTo(const std::vector<EventInfo> events);
+        void ResetTo(const std::vector<EventInfo> & events);
 
         /*!
          * \brief Gets the final multiplier for some indexed deal.
          * \param index The index of the deal in question.
          * \return The final multiplier to be applied to the deal results.
          */
-        unsigned short GetMultiplier(const unsigned int index) const;
+        [[nodiscard]] unsigned short GetMultiplier(const unsigned int & index) const; //NOLINT(google-runtime-int)
 
         /*!
          * \brief Gets a value indicating whether the deal is a mandatory solo.
          * \param index The index of the deal in question.
          * \return A value indicating whether the deal is a mandatory solo.
          */
-        bool GetIsMandatorySolo(const unsigned int index) const;
+        [[nodiscard]] bool GetIsMandatorySolo(const unsigned int & index) const;
 
         /*!
          * \brief Gets the future levels of multiplication (which are the indices of the vector returned).
          * \return A vector containing counts for single, double ... etc. level of multiplication.
          */
-        std::vector<unsigned int> GetPreview() const;
+        [[nodiscard]] std::vector<unsigned int> GetPreview() const;
     };
 }
 

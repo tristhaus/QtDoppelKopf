@@ -18,12 +18,12 @@
 
 #include <gtest/gtest.h>
 
-#include "tst_gameinfo.h"
-#include "tst_playerinfo.h"
-#include "tst_multiplierinfo.h"
 #include "tst_deserializer.h"
-#include "tst_memoryrepository.h"
 #include "tst_diskrepository.h"
+#include "tst_gameinfo.h"
+#include "tst_memoryrepository.h"
+#include "tst_multiplierinfo.h"
+#include "tst_playerinfo.h"
 
 int main(int argc, char *argv[])
 {

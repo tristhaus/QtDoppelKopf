@@ -18,26 +18,26 @@
 
 #include "multiplierinfo.h"
 
-#include <string>
 #include <algorithm>
+#include <string>
 
 Backend::MultiplierInfo::MultiplierInfo()
     : dealIndex(0)
 {
-    this->effective.push_back(std::make_pair(0u, false));
+    this->effective.emplace_back(0U, false);
 }
 
-void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
+void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo & eventInfo)
 {
     auto GrowEffective = [this](unsigned int minIndex)
     {
         while(minIndex >= this->effective.size())
         {
-            this->effective.push_back(std::make_pair(0u, false));
+            this->effective.emplace_back(0U, false);
         }
     };
 
-    unsigned int effectiveIndex = dealIndex + 1;
+    unsigned int effectiveIndex = this->dealIndex + 1;
 
     GrowEffective(effectiveIndex);
 
@@ -45,7 +45,7 @@ void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
     {
         for(unsigned int iter = 0; iter < eventInfo.players.Value(); ++iter)
         {
-            this->effective.insert(effective.begin() + effectiveIndex, std::make_pair(0u, true));
+            this->effective.insert(this->effective.begin() + effectiveIndex, std::make_pair(0U, true));
             ++effectiveIndex;
         }
     }
@@ -58,7 +58,7 @@ void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
 
         GrowEffective(effectiveIndex);
 
-        while(this->effective[effectiveIndex].first == 3u)
+        while(this->effective[effectiveIndex].first == 3U)
         {
             ++effectiveIndex;
 
@@ -73,24 +73,24 @@ void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo eventInfo)
         }
     }
 
-    ++dealIndex;
+    ++(this->dealIndex);
 }
 
-void Backend::MultiplierInfo::ResetTo(const std::vector<EventInfo> events)
+void Backend::MultiplierInfo::ResetTo(const std::vector<EventInfo> & events)
 {
     this->effective.clear();
-    dealIndex = 0;
-    this->effective.push_back(std::make_pair(0u, false));
+    this->dealIndex = 0;
+    this->effective.emplace_back(0U, false);
 
-    for (auto event : events)
+    for (const auto & event : events)
     {
         this->PushDeal(event);
     }
 
-    dealIndex = static_cast<unsigned int>(events.size());
+    this->dealIndex = static_cast<unsigned int>(events.size());
 }
 
-unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int index) const
+unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int & index) const //NOLINT(google-runtime-int)
 {
     if(this->effective.size() <= index)
     {
@@ -100,19 +100,19 @@ unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int index) 
     switch (this->effective[index].first)
     {
     case 3:
-        return 8u;
+        return 8U; //NOLINT(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
     case 2:
-        return 4u;
+        return 4U; //NOLINT(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
     case 1:
-        return 2u;
+        return 2U; //NOLINT(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
     case 0:
-        return 1u;
+        return 1U; //NOLINT(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
     default:
         throw std::exception((std::string(u8"not supported bock of ") + std::to_string(static_cast<unsigned int>(this->effective[index].first))).c_str());
     }
 }
 
-bool Backend::MultiplierInfo::GetIsMandatorySolo(const unsigned int index) const
+bool Backend::MultiplierInfo::GetIsMandatorySolo(const unsigned int & index) const
 {
     if(this->effective.size() <= index)
     {
@@ -126,8 +126,8 @@ std::vector<unsigned int> Backend::MultiplierInfo::GetPreview() const
 {
     return std::vector<unsigned int>
     {
-        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), std::pair<unsigned short, bool>(1u, false))),
-        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), std::pair<unsigned short, bool>(2u, false))),
-        static_cast<unsigned int>(std::count(effective.begin() + dealIndex, effective.end(), std::pair<unsigned short, bool>(3u, false)))
+        static_cast<unsigned int>(std::count(this->effective.begin() + this->dealIndex, this->effective.end(), std::pair<unsigned short, bool>(1U, false))), //NOLINT(google-runtime-int)
+        static_cast<unsigned int>(std::count(this->effective.begin() + this->dealIndex, this->effective.end(), std::pair<unsigned short, bool>(2U, false))), //NOLINT(google-runtime-int)
+        static_cast<unsigned int>(std::count(this->effective.begin() + this->dealIndex, this->effective.end(), std::pair<unsigned short, bool>(3U, false)))  //NOLINT(google-runtime-int)
     };
 }

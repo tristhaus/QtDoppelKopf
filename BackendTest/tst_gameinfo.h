@@ -19,14 +19,14 @@
 #ifndef TST_GAMEINFO_H
 #define TST_GAMEINFO_H
 
-#include <regex>
-#include <memory>
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
 #include "../Backend/gameinfo.h"
 #include "../TestHelper/memoryrepository.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <memory>
+#include <regex>
 
-TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSetting)
+TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSetting) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -57,7 +57,7 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
                           std::make_pair<std::string, int>(u8"B", 0),
                           std::make_pair<std::string, int>(u8"C", 0),
                           std::make_pair<std::string, int>(u8"D", 0)
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
@@ -88,7 +88,7 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
                           std::make_pair<std::string, int>(u8"C", 0),
                           std::make_pair<std::string, int>(u8"D", 0),
                           std::make_pair<std::string, int>(u8"A", 0)
-                      }, 0u);
+                      }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
@@ -96,7 +96,7 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
                           std::make_pair<std::string, int>(u8"D", 0),
                           std::make_pair<std::string, int>(u8"A", 0),
                           std::make_pair<std::string, int>(u8"B", 0)
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
@@ -146,16 +146,17 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::PlayersSet, gameInfo.LastPoppableEntry());
 }
 
-TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
+TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
 
     // Act, Assert
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F", u8"G"}, u8"A", std::set<unsigned int> { 3u, 5u });
+    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F", u8"G"}, u8"A", std::set<unsigned int> { 3U, 5U });
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.SetPlayers({u8"A", u8"B", u8"C"}, u8"A", emptySitOutScheme);
@@ -167,7 +168,8 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
         }
     }, std::exception);
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.SetPlayers({u8"A", u8"B", u8"A", u8"D"}, u8"A", emptySitOutScheme);
@@ -179,7 +181,8 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
         }
     }, std::exception );
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"Z", emptySitOutScheme);
@@ -193,10 +196,11 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
 
     gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", emptySitOutScheme);
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
-            gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F", u8"G"}, u8"A", std::set<unsigned int> { 3u });
+            gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F", u8"G"}, u8"A", std::set<unsigned int> { 3U });
         }
         catch( const std::exception& e )
         {
@@ -206,7 +210,7 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames)
     }, std::exception );
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyReportIfPlayersWereSet)
+TEST(BackendTest, GameInfoShallCorrectlyReportIfPlayersWereSet) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -221,7 +225,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportIfPlayersWereSet)
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::None, gameInfo.LastPoppableEntry());
 }
 
-TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
+TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -257,7 +261,7 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
                           std::make_pair<std::string, int>(u8"C", 0),
                           std::make_pair<std::string, int>(u8"E", 0),
                           std::make_pair<std::string, int>(u8"F", 0)
-                      }, 0u);
+                      }, 0U);
 
     std::vector<std::shared_ptr<Backend::PlayerInfo>> two(gameInfo.PlayerInfos());
 
@@ -289,7 +293,7 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
                           std::make_pair<std::string, int>(u8"C", 0),
                           std::make_pair<std::string, int>(u8"D", 0),
                           std::make_pair<std::string, int>(u8"E", 0)
-                      }, 0u);
+                      }, 0U);
 
     std::vector<std::shared_ptr<Backend::PlayerInfo>> three(gameInfo.PlayerInfos());
 
@@ -320,7 +324,7 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
                           std::make_pair<std::string, int>(u8"D", 0),
                           std::make_pair<std::string, int>(u8"E", 0),
                           std::make_pair<std::string, int>(u8"F", 0)
-                      }, 0u);
+                      }, 0U);
 
     std::vector<std::shared_ptr<Backend::PlayerInfo>> four(gameInfo.PlayerInfos());
 
@@ -346,7 +350,7 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges)
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 }
 
-TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
+TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -360,20 +364,22 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
                           std::make_pair<std::string, int>(u8"B", 0),
                           std::make_pair<std::string, int>(u8"C", 0),
                           std::make_pair<std::string, int>(u8"D", 0)
-                      }, 0u);
+                      }, 0U);
 
-    EXPECT_THROW({ gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
-                   {
-                       std::make_pair<std::string, int>(u8"A", 0),
-                       std::make_pair<std::string, int>(u8"B", 0),
-                       std::make_pair<std::string, int>(u8"C", 0),
-                       std::make_pair<std::string, int>(u8"Z", 0)
-                   }, 0u);
-                 }, std::exception);
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    { gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
+      {
+          std::make_pair<std::string, int>(u8"A", 0),
+          std::make_pair<std::string, int>(u8"B", 0),
+          std::make_pair<std::string, int>(u8"C", 0),
+          std::make_pair<std::string, int>(u8"Z", 0)
+      }, 0U);
+    }, std::exception);
 
     gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", emptySitOutScheme);
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
@@ -382,7 +388,7 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
                              std::make_pair<std::string, int>(u8"B", 0),
                              std::make_pair<std::string, int>(u8"C", 0),
                              std::make_pair<std::string, int>(u8"E", 0)
-                         }, 0u);
+                         }, 0U);
         }
         catch( const std::exception& e )
         {
@@ -393,7 +399,8 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
 
     gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"E", emptySitOutScheme);
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
@@ -402,7 +409,7 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
                              std::make_pair<std::string, int>(u8"B", 3),
                              std::make_pair<std::string, int>(u8"C", 0),
                              std::make_pair<std::string, int>(u8"D", -3)
-                         }, 0u);
+                         }, 0U);
         }
         catch( const std::exception& e )
         {
@@ -412,7 +419,7 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges)
     }, std::exception);
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
+TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -427,7 +434,7 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
                       {
                           std::make_pair<std::string, int>(u8"A", 1),
                           std::make_pair<std::string, int>(u8"B", 1),
-                      }, 1u);
+                      }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
@@ -461,7 +468,7 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
                       {
                           std::make_pair<std::string, int>(u8"A", 3),
                           std::make_pair<std::string, int>(u8"C", 3),
-                      }, 2u);
+                      }, 2U);
 
     EXPECT_EQ( 7, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-5, playerInfos[1]->CurrentScore());
@@ -488,7 +495,7 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
                       {
                           std::make_pair<std::string, int>(u8"C", 2),
                           std::make_pair<std::string, int>(u8"D", 2),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ( -9, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-21, playerInfos[1]->CurrentScore());
@@ -512,7 +519,7 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier)
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
+TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -527,7 +534,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
                       {
                           std::make_pair<std::string, int>(u8"A", 1),
                           std::make_pair<std::string, int>(u8"B", 1),
-                      }, 1u);
+                      }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
@@ -562,7 +569,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
                       {
                           std::make_pair<std::string, int>(u8"A", 3),
                           std::make_pair<std::string, int>(u8"C", 3),
-                      }, 2u);
+                      }, 2U);
 
     EXPECT_EQ( 7, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-5, playerInfos[1]->CurrentScore());
@@ -609,7 +616,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier)
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
+TEST(BackendTest, GameInfoShallCorrectlyPopDeal) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -624,7 +631,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
                       {
                           std::make_pair<std::string, int>(u8"A", 1),
                           std::make_pair<std::string, int>(u8"B", 1),
-                      }, 0u);
+                      }, 0U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
@@ -650,7 +657,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
                       {
                           std::make_pair<std::string, int>(u8"A", 3),
                           std::make_pair<std::string, int>(u8"C", 3),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ( 4, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[1]->CurrentScore());
@@ -680,7 +687,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal)
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping)
+TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -692,7 +699,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping)
                       {
                           std::make_pair<std::string, int>(u8"A", 1),
                           std::make_pair<std::string, int>(u8"B", 1),
-                      }, 0u);
+                      }, 0U);
 
     while(gameInfo.LastPoppableEntry() != Backend::GameInfo::PoppableEntry::None)
     {
@@ -703,7 +710,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping)
                       {
                           std::make_pair<std::string, int>(u8"A", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 0u);
+                      }, 0U);
 
     // Assert
     auto playerInfos = gameInfo.PlayerInfos();
@@ -716,7 +723,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping)
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries)
+TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -740,7 +747,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries)
                       {
                           std::make_pair<std::string, int>(u8"B", 2),
                           std::make_pair<std::string, int>(u8"C", 2),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 2, playerInfos[1]->CurrentScore());
@@ -822,7 +829,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries)
     EXPECT_EQ(0, playerInfos[5]->NumberGames());
 }
 
-TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
+TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -834,7 +841,7 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
@@ -871,7 +878,7 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
                       {
                           std::make_pair<std::string, int>(u8"A", 2),
                           std::make_pair<std::string, int>(u8"C", 2),
-                      }, 2u);
+                      }, 2U);
 
     EXPECT_EQ( 4, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -899,7 +906,7 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
                       {
                           std::make_pair<std::string, int>(u8"A", 2),
                           std::make_pair<std::string, int>(u8"B", 2),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ( 20, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 17, playerInfos[1]->CurrentScore());
@@ -960,7 +967,7 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping)
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 }
 
-TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers)
+TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -972,19 +979,19 @@ TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 0u);
+                      }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"A", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 0u);
+                      }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"C", 1),
                           std::make_pair<std::string, int>(u8"D", 1),
-                      }, 1u);
+                      }, 1U);
 
 
     auto playerInfos = gameInfo.PlayerInfos();
@@ -1023,7 +1030,7 @@ TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers)
                       {
                           std::make_pair<std::string, int>(u8"C", 1),
                           std::make_pair<std::string, int>(u8"E", 1),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-3, playerInfos[1]->CurrentScore());
@@ -1032,7 +1039,7 @@ TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers)
     EXPECT_EQ( 2, playerInfos[4]->CurrentScore());
 }
 
-TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
+TEST(BackendTest, GameInfoShallProvideCorrectStatistics) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -1047,7 +1054,7 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
                           std::make_pair<std::string, int>(u8"C", -1),
                           std::make_pair<std::string, int>(u8"D",  1),
                           std::make_pair<std::string, int>(u8"E",  1)
-                      }, 0u);
+                      }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
@@ -1056,7 +1063,7 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
                           std::make_pair<std::string, int>(u8"C", -1),
                           std::make_pair<std::string, int>(u8"D", -1),
                           std::make_pair<std::string, int>(u8"E", -1)
-                      }, 1u);
+                      }, 1U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
@@ -1065,7 +1072,7 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
                           /* C */
                           std::make_pair<std::string, int>(u8"D",  2),
                           std::make_pair<std::string, int>(u8"E", -6)
-                      }, 0u);
+                      }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
@@ -1074,7 +1081,7 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
                           std::make_pair<std::string, int>(u8"C",  3),
                           /* D */
                           std::make_pair<std::string, int>(u8"E", -3)
-                      }, 0u);
+                      }, 0U);
 
     // Assert
     auto playerInfos = gameInfo.PlayerInfos();
@@ -1152,7 +1159,7 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics)
     EXPECT_THAT(playerInfos[4]->ScoreHistory(), ::testing::ElementsAre( 1,  0, -12, -18));
 }
 
-TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
+TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -1164,7 +1171,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 
@@ -1192,7 +1199,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 6),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 7, playerInfos[1]->CurrentScore());
@@ -1209,7 +1216,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"C", -3),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-2, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 8, playerInfos[1]->CurrentScore());
@@ -1226,7 +1233,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"D", 3),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 7, playerInfos[1]->CurrentScore());
@@ -1243,7 +1250,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"A", -9),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-12, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 10, playerInfos[1]->CurrentScore());
@@ -1261,7 +1268,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
                       {
                           std::make_pair<std::string, int>(u8"B", 5),
                           std::make_pair<std::string, int>(u8"C", 5),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-22, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 20, playerInfos[1]->CurrentScore());
@@ -1276,7 +1283,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo)
     EXPECT_EQ(0, preview6[2]);
 }
 
-TEST(BackendTest, GameInfoShallPopMandatorySolo)
+TEST(BackendTest, GameInfoShallPopMandatorySolo) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -1288,7 +1295,7 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
@@ -1308,7 +1315,7 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 
@@ -1333,7 +1340,7 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo)
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 6),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 9, playerInfos[1]->CurrentScore());
@@ -1384,7 +1391,7 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo)
                       {
                           std::make_pair<std::string, int>(u8"A", 3),
                           std::make_pair<std::string, int>(u8"C", 3),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ( 5, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-5, playerInfos[1]->CurrentScore());
@@ -1399,7 +1406,7 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo)
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 }
 
-TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet)
+TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -1411,7 +1418,7 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 0u);
+                      }, 0U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
@@ -1452,7 +1459,7 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet)
                       {
                           std::make_pair<std::string, int>(u8"C", 1),
                           std::make_pair<std::string, int>(u8"D", 1),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
@@ -1460,7 +1467,7 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet)
                       {
                           std::make_pair<std::string, int>(u8"D", 1),
                           std::make_pair<std::string, int>(u8"E", 1),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
@@ -1468,7 +1475,7 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet)
                       {
                           std::make_pair<std::string, int>(u8"E", 1),
                           std::make_pair<std::string, int>(u8"A", 1),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
@@ -1476,7 +1483,7 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet)
                       {
                           std::make_pair<std::string, int>(u8"A", 1),
                           std::make_pair<std::string, int>(u8"B", 1),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
@@ -1484,12 +1491,12 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 0u);
+                      }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 }
 
-TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates)
+TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -1500,7 +1507,8 @@ TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates)
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::CannotTrigger, gameInfo.MandatorySolo());
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.TriggerMandatorySolo();
@@ -1516,13 +1524,14 @@ TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates)
                       {
                           std::make_pair<std::string, int>(u8"A", 3),
                           std::make_pair<std::string, int>(u8"C", 3),
-                      }, 0u);
+                      }, 0U);
 
     gameInfo.TriggerMandatorySolo();
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
-    EXPECT_THROW({
+    EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
+    {
         try
         {
             gameInfo.TriggerMandatorySolo();
@@ -1535,7 +1544,7 @@ TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates)
     }, std::exception);
 }
 
-TEST(BackendTest, GameInfoShallCorrectlySaveToRepository)
+TEST(BackendTest, GameInfoShallCorrectlySaveToRepository) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
@@ -1548,7 +1557,7 @@ TEST(BackendTest, GameInfoShallCorrectlySaveToRepository)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
 
     gameInfo.TriggerMandatorySolo();
 
@@ -1591,7 +1600,7 @@ TEST(BackendTest, GameInfoShallCorrectlySaveToRepository)
     EXPECT_TRUE(std::regex_search(persisted, mandatorySoloTriggerKindRegex));
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository)
+TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     std::vector<std::shared_ptr<Backend::Entry>> entries;
@@ -1644,7 +1653,7 @@ TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository)
 
     EXPECT_STREQ(u8"D", gameInfo.Dealer()->Name().c_str());
 
-    EXPECT_EQ(6u, gameInfo.RemainingGamesInRound());
+    EXPECT_EQ(6U, gameInfo.RemainingGamesInRound());
 
     EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -1665,7 +1674,7 @@ TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository)
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, mandatorySolo);
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository)
+TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
@@ -1678,7 +1687,7 @@ TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
 
     gameInfo.TriggerMandatorySolo();
 
@@ -1700,7 +1709,7 @@ TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository)
     gameInfo.LoadFrom(id);
 
     // Assert
-    EXPECT_EQ(3u, gameInfo.RemainingGamesInRound());
+    EXPECT_EQ(3U, gameInfo.RemainingGamesInRound());
 
     ASSERT_EQ(1, playerInfos[0]->NumberGames());
     ASSERT_EQ(1, playerInfos[1]->NumberGames());
@@ -1723,7 +1732,7 @@ TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository)
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, mandatorySolo);
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyHandleBadLoad)
+TEST(BackendTest, GameInfoShallCorrectlyHandleBadLoad) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
@@ -1739,7 +1748,7 @@ TEST(BackendTest, GameInfoShallCorrectlyHandleBadLoad)
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
 
     gameInfo.TriggerMandatorySolo();
 
@@ -1782,7 +1791,7 @@ TEST(BackendTest, GameInfoShallCorrectlyHandleBadLoad)
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, mandatorySolo);
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRound)
+TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRound) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
@@ -1793,66 +1802,66 @@ TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRound)
 
     // Act, Assert
     auto remaining1 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(0u, remaining1);
+    EXPECT_EQ(0U, remaining1);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining2 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(3u, remaining2);
+    EXPECT_EQ(3U, remaining2);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining3 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(2u, remaining3);
+    EXPECT_EQ(2U, remaining3);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining4 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(1u, remaining4);
+    EXPECT_EQ(1U, remaining4);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining5 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(0u, remaining5);
+    EXPECT_EQ(0U, remaining5);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining6 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(3u, remaining6);
+    EXPECT_EQ(3U, remaining6);
 
     gameInfo.TriggerMandatorySolo();
     auto remaining7 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(3u, remaining7);
+    EXPECT_EQ(3U, remaining7);
 
     gameInfo.PopLastEntry();
     auto remaining8 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(3u, remaining8);
+    EXPECT_EQ(3U, remaining8);
 
     gameInfo.PopLastEntry();
     auto remaining9 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(0u, remaining9);
+    EXPECT_EQ(0U, remaining9);
 
     gameInfo.PopLastEntry();
     auto remaining10 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(1u, remaining10);
+    EXPECT_EQ(1U, remaining10);
 }
 
-TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRoundAfterPoppingPlayerSet)
+TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRoundAfterPoppingPlayerSet) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
@@ -1863,46 +1872,46 @@ TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRoundAfterPoppingP
 
     // Act, Assert
     auto remaining1 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(0u, remaining1);
+    EXPECT_EQ(0U, remaining1);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining2 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(3u, remaining2);
+    EXPECT_EQ(3U, remaining2);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining3 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(2u, remaining3);
+    EXPECT_EQ(2U, remaining3);
 
     gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"E", sitOutScheme);
     auto remaining4 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(0u, remaining4);
+    EXPECT_EQ(0U, remaining4);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           std::make_pair<std::string, int>(u8"B", 1),
                           std::make_pair<std::string, int>(u8"C", 1),
-                      }, 1u);
+                      }, 1U);
     auto remaining5 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(4u, remaining5);
+    EXPECT_EQ(4U, remaining5);
 
     gameInfo.PopLastEntry();
     auto remaining6 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(0u, remaining6);
+    EXPECT_EQ(0U, remaining6);
 
     gameInfo.PopLastEntry();
     auto remaining7 = gameInfo.RemainingGamesInRound();
-    EXPECT_EQ(2u, remaining7);
+    EXPECT_EQ(2U, remaining7);
 }
 
-TEST(BackendTest, GameInfoShallHandleNoPlayersSet)
+TEST(BackendTest, GameInfoShallHandleNoPlayersSet) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
@@ -1920,10 +1929,10 @@ TEST(BackendTest, GameInfoShallHandleNoPlayersSet)
     // Assert
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::None, poppableEntry);
     EXPECT_FALSE(hasPlayersSet);
-    EXPECT_EQ(0u, lastNumberOfEvents);
-    EXPECT_EQ(0u, totalCashCents);
+    EXPECT_EQ(0U, lastNumberOfEvents);
+    EXPECT_EQ(0U, totalCashCents);
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::CannotTrigger, mandatorySolo);
-    EXPECT_EQ(0u, remaingingGamesInRound);
+    EXPECT_EQ(0U, remaingingGamesInRound);
 }
 
 #endif // TST_GAMEINFO_H

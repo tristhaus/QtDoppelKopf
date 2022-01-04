@@ -18,20 +18,21 @@
 
 #include "playerinfo.h"
 #include "cashcalculation.h"
-#include <numeric>
 #include <algorithm>
+#include <numeric>
+#include <utility>
 
 namespace Backend
 {
     PlayerInfo::PlayerInfo(std::string name,
-                           std::function<unsigned short(unsigned int)> multiplierAccessor,
+                           std::function<unsigned short(unsigned int)> multiplierAccessor, //NOLINT(google-runtime-int)
                            std::function<int()> maxCurrentScoreAccessor)
-        : name(name),
+        : name(std::move(name)),
           hasPlayed(false),
           isPresent(false),
           isPlaying(false),
-          multiplierAccessor(multiplierAccessor),
-          maxCurrentScoreAccessor(maxCurrentScoreAccessor)
+          multiplierAccessor(std::move(multiplierAccessor)),
+          maxCurrentScoreAccessor(std::move(maxCurrentScoreAccessor))
     {
     }
 

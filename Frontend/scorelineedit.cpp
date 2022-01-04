@@ -16,8 +16,8 @@
  *
  */
 
-#include <qevent.h>
 #include "scorelineedit.h"
+#include <qevent.h>
 
 ScoreLineEdit::ScoreLineEdit(QWidget *parent)
  : QLineEdit(parent)

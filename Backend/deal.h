@@ -51,25 +51,25 @@ namespace Backend
         /*!
          * \reimp
          */
-        virtual enum Entry::Kind Kind() const;
+        [[nodiscard]] enum Entry::Kind Kind() const override;
 
         /*!
          * \brief Gets the unmultiplied score changes from this deal.
          * \return The unmultiplied score changes from this deal.
          */
-        std::vector<std::pair<std::string, int>> Changes() const;
+        [[nodiscard]] std::vector<std::pair<std::string, int>> Changes() const;
 
         /*!
          * \brief Gets the number of multiplier-relevant events from this deal.
          * \return The number of multiplier-relevant events from this deal.
          */
-        NumberOfEvents NumberOfEvents() const;
+        [[nodiscard]] NumberOfEvents NumberOfEvents() const;
 
         /*!
          * \brief Gets the number of players present at this deal.
          * \return The number of players present at this deal.
          */
-        Players Players() const;
+        [[nodiscard]] Players Players() const;
     };
 }
 

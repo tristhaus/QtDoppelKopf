@@ -21,24 +21,25 @@
 #include "playerselection_ui.h"
 
 #include <QMessageBox>
+#include <utility>
 
 MainWindow::MainWindow(const unsigned int maxPlayers, std::shared_ptr<Backend::Repository> repository, bool showPlayerSelection, QWidget *parent)
     : QMainWindow(parent),
       MaxPlayers(maxPlayers),
       ui(new Ui::MainWindow(MaxPlayers)),
-      gameInfo(Backend::GameInfo(repository, maxPlayers))
+      gameInfo(Backend::GameInfo(std::move(repository), maxPlayers))
 {
     assert(maxPlayers <= 8);
     this->htmlColors = std::vector<QColor>
     {
-        QColor(0x7b, 0x1f, 0xa2),
-        QColor(0x00, 0x00, 0x00),
-        QColor(0xfb, 0x8c, 0x00),
-        QColor(0x00, 0x89, 0x7b),
-        QColor(0x39, 0x49, 0xab),
-        QColor(0xe5, 0x39, 0x35),
-        QColor(0x79, 0x55, 0x48),
-        QColor(0x21, 0x96, 0xf3)
+        QColor(0x7b, 0x1f, 0xa2), //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        QColor(0x00, 0x00, 0x00), //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        QColor(0xfb, 0x8c, 0x00), //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        QColor(0x00, 0x89, 0x7b), //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        QColor(0x39, 0x49, 0xab), //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        QColor(0xe5, 0x39, 0x35), //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        QColor(0x79, 0x55, 0x48), //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        QColor(0x21, 0x96, 0xf3)  //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     };
 
     ui->setupUi(this);
@@ -113,7 +114,7 @@ void MainWindow::UpdateDisplay()
 
         QString name = QString::fromUtf8(playerInfo->Name());
         ui->names[index]->setText(name);
-        if(dealer && playerInfo->Name().compare(dealer->Name()) == 0)
+        if(dealer && playerInfo->Name() == dealer->Name())
         {
             ui->names[index]->setStyleSheet(this->DealerNamesStylesheet);
         }
@@ -130,7 +131,7 @@ void MainWindow::UpdateDisplay()
 
         ui->lastGames[index]->setText(playerInfo->ParticipatedInLastDeal() ? QString(u8"%1").arg(playerInfo->ScoreInLastDeal()) : QString(u8""));
 
-        ui->cashs[index]->setText(QString(u8"%1,%2").arg(playerInfo->CashCents()/100).arg(playerInfo->CashCents()%100, 2, 10, QLatin1Char('0')));
+        ui->cashs[index]->setText(QString(u8"%1,%2").arg(playerInfo->CashCents()/CentsInEuro).arg(playerInfo->CashCents()%CentsInEuro, 2, DecimalBase, QLatin1Char('0')));
 
         ui->numberWons[index]->setText(QString().setNum(playerInfo->NumberGamesWon()));
         ui->numberLosts[index]->setText(QString().setNum(playerInfo->NumberGamesLost()));
@@ -142,11 +143,11 @@ void MainWindow::UpdateDisplay()
         ui->maxSingleLosss[index]->setText(QString().setNum(playerInfo->MaxSingleLoss()));
         ui->unmultipliedScores[index]->setText(QString().setNum(playerInfo->UnmultipliedScore()));
 
-        ui->playerHistorySelectionLabels[index]->setText(QString::asprintf(u8"<font color=\"#%02x%02x%02x\">■</font> %s",
-                                                                           this->htmlColors[index].red(),
-                                                                           this->htmlColors[index].green(),
-                                                                           this->htmlColors[index].blue(),
-                                                                           name.toStdString().c_str()));
+        ui->playerHistorySelectionLabels[index]->setText(QString(u8"<font color=\"#%1%2%3\">■</font> %4")
+                                                         .arg(this->htmlColors[index].red(),   2, HexadecimalBase, QLatin1Char('0'))
+                                                         .arg(this->htmlColors[index].green(), 2, HexadecimalBase, QLatin1Char('0'))
+                                                         .arg(this->htmlColors[index].blue(),  2, HexadecimalBase, QLatin1Char('0'))
+                                                         .arg(name.toUtf8()));
     }
 
     ui->spinBox->setValue(0);
@@ -177,10 +178,10 @@ void MainWindow::UpdateDisplay()
     ui->remainingGamesInRound->setText(remainingText);
 
     ui->totalCash->setText(QString(u8"%1,%2 (inkl. %3,%4 pro Abwesender)")
-                           .arg(gameInfo.TotalCashCents()/100)
-                           .arg(gameInfo.TotalCashCents()%100, 2, 10, QLatin1Char('0'))
-                           .arg(gameInfo.AbsentPlayerCashCents()/100)
-                           .arg(gameInfo.AbsentPlayerCashCents()%100, 2, 10, QLatin1Char('0')));
+                           .arg(gameInfo.TotalCashCents()/CentsInEuro)
+                           .arg(gameInfo.TotalCashCents()%CentsInEuro, 2, DecimalBase, QLatin1Char('0'))
+                           .arg(gameInfo.AbsentPlayerCashCents()/CentsInEuro)
+                           .arg(gameInfo.AbsentPlayerCashCents()%CentsInEuro, 2, DecimalBase, QLatin1Char('0')));
 
     ui->resetButton->setEnabled(this->gameInfo.LastPoppableEntry() != Backend::GameInfo::PoppableEntry::None);
     switch(this->gameInfo.LastPoppableEntry())
@@ -229,17 +230,17 @@ void MainWindow::ShowPlayerSelection()
     QString currentDealer;
     std::set<unsigned int> currentSitOutScheme;
 
-    if(gameInfo.PlayerInfos().size() > 0)
+    if(!gameInfo.PlayerInfos().empty())
     {
         const std::vector<std::shared_ptr<Backend::PlayerInfo>> playerInfos = gameInfo.PlayerInfos();
 
-        for(auto playerInfosIt = playerInfos.begin(); playerInfosIt != playerInfos.end(); ++playerInfosIt)
+        for(const auto & playerInfo : playerInfos)
         {
-            currentPlayers.emplace_back(std::pair<QString, bool>(QString::fromUtf8((*playerInfosIt)->Name()), (*playerInfosIt)->IsPresent()));
+            currentPlayers.emplace_back(std::pair<QString, bool>(QString::fromUtf8(playerInfo->Name()), playerInfo->IsPresent()));
         }
 
         std::string dealerName = gameInfo.Dealer()->Name();
-        auto dealerIt = std::find_if(playerInfos.cbegin(), playerInfos.cend(), [&](std::shared_ptr<Backend::PlayerInfo> left){ return left->Name().compare(dealerName) == 0; });
+        auto dealerIt = std::find_if(playerInfos.cbegin(), playerInfos.cend(), [&](const std::shared_ptr<Backend::PlayerInfo>& left){ return left->Name() == dealerName; });
         this->dealerIndex = dealerIt - playerInfos.cbegin();
 
         currentSitOutScheme = gameInfo.SitOutScheme();
@@ -271,7 +272,7 @@ void MainWindow::ShowPlayerSelection()
     std::transform(std::get<0>(result).begin(),
                    std::get<0>(result).end(),
                    std::back_inserter(players),
-                   [](QString qs) { auto bytes = qs.toUtf8(); return std::string(bytes.constData(), bytes.length()); });
+                   [](const QString& qs) { auto bytes = qs.toUtf8(); return std::string(bytes.constData(), bytes.length()); });
 
     auto dealerBytes = std::get<1>(result).toUtf8();
     std::string dealer(dealerBytes.constData(), dealerBytes.length());
@@ -366,8 +367,8 @@ void MainWindow::RedrawPlayerHistory()
     }
 
     auto x = static_cast<unsigned int>(map.begin()->second.first.size());
-    x = std::max(x, 50u);
-    ui->plotPlayerHistory->xAxis->setRange(x - 50u, x);
+    x = std::max(x, 50U); //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+    ui->plotPlayerHistory->xAxis->setRange(x - 50U, x); //NOLINT(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
     ui->plotPlayerHistory->yAxis->rescale();
 
     ui->plotPlayerHistory->replot();
@@ -434,9 +435,9 @@ void MainWindow::DetermineAndSetMultiplierLabels()
         ui->currentGameMultiplier->setText(QString(u8"Kein Bock"));
     }
 
-    ui->tripleMultiplier->setText(QString().number(preview[2]));
-    ui->doubleMultiplier->setText(QString().number(preview[1]));
-    ui->singleMultiplier->setText(QString().number(preview[0]));
+    ui->tripleMultiplier->setText(QString::number(preview[2]));
+    ui->doubleMultiplier->setText(QString::number(preview[1]));
+    ui->singleMultiplier->setText(QString::number(preview[0]));
 }
 
 QString MainWindow::GetFolderForFileDialog()
@@ -468,7 +469,7 @@ void MainWindow::CommitDeal()
         }
     }
 
-    if(changes.size() == 0)
+    if(changes.empty())
     {
         return;
     }
@@ -581,7 +582,7 @@ void MainWindow::OnResetPressed()
     std::transform(playerInfos.begin(),
                    playerInfos.end(),
                    std::back_inserter(resetActuals),
-                   [](std::shared_ptr<Backend::PlayerInfo> info){ return info->InputInLastDeal(); });
+                   [](const std::shared_ptr<Backend::PlayerInfo>& info){ return info->InputInLastDeal(); });
 
     auto numberOfEvents = this->gameInfo.LastNumberOfEvents();
 

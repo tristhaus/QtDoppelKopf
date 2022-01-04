@@ -22,8 +22,8 @@
 #error "you need to make a choice between using or skipping long tests, -D_USE_LONG_TEST -D_SKIP_LONG_TEST"
 #endif
 
-#include <QtTest>
 #include <QTest>
+#include <QtTest>
 
 #include "../Frontend/mainwindow.h"
 #include "../Frontend/mainwindow_ui.h"
@@ -35,15 +35,18 @@ class FrontendTest : public QObject
     Q_OBJECT
 
 private:
+    const int SingleShotInterval = 1000;
+    const int ShortInterval = 10;
+    const unsigned int MaxPlayers = 8U;
+    const unsigned int DefaultPlayers = 8U;
     const QString ExpectedStandardNamesStyleSheet = QString::fromUtf8(u8"QLabel { }");
     const QString ExpectedDealerNamesStyleSheet = QString::fromUtf8(u8"QLabel { border: 3px solid orange ; border-radius : 6px }");
 
 public:
     FrontendTest();
-    ~FrontendTest();
 
 private slots:
-    void ConstructionShallWorkCompletely();
+    void ConstructionShallWorkCompletely() const;
 #ifdef _USE_LONG_TEST
     void CancellingInitialPlayerSelectionLeadsToDisabledUI();
     void SetDataShallBeDisplayed();
@@ -51,33 +54,28 @@ private slots:
     void OneCommittedGameShallBeDisplayed();
     void TwoCommittedGamesShallBeDisplayed();
     void TwoCommittedAndTwoPoppedGameShallBeDisplayed();
-    void AllLevelsOfMultipliersShallCorrectlyBeDisplayed();
-    void StatisticsShallCorrectlyBeDisplayed();
-    void ScoreHistoryPlotShallWorkCorrectly();
+    void AllLevelsOfMultipliersShallCorrectlyBeDisplayed() const;
+    void StatisticsShallCorrectlyBeDisplayed() const;
+    void ScoreHistoryPlotShallWorkCorrectly() const;
     void AboutButtonShallTriggerDialogAndOKShallClose();
-    void MandatorySoloButtonShallBeEnabledAndTrigger();
+    void MandatorySoloButtonShallBeEnabledAndTrigger() const;
     void EveryOptionOfResetButtonShallBeDisplayed();
-    void SaveGameShallWorkWithPresetValueAndPersist();
+    void SaveGameShallWorkWithPresetValueAndPersist() const;
     void LoadGameShallWorkWithPresetValueAndDisplayGame();
-    void FocusOnActualShallTriggerAutofill();
-    void ReturnKeyShallCommitGame();
+    void FocusOnActualShallTriggerAutofill() const;
+    void ReturnKeyShallCommitGame() const;
 #endif // _USE_LONG_TEST
 };
 
 FrontendTest::FrontendTest()
-{
-}
+= default;
 
-FrontendTest::~FrontendTest()
-{
-}
-
-void FrontendTest::ConstructionShallWorkCompletely()
+void FrontendTest::ConstructionShallWorkCompletely() const//NOLINT(google-readability-function-size, hicpp-function-size, readability-function-size)
 {
     try
     {
         // Act
-        MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+        MainWindow mw(MaxPlayers, std::make_shared<MemoryRepository>(), false);
 
         // Assert
         QVERIFY2(mw.ui->centralwidget, qPrintable(QString::fromUtf8(u8"not created central widget")));
@@ -94,26 +92,26 @@ void FrontendTest::ConstructionShallWorkCompletely()
 
         QVERIFY2(mw.ui->namesLayout, qPrintable(QString::fromUtf8(u8"not created names layout")));
         QVERIFY2(mw.ui->namenLabel, qPrintable(QString::fromUtf8(u8"not created namen label")));
-        QVERIFY2(mw.ui->names.size() > 0, qPrintable(QString::fromUtf8(u8"there must be name labels")));
-        for(size_t i = 0; i < mw.ui->names.size(); ++i)
+        QVERIFY2(!mw.ui->names.empty(), qPrintable(QString::fromUtf8(u8"there must be name labels")));
+        for(auto & name : mw.ui->names)
         {
-            QVERIFY2(mw.ui->names[i], qPrintable(QString::fromUtf8(u8"name label not created")));
+            QVERIFY2(name, qPrintable(QString::fromUtf8(u8"name label not created")));
         }
 
         QVERIFY2(mw.ui->letztesLabel, qPrintable(QString::fromUtf8(u8"not created letztes label")));
-        QVERIFY2(mw.ui->lastGames.size() > 0, qPrintable(QString::fromUtf8(u8"there must be last games labels")));
+        QVERIFY2(!mw.ui->lastGames.empty(), qPrintable(QString::fromUtf8(u8"there must be last games labels")));
         QVERIFY2(mw.ui->lastGames.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: lastGames, names")));
-        for(size_t i = 0; i < mw.ui->lastGames.size(); ++i)
+        for(auto & lastGame : mw.ui->lastGames)
         {
-            QVERIFY2(mw.ui->lastGames[i], qPrintable(QString::fromUtf8(u8"last game label not created")));
+            QVERIFY2(lastGame, qPrintable(QString::fromUtf8(u8"last game label not created")));
         }
 
         QVERIFY2(mw.ui->aktuellesLabel, qPrintable(QString::fromUtf8(u8"not created aktuelles label")));
-        QVERIFY2(mw.ui->actuals.size() > 0, qPrintable(QString::fromUtf8(u8"there must be actuals inputs")));
+        QVERIFY2(!mw.ui->actuals.empty(), qPrintable(QString::fromUtf8(u8"there must be actuals inputs")));
         QVERIFY2(mw.ui->actuals.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: actuals, names")));
-        for(size_t i = 0; i < mw.ui->actuals.size(); ++i)
+        for(auto & actual : mw.ui->actuals)
         {
-            QVERIFY2(mw.ui->actuals[i], qPrintable(QString::fromUtf8(u8"actual input not created")));
+            QVERIFY2(actual, qPrintable(QString::fromUtf8(u8"actual input not created")));
         }
 
         QVERIFY2(mw.ui->controlWidget, qPrintable(QString::fromUtf8(u8"not created control widget")));
@@ -128,19 +126,19 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(mw.ui->resetButton, qPrintable(QString::fromUtf8(u8"not created reset button")));
 
         QVERIFY2(mw.ui->spielstandLabel, qPrintable(QString::fromUtf8(u8"not created spielstand label")));
-        QVERIFY2(mw.ui->scores.size() > 0, qPrintable(QString::fromUtf8(u8"there must be scores labels")));
+        QVERIFY2(!mw.ui->scores.empty(), qPrintable(QString::fromUtf8(u8"there must be scores labels")));
         QVERIFY2(mw.ui->scores.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: scores, names")));
-        for(size_t i = 0; i < mw.ui->scores.size(); ++i)
+        for(auto & score : mw.ui->scores)
         {
-            QVERIFY2(mw.ui->scores[i], qPrintable(QString::fromUtf8(u8"score label not created")));
+            QVERIFY2(score, qPrintable(QString::fromUtf8(u8"score label not created")));
         }
 
         QVERIFY2(mw.ui->zuZahlenLabel, qPrintable(QString::fromUtf8(u8"not created zu zahlen label")));
-        QVERIFY2(mw.ui->cashs.size() > 0, qPrintable(QString::fromUtf8(u8"there must be scores labels")));
+        QVERIFY2(!mw.ui->cashs.empty(), qPrintable(QString::fromUtf8(u8"there must be scores labels")));
         QVERIFY2(mw.ui->cashs.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: cashs, names")));
-        for(size_t i = 0; i < mw.ui->cashs.size(); ++i)
+        for(auto & cash : mw.ui->cashs)
         {
-            QVERIFY2(mw.ui->cashs[i], qPrintable(QString::fromUtf8(u8"cash label not created")));
+            QVERIFY2(cash, qPrintable(QString::fromUtf8(u8"cash label not created")));
         }
 
         QVERIFY2(mw.ui->kassenstandLabel, qPrintable(QString::fromUtf8(u8"not created kassenstand label")));
@@ -159,74 +157,74 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(mw.ui->groessterVerlustLabel, qPrintable(QString::fromUtf8(u8"not created groesster verlust label")));
         QVERIFY2(mw.ui->ohneBockLabel, qPrintable(QString::fromUtf8(u8"not created ohne bock label")));
 
-        QVERIFY2(mw.ui->statisticNames.size() > 0, qPrintable(QString::fromUtf8(u8"there must be statisticNames labels")));
+        QVERIFY2(!mw.ui->statisticNames.empty(), qPrintable(QString::fromUtf8(u8"there must be statisticNames labels")));
         QVERIFY2(mw.ui->statisticNames.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: statisticNames, names")));
-        for(size_t i = 0; i < mw.ui->statisticNames.size(); ++i)
+        for(auto & statisticName : mw.ui->statisticNames)
         {
-            QVERIFY2(mw.ui->statisticNames[i], qPrintable(QString::fromUtf8(u8"statistic name label not created")));
+            QVERIFY2(statisticName, qPrintable(QString::fromUtf8(u8"statistic name label not created")));
         }
 
-        QVERIFY2(mw.ui->numberWons.size() > 0, qPrintable(QString::fromUtf8(u8"there must be numberWons labels")));
+        QVERIFY2(!mw.ui->numberWons.empty(), qPrintable(QString::fromUtf8(u8"there must be numberWons labels")));
         QVERIFY2(mw.ui->numberWons.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: numberWons, names")));
-        for(size_t i = 0; i < mw.ui->numberWons.size(); ++i)
+        for(auto & numberWon : mw.ui->numberWons)
         {
-            QVERIFY2(mw.ui->numberWons[i], qPrintable(QString::fromUtf8(u8"number won label not created")));
+            QVERIFY2(numberWon, qPrintable(QString::fromUtf8(u8"number won label not created")));
         }
 
-        QVERIFY2(mw.ui->numberLosts.size() > 0, qPrintable(QString::fromUtf8(u8"there must be numberLosts labels")));
+        QVERIFY2(!mw.ui->numberLosts.empty(), qPrintable(QString::fromUtf8(u8"there must be numberLosts labels")));
         QVERIFY2(mw.ui->numberLosts.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: numberLosts, names")));
-        for(size_t i = 0; i < mw.ui->numberLosts.size(); ++i)
+        for(auto & numberLost : mw.ui->numberLosts)
         {
-            QVERIFY2(mw.ui->numberLosts[i], qPrintable(QString::fromUtf8(u8"number lost label not created")));
+            QVERIFY2(numberLost, qPrintable(QString::fromUtf8(u8"number lost label not created")));
         }
 
-        QVERIFY2(mw.ui->numberPlayeds.size() > 0, qPrintable(QString::fromUtf8(u8"there must be numberPlayeds labels")));
+        QVERIFY2(!mw.ui->numberPlayeds.empty(), qPrintable(QString::fromUtf8(u8"there must be numberPlayeds labels")));
         QVERIFY2(mw.ui->numberPlayeds.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: numberPlayeds, names")));
-        for(size_t i = 0; i < mw.ui->numberPlayeds.size(); ++i)
+        for(auto & numberPlayed : mw.ui->numberPlayeds)
         {
-            QVERIFY2(mw.ui->numberPlayeds[i], qPrintable(QString::fromUtf8(u8"number playeds label not created")));
+            QVERIFY2(numberPlayed, qPrintable(QString::fromUtf8(u8"number playeds label not created")));
         }
 
-        QVERIFY2(mw.ui->numberSoloWons.size() > 0, qPrintable(QString::fromUtf8(u8"there must be numberSoloWons labels")));
+        QVERIFY2(!mw.ui->numberSoloWons.empty(), qPrintable(QString::fromUtf8(u8"there must be numberSoloWons labels")));
         QVERIFY2(mw.ui->numberSoloWons.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: numberSoloWons, names")));
-        for(size_t i = 0; i < mw.ui->numberSoloWons.size(); ++i)
+        for(auto & numberSoloWon : mw.ui->numberSoloWons)
         {
-            QVERIFY2(mw.ui->numberSoloWons[i], qPrintable(QString::fromUtf8(u8"solo wons label not created")));
+            QVERIFY2(numberSoloWon, qPrintable(QString::fromUtf8(u8"solo wons label not created")));
         }
 
-        QVERIFY2(mw.ui->numberSoloLosts.size() > 0, qPrintable(QString::fromUtf8(u8"there must be numberSoloLosts labels")));
+        QVERIFY2(!mw.ui->numberSoloLosts.empty(), qPrintable(QString::fromUtf8(u8"there must be numberSoloLosts labels")));
         QVERIFY2(mw.ui->numberSoloLosts.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: numberSoloLosts, names")));
-        for(size_t i = 0; i < mw.ui->numberSoloLosts.size(); ++i)
+        for(auto & numberSoloLost : mw.ui->numberSoloLosts)
         {
-            QVERIFY2(mw.ui->numberSoloLosts[i], qPrintable(QString::fromUtf8(u8"solo losts label not created")));
+            QVERIFY2(numberSoloLost, qPrintable(QString::fromUtf8(u8"solo losts label not created")));
         }
 
-        QVERIFY2(mw.ui->pointsSolos.size() > 0, qPrintable(QString::fromUtf8(u8"there must be pointsSolos labels")));
+        QVERIFY2(!mw.ui->pointsSolos.empty(), qPrintable(QString::fromUtf8(u8"there must be pointsSolos labels")));
         QVERIFY2(mw.ui->pointsSolos.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: pointsSolos, names")));
-        for(size_t i = 0; i < mw.ui->pointsSolos.size(); ++i)
+        for(auto & pointsSolo : mw.ui->pointsSolos)
         {
-            QVERIFY2(mw.ui->pointsSolos[i], qPrintable(QString::fromUtf8(u8"points solos label not created")));
+            QVERIFY2(pointsSolo, qPrintable(QString::fromUtf8(u8"points solos label not created")));
         }
 
-        QVERIFY2(mw.ui->maxSingleWins.size() > 0, qPrintable(QString::fromUtf8(u8"there must be maxSingleWins labels")));
+        QVERIFY2(!mw.ui->maxSingleWins.empty(), qPrintable(QString::fromUtf8(u8"there must be maxSingleWins labels")));
         QVERIFY2(mw.ui->maxSingleWins.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: maxSingleWins, names")));
-        for(size_t i = 0; i < mw.ui->maxSingleWins.size(); ++i)
+        for(auto & maxSingleWin : mw.ui->maxSingleWins)
         {
-            QVERIFY2(mw.ui->maxSingleWins[i], qPrintable(QString::fromUtf8(u8"max single wins label not created")));
+            QVERIFY2(maxSingleWin, qPrintable(QString::fromUtf8(u8"max single wins label not created")));
         }
 
-        QVERIFY2(mw.ui->maxSingleLosss.size() > 0, qPrintable(QString::fromUtf8(u8"there must be maxSingleLosss labels")));
+        QVERIFY2(!mw.ui->maxSingleLosss.empty(), qPrintable(QString::fromUtf8(u8"there must be maxSingleLosss labels")));
         QVERIFY2(mw.ui->maxSingleLosss.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: maxSingleLosss, names")));
-        for(size_t i = 0; i < mw.ui->maxSingleLosss.size(); ++i)
+        for(auto & maxSingleLoss : mw.ui->maxSingleLosss)
         {
-            QVERIFY2(mw.ui->maxSingleLosss[i], qPrintable(QString::fromUtf8(u8"max single losss label not created")));
+            QVERIFY2(maxSingleLoss, qPrintable(QString::fromUtf8(u8"max single losss label not created")));
         }
 
-        QVERIFY2(mw.ui->unmultipliedScores.size() > 0, qPrintable(QString::fromUtf8(u8"there must be unmultipliedScores labels")));
+        QVERIFY2(!mw.ui->unmultipliedScores.empty(), qPrintable(QString::fromUtf8(u8"there must be unmultipliedScores labels")));
         QVERIFY2(mw.ui->unmultipliedScores.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: unmultipliedScores, names")));
-        for(size_t i = 0; i < mw.ui->unmultipliedScores.size(); ++i)
+        for(auto & unmultipliedScore : mw.ui->unmultipliedScores)
         {
-            QVERIFY2(mw.ui->unmultipliedScores[i], qPrintable(QString::fromUtf8(u8"unmultiplied scores label not created")));
+            QVERIFY2(unmultipliedScore, qPrintable(QString::fromUtf8(u8"unmultiplied scores label not created")));
         }
 
         QVERIFY2(mw.ui->currentGameMultiplier, qPrintable(QString::fromUtf8(u8"current game multiplier not created")));
@@ -242,25 +240,25 @@ void FrontendTest::ConstructionShallWorkCompletely()
         QVERIFY2(mw.ui->playerHistorySelectionWidget, qPrintable(QString::fromUtf8(u8"not created player history selection widget")));
         QVERIFY2(mw.ui->playerHistoryGridLayout, qPrintable(QString::fromUtf8(u8"not created player history grid layout")));
 
-        QVERIFY2(mw.ui->playerHistorySelectionLayouts.size() > 0, qPrintable(QString::fromUtf8(u8"there must be playerHistorySelectionLayouts labels")));
+        QVERIFY2(!mw.ui->playerHistorySelectionLayouts.empty(), qPrintable(QString::fromUtf8(u8"there must be playerHistorySelectionLayouts labels")));
         QVERIFY2(mw.ui->playerHistorySelectionLayouts.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: playerHistorySelectionLayouts, names")));
-        for(size_t i = 0; i < mw.ui->playerHistorySelectionLayouts.size(); ++i)
+        for(auto & playerHistorySelectionLayout : mw.ui->playerHistorySelectionLayouts)
         {
-            QVERIFY2(mw.ui->playerHistorySelectionLayouts[i], qPrintable(QString::fromUtf8(u8"player history selection layout not created")));
+            QVERIFY2(playerHistorySelectionLayout, qPrintable(QString::fromUtf8(u8"player history selection layout not created")));
         }
 
-        QVERIFY2(mw.ui->playerHistorySelectionCheckboxes.size() > 0, qPrintable(QString::fromUtf8(u8"there must be playerHistorySelectionCheckboxes labels")));
+        QVERIFY2(!mw.ui->playerHistorySelectionCheckboxes.empty(), qPrintable(QString::fromUtf8(u8"there must be playerHistorySelectionCheckboxes labels")));
         QVERIFY2(mw.ui->playerHistorySelectionCheckboxes.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: playerHistorySelectionCheckboxes, names")));
-        for(size_t i = 0; i < mw.ui->playerHistorySelectionCheckboxes.size(); ++i)
+        for(auto & playerHistorySelectionCheckboxe : mw.ui->playerHistorySelectionCheckboxes)
         {
-            QVERIFY2(mw.ui->playerHistorySelectionCheckboxes[i], qPrintable(QString::fromUtf8(u8"player history selection checkbox not created")));
+            QVERIFY2(playerHistorySelectionCheckboxe, qPrintable(QString::fromUtf8(u8"player history selection checkbox not created")));
         }
 
-        QVERIFY2(mw.ui->playerHistorySelectionLabels.size() > 0, qPrintable(QString::fromUtf8(u8"there must be playerHistorySelectionLabels labels")));
+        QVERIFY2(!mw.ui->playerHistorySelectionLabels.empty(), qPrintable(QString::fromUtf8(u8"there must be playerHistorySelectionLabels labels")));
         QVERIFY2(mw.ui->playerHistorySelectionLabels.size() == mw.ui->names.size(), qPrintable(QString::fromUtf8(u8"sizes do not match: playerHistorySelectionLabels, names")));
-        for(size_t i = 0; i < mw.ui->playerHistorySelectionLabels.size(); ++i)
+        for(auto & playerHistorySelectionLabel : mw.ui->playerHistorySelectionLabels)
         {
-            QVERIFY2(mw.ui->playerHistorySelectionLabels[i], qPrintable(QString::fromUtf8(u8"player history selection label not created")));
+            QVERIFY2(playerHistorySelectionLabel, qPrintable(QString::fromUtf8(u8"player history selection label not created")));
         }
 
         QVERIFY2(mw.ui->plotPlayerHistory, qPrintable(QString::fromUtf8(u8"not created player history plot")));
@@ -283,16 +281,14 @@ void FrontendTest::ConstructionShallWorkCompletely()
 void FrontendTest::CancellingInitialPlayerSelectionLeadsToDisabledUI()
 {
     // Arrange
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
-    auto ui = mw.ui;
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     // Act
     // spy needed such that events actually happen
-    QSignalSpy spyChangePlayersButton(ui->changePlayersButton, &QAbstractButton::pressed);
+    QSignalSpy spyChangePlayersButton(mw.ui->changePlayersButton, &QAbstractButton::pressed);
 
     // Act
-    int interval = 1000;
-    QTimer::singleShot(interval, [&]()
+    QTimer::singleShot(this->SingleShotInterval, this, [&]()
     {
         mw.playerSelection->reject();
     });
@@ -341,7 +337,7 @@ void FrontendTest::SetDataShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     // Act
     mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
@@ -405,16 +401,14 @@ void FrontendTest::SetDataShallBeDisplayed()
 void FrontendTest::PlayerSelectionButtonShallTriggerDialogAndSetDataShallBeUsed()
 {
     // Arrange
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
-    auto ui = mw.ui;
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     // spy needed such that events actually happen
-    QSignalSpy spyChangePlayersButton(ui->changePlayersButton, &QAbstractButton::pressed);
+    QSignalSpy spyChangePlayersButton(mw.ui->changePlayersButton, &QAbstractButton::pressed);
 
     // Act
     bool changePlayersDialogFound = false;
-    int interval = 1000;
-    QTimer::singleShot(interval, [&]()
+    QTimer::singleShot(this->SingleShotInterval, this, [&]()
     {
         changePlayersDialogFound = mw.playerSelection != nullptr;
         mw.playerSelection->dialogNames[1]->setText(QString::fromUtf8(u8"NewPlayer"));
@@ -431,7 +425,7 @@ void FrontendTest::PlayerSelectionButtonShallTriggerDialogAndSetDataShallBeUsed(
 
     QVERIFY2(mw.playerSelection == nullptr, qPrintable(QString::fromUtf8(u8"playerSelection still reachable")));
 
-    QVERIFY2(ui->names[1]->text().compare(QString::fromUtf8(u8"NewPlayer")) == 0, qPrintable(QString::fromUtf8(u8"incorrect name")));
+    QVERIFY2(mw.ui->names[1]->text().compare(QString::fromUtf8(u8"NewPlayer")) == 0, qPrintable(QString::fromUtf8(u8"incorrect name")));
 }
 
 void FrontendTest::OneCommittedGameShallBeDisplayed()
@@ -453,7 +447,7 @@ void FrontendTest::OneCommittedGameShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -546,7 +540,7 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -624,7 +618,7 @@ void FrontendTest::TwoCommittedGamesShallBeDisplayed()
     QVERIFY2(mw.ui->singleMultiplier->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"single multiplier label incorrect")));
 }
 
-void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
+void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed() //NOLINT(google-readability-function-size, hicpp-function-size, readability-function-size)
 {
     // Arrange
     std::vector<std::string> players
@@ -643,7 +637,7 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
         3
     };
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
     QSignalSpy resetButtonSpy(mw.ui->resetButton, &QPushButton::clicked);
@@ -844,7 +838,7 @@ void FrontendTest::TwoCommittedAndTwoPoppedGameShallBeDisplayed()
     QVERIFY2(isEnabled5 == false, qPrintable(QString::fromUtf8(u8"reset button wrong enabled state")));
 }
 
-void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
+void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed() const
 {
     // Arrange
     std::vector<std::string> players
@@ -859,7 +853,7 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
     std::string dealer(u8"C");
     std::set<unsigned int> sitOutScheme;
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -907,7 +901,7 @@ void FrontendTest::AllLevelsOfMultipliersShallCorrectlyBeDisplayed()
     QVERIFY2(mw.ui->singleMultiplier->text().compare(QString::fromUtf8(u8"1")) == 0, qPrintable(QString::fromUtf8(u8"single multiplier label incorrect")));
 }
 
-void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
+void FrontendTest::StatisticsShallCorrectlyBeDisplayed() const
 {
     // Arrange
     std::vector<std::string> players
@@ -922,7 +916,7 @@ void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
     std::string dealer(u8"A");
     std::set<unsigned int> sitOutScheme {};
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -1025,7 +1019,7 @@ void FrontendTest::StatisticsShallCorrectlyBeDisplayed()
     QVERIFY2(mw.ui->unmultipliedScores[4]->text().compare(QString::fromUtf8(u8"-9")) == 0, qPrintable(QString::fromUtf8(u8"incorrect unmultiplied scores 4")));
 }
 
-void FrontendTest::ScoreHistoryPlotShallWorkCorrectly()
+void FrontendTest::ScoreHistoryPlotShallWorkCorrectly() const
 {
     // Arrange
     std::vector<std::string> players
@@ -1040,7 +1034,7 @@ void FrontendTest::ScoreHistoryPlotShallWorkCorrectly()
     std::string dealer(u8"A");
     std::set<unsigned int> sitOutScheme {};
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 
@@ -1083,17 +1077,15 @@ void FrontendTest::ScoreHistoryPlotShallWorkCorrectly()
 void FrontendTest::AboutButtonShallTriggerDialogAndOKShallClose()
 {
     // Arrange
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
-    auto ui = mw.ui;
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     // spy needed such that events actually happen
-    QSignalSpy spyAboutButton(ui->aboutButton, &QAbstractButton::pressed);
+    QSignalSpy spyAboutButton(mw.ui->aboutButton, &QAbstractButton::pressed);
 
     // Act
     bool aboutMessageBoxFound = false;
     bool aboutMessageBoxHasOneButton = false;
-    int interval = 1000;
-    QTimer::singleShot(interval, [&]()
+    QTimer::singleShot(this->SingleShotInterval, this, [&]()
     {
         aboutMessageBoxFound = mw.aboutMessageBox != nullptr;
         aboutMessageBoxHasOneButton = mw.aboutMessageBox->buttons().count() == 1 && mw.aboutMessageBox->buttons().first() != nullptr;
@@ -1112,7 +1104,7 @@ void FrontendTest::AboutButtonShallTriggerDialogAndOKShallClose()
     QVERIFY2(mw.aboutMessageBox == nullptr, qPrintable(QString::fromUtf8(u8"aboutMessageBox still reachable")));
 }
 
-void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger()
+void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger() const
 {
     // Arrange
     std::vector<std::string> players
@@ -1126,7 +1118,7 @@ void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger()
     std::string dealer(u8"A");
     std::set<unsigned int> sitOutScheme {};
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy mandatorySoloButtonSpy(mw.ui->mandatorySoloButton, &QPushButton::clicked);
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
@@ -1181,8 +1173,7 @@ void FrontendTest::MandatorySoloButtonShallBeEnabledAndTrigger()
 void FrontendTest::EveryOptionOfResetButtonShallBeDisplayed()
 {
     // Arrange
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
-    auto ui = mw.ui;
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     std::vector<std::string> players
     {
@@ -1199,24 +1190,23 @@ void FrontendTest::EveryOptionOfResetButtonShallBeDisplayed()
     mw.UpdateDisplay();
 
     // spy needed such that events actually happen
-    QSignalSpy spyChangePlayersButton(ui->changePlayersButton, &QAbstractButton::pressed);
-    QSignalSpy spyCommitButton(ui->commitButton, &QAbstractButton::pressed);
-    QSignalSpy spyMandatorySoloButton(ui->mandatorySoloButton, &QAbstractButton::pressed);
+    QSignalSpy spyChangePlayersButton(mw.ui->changePlayersButton, &QAbstractButton::pressed);
+    QSignalSpy spyCommitButton(mw.ui->commitButton, &QAbstractButton::pressed);
+    QSignalSpy spyMandatorySoloButton(mw.ui->mandatorySoloButton, &QAbstractButton::pressed);
 
     // Act, Assert
-    QVERIFY2(!ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: none")));
-    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8(u8"Zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: none")));
+    QVERIFY2(!mw.ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: none")));
+    QVERIFY2(mw.ui->resetButton->text().compare(QString::fromUtf8(u8"Zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: none")));
 
     mw.ui->actuals[0]->setText(QString::fromUtf8(u8"2"));
     mw.ui->actuals[1]->setText(QString::fromUtf8(u8"2"));
     QTest::mouseClick(mw.ui->commitButton, Qt::LeftButton);
 
-    QVERIFY2(ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: deal")));
-    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8(u8"Spiel zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: deal")));
+    QVERIFY2(mw.ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: deal")));
+    QVERIFY2(mw.ui->resetButton->text().compare(QString::fromUtf8(u8"Spiel zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: deal")));
 
     bool changePlayersDialogFound = false;
-    int interval = 1000;
-    QTimer::singleShot(interval, [&]()
+    QTimer::singleShot(this->SingleShotInterval, this, [&]()
     {
         changePlayersDialogFound = mw.playerSelection != nullptr;
         mw.playerSelection->dialogNames[1]->setText(QString::fromUtf8(u8"NewPlayer"));
@@ -1226,30 +1216,29 @@ void FrontendTest::EveryOptionOfResetButtonShallBeDisplayed()
         }
     });
 
-    QTest::mouseClick(ui->changePlayersButton, Qt::LeftButton);
+    QTest::mouseClick(mw.ui->changePlayersButton, Qt::LeftButton);
 
     QVERIFY2(changePlayersDialogFound, qPrintable(QString::fromUtf8(u8"changePlayersDialog not found")));
 
     QVERIFY2(mw.playerSelection == nullptr, qPrintable(QString::fromUtf8(u8"playerSelection still reachable")));
 
-    QVERIFY2(ui->names[1]->text().compare(QString::fromUtf8(u8"NewPlayer")) == 0, qPrintable(QString::fromUtf8(u8"incorrect name")));
+    QVERIFY2(mw.ui->names[1]->text().compare(QString::fromUtf8(u8"NewPlayer")) == 0, qPrintable(QString::fromUtf8(u8"incorrect name")));
 
-    QVERIFY2(ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: player choice")));
-    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8(u8"Spielerwahl zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: player choice")));
+    QVERIFY2(mw.ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: player choice")));
+    QVERIFY2(mw.ui->resetButton->text().compare(QString::fromUtf8(u8"Spielerwahl zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: player choice")));
 
-    QTest::mouseClick(ui->mandatorySoloButton, Qt::LeftButton);
+    QTest::mouseClick(mw.ui->mandatorySoloButton, Qt::LeftButton);
 
-    QVERIFY2(ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: mandatory solo")));
-    QVERIFY2(ui->resetButton->text().compare(QString::fromUtf8(u8"Pflichtsolo zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: mandatory solo")));
+    QVERIFY2(mw.ui->resetButton->isEnabled(), qPrintable(QString::fromUtf8(u8"incorrect reset button state: mandatory solo")));
+    QVERIFY2(mw.ui->resetButton->text().compare(QString::fromUtf8(u8"Pflichtsolo zurücksetzen")) == 0, qPrintable(QString::fromUtf8(u8"incorrect reset button label: mandatory solo")));
     QVERIFY2(mw.ui->currentGameMultiplier->text().compare(QString::fromUtf8(u8"Pflichtsolorunde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect multiplier label after trigger")));
 }
 
-void FrontendTest::SaveGameShallWorkWithPresetValueAndPersist()
+void FrontendTest::SaveGameShallWorkWithPresetValueAndPersist() const
 {
     // Arrange
     std::shared_ptr<MemoryRepository> memoryRepository = std::make_shared<MemoryRepository>();
-    MainWindow mw(8u, memoryRepository, false);
-    auto ui = mw.ui;
+    MainWindow mw(this->DefaultPlayers, memoryRepository, false);
 
     std::string identifier = u8"something";
     std::string dummy;
@@ -1257,7 +1246,7 @@ void FrontendTest::SaveGameShallWorkWithPresetValueAndPersist()
     mw.presetFilename = QString::fromUtf8(identifier);
 
     // spy needed such that events actually happen
-    QSignalSpy spySaveAction(ui->saveButton, &QAbstractButton::pressed);
+    QSignalSpy spySaveAction(mw.ui->saveButton, &QAbstractButton::pressed);
 
     // Act
     QTest::mouseClick(mw.ui->saveButton, Qt::LeftButton);
@@ -1336,13 +1325,12 @@ void FrontendTest::LoadGameShallWorkWithPresetValueAndDisplayGame()
 })foo";
     memoryRepository->SetByIdentifier(identifier, content);
 
-    MainWindow mw(8u, memoryRepository, false);
-    auto ui = mw.ui;
+    MainWindow mw(this->DefaultPlayers, memoryRepository, false);
 
     mw.presetFilename = QString::fromUtf8(identifier);
 
     // spy needed such that events actually happen
-    QSignalSpy spyLoadAction(ui->loadButton, &QAbstractButton::pressed);
+    QSignalSpy spyLoadAction(mw.ui->loadButton, &QAbstractButton::pressed);
 
     // Act
     QTest::mouseClick(mw.ui->loadButton, Qt::LeftButton);
@@ -1376,7 +1364,7 @@ void FrontendTest::LoadGameShallWorkWithPresetValueAndDisplayGame()
     QVERIFY2(mw.ui->singleMultiplier->text().compare(QString::fromUtf8(u8"0")) == 0, qPrintable(QString::fromUtf8(u8"single multiplier label incorrect")));
 }
 
-void FrontendTest::FocusOnActualShallTriggerAutofill()
+void FrontendTest::FocusOnActualShallTriggerAutofill() const
 {
     // Arrange
     std::vector<std::string> players
@@ -1395,7 +1383,7 @@ void FrontendTest::FocusOnActualShallTriggerAutofill()
         3
     };
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
     mw.gameInfo.SetPlayers(players, dealer, sitOutScheme);
     mw.UpdateDisplay();
 
@@ -1404,7 +1392,7 @@ void FrontendTest::FocusOnActualShallTriggerAutofill()
     // Act 1
     mw.ui->actuals[0]->setText(QString::fromUtf8(u8"2"));
     QTest::mouseClick(mw.ui->actuals[3], Qt::LeftButton);
-    QTest::qWait(10);
+    QTest::qWait(this->ShortInterval);
 
     // Assert 1
     QVERIFY2(mw.ui->actuals[0]->selectedText().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect selected text actuals 0")));
@@ -1418,7 +1406,7 @@ void FrontendTest::FocusOnActualShallTriggerAutofill()
     QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
 
     // Reset
-    for(unsigned char i = 0; i < players.size(); ++i)
+    for(unsigned int i = 0; i < players.size(); ++i)
     {
         mw.ui->actuals[i]->clear();
     }
@@ -1438,7 +1426,7 @@ void FrontendTest::FocusOnActualShallTriggerAutofill()
     QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
 
     // Reset
-    for(unsigned char i = 0; i < players.size(); ++i)
+    for(unsigned int i = 0; i < players.size(); ++i)
     {
         mw.ui->actuals[i]->clear();
     }
@@ -1458,7 +1446,7 @@ void FrontendTest::FocusOnActualShallTriggerAutofill()
     QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
 
     // Reset
-    for(unsigned char i = 0; i < players.size(); ++i)
+    for(unsigned int i = 0; i < players.size(); ++i)
     {
         mw.ui->actuals[i]->clear();
     }
@@ -1479,7 +1467,7 @@ void FrontendTest::FocusOnActualShallTriggerAutofill()
     QVERIFY2(mw.ui->actuals[5]->text().compare(QString::fromUtf8(u8"")) == 0, qPrintable(QString::fromUtf8(u8"incorrect text actuals 5")));
 }
 
-void FrontendTest::ReturnKeyShallCommitGame()
+void FrontendTest::ReturnKeyShallCommitGame() const
 {
     // Arrange
     std::vector<std::string> players
@@ -1498,7 +1486,7 @@ void FrontendTest::ReturnKeyShallCommitGame()
         3
     };
 
-    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    MainWindow mw(this->DefaultPlayers, std::make_shared<MemoryRepository>(), false);
 
     QSignalSpy commitButtonSpy(mw.ui->commitButton, &QPushButton::clicked);
 

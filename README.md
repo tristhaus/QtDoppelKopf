@@ -22,6 +22,8 @@ The simplest thing in Qt Creator is to add an additional argument to the qmake s
 
 The project is not localized.
 
+`clang-tidy` has been added, be sure to configure QtCreator to use the [.clang-tidy](.clang-tidy) file.
+
 ## License
 
 All source code licensed under GPL v3 (see LICENSE for terms).

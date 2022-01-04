@@ -18,10 +18,12 @@
 
 #include "deal.h"
 
+#include <utility>
+
 Backend::Deal::Deal(std::vector<std::pair<std::string, int>> changes,
                     Backend::NumberOfEvents numberOfEvents,
                     Backend::Players presentPlayers)
-    : changes(changes),
+    : changes(std::move(changes)),
       numberOfEvents(numberOfEvents),
       players(presentPlayers)
 {

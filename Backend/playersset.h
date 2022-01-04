@@ -17,9 +17,9 @@
  */
 
 #include "entry.h"
-#include <vector>
 #include <set>
 #include <string>
+#include <vector>
 
 #ifndef PLAYERSSET_H
 #define PLAYERSSET_H
@@ -53,31 +53,31 @@ namespace Backend
         /*!
          * \reimp
          */
-        virtual enum Entry::Kind Kind() const;
+        [[nodiscard]] enum Entry::Kind Kind() const override;
 
         /*!
          * \brief Gets the names of the players.
          * \return The names of the players.
          */
-        std::vector<std::string> Players() const;
+        [[nodiscard]] std::vector<std::string> Players() const;
 
         /*!
          * \brief Gets the name of the current dealer.
          * \return The name of the current dealer.
          */
-        std::string Dealer() const;
+        [[nodiscard]] std::string Dealer() const;
 
         /*!
          * \brief Gets the sit out scheme.
          * \return The sit out scheme.
          */
-        std::set<unsigned int> SitOutScheme() const;
+        [[nodiscard]] std::set<unsigned int> SitOutScheme() const;
 
         /*!
          * \brief Gets the name of the last current dealer before this set.
          * \return The name of the last current dealer before this set.
          */
-        std::string PreviousDealer() const;
+        [[nodiscard]] std::string PreviousDealer() const;
     };
 }
 

@@ -16,16 +16,16 @@
  *
  */
 
-#include <gtest/gtest.h>
+#include "../Backend/deserializer.h"
 #include <gmock/gmock-matchers.h>
+#include <gtest/gtest.h>
 #include <regex>
 #include <sstream>
-#include "../Backend/deserializer.h"
 
 #ifndef TST_DESERIALIZER_H
 #define TST_DESERIALIZER_H
 
-TEST(BackendTest, SerializationOfEntriesShallWorkCorrectly)
+TEST(BackendTest, SerializationOfEntriesShallWorkCorrectly) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     std::stringstream ss;
@@ -102,7 +102,7 @@ TEST(BackendTest, SerializationOfEntriesShallWorkCorrectly)
     EXPECT_TRUE(std::regex_search(result, mandatorySoloTriggerKindRegex));
 }
 
-TEST(BackendTest, DeserializationOfEntriesShallWorkCorrectly)
+TEST(BackendTest, DeserializationOfEntriesShallWorkCorrectly) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     const char * json = u8R"foo(
@@ -191,7 +191,7 @@ TEST(BackendTest, DeserializationOfEntriesShallWorkCorrectly)
     EXPECT_EQ(Backend::Entry::Kind::MandatorySoloTrigger, mandatorySoloTrigger->Kind());
 }
 
-TEST(BackendTest, DeserializationRoundtripShallWorkCorrectly)
+TEST(BackendTest, DeserializationRoundtripShallWorkCorrectly) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     std::stringstream ss;
@@ -272,7 +272,7 @@ class DeserializationErrorTest : public testing::TestWithParam<TestDeserializati
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest, // clazy:exclude=non-pod-global-static
+INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest, // clazy:exclude=non-pod-global-static //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, fuchsia-statically-constructed-objects)
     testing::Values(
     TestDeserializationErrorResult{u8"NotObject", u8R"foo([])foo"},
     TestDeserializationErrorResult{u8"EmptyObject", u8R"foo({})foo"},
@@ -307,7 +307,7 @@ INSTANTIATE_TEST_SUITE_P(BackendTest, DeserializationErrorTest, // clazy:exclude
     TestDeserializationErrorResult{u8"ChangesItemDiffNotInt", u8R"foo({"dataVersion":"1","data":[{"kind":"deal","players":7,"numberOfEvents":2,"changes":[{"name":"A","diff":{}},{"name":"B","diff":1},{"name":"C","diff":-1},{"name":"D","diff":-1}]}]})foo"}
     ));
 
-TEST_P(DeserializationErrorTest, GivenBadJsonDeserializationShallGiveError)
+TEST_P(DeserializationErrorTest, GivenBadJsonDeserializationShallGiveError) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
     TestDeserializationErrorResult tder = GetParam();
@@ -318,7 +318,7 @@ TEST_P(DeserializationErrorTest, GivenBadJsonDeserializationShallGiveError)
     Backend::DeSerializer ds;
 
     // Act, Assert
-    EXPECT_THROW({ auto result = ds.Deserialize(ss); }, std::exception);
+    EXPECT_THROW({ auto result = ds.Deserialize(ss); }, std::exception); //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
 }
 
 #endif // TST_DESERIALIZER_H

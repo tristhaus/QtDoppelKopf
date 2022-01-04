@@ -16,13 +16,12 @@
  *
  */
 
-#include <fstream>
-#include <filesystem>
 #include "diskrepository.h"
+#include <filesystem>
+#include <fstream>
 
 Backend::DiskRepository::DiskRepository()
-{
-}
+= default;
 
 void Backend::DiskRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier)
 {

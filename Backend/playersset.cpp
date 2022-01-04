@@ -18,14 +18,16 @@
 
 #include "playersset.h"
 
+#include <utility>
+
 Backend::PlayersSet::PlayersSet(std::vector<std::string> players,
                                 std::string dealer,
                                 std::set<unsigned int> sitOutScheme,
                                 std::string previousDealer)
-    : players(players),
-      dealer(dealer),
-      sitOutScheme(sitOutScheme),
-      previousDealer(previousDealer)
+    : players(std::move(players)),
+      dealer(std::move(dealer)),
+      sitOutScheme(std::move(sitOutScheme)),
+      previousDealer(std::move(previousDealer))
 {
 }
 
@@ -36,20 +38,20 @@ enum Backend::Entry::Kind Backend::PlayersSet::Kind() const
 
 std::set<unsigned int> Backend::PlayersSet::SitOutScheme() const
 {
-    return sitOutScheme;
+    return this->sitOutScheme;
 }
 
 std::string Backend::PlayersSet::Dealer() const
 {
-    return dealer;
+    return this->dealer;
 }
 
 std::vector<std::string> Backend::PlayersSet::Players() const
 {
-    return players;
+    return this->players;
 }
 
 std::string Backend::PlayersSet::PreviousDealer() const
 {
-    return previousDealer;
+    return this->previousDealer;
 }

@@ -19,9 +19,9 @@
 #ifndef PLAYERINFO_H
 #define PLAYERINFO_H
 
+#include <functional>
 #include <string>
 #include <vector>
-#include <functional>
 
 namespace Backend
 {
@@ -32,7 +32,7 @@ namespace Backend
     class PlayerInfo
     {
     protected:
-        class DealResult
+        struct DealResult
         {
         public:
             DealResult(bool hasPlayedInDeal, int unmultipliedScore, bool playedSolo)
@@ -55,7 +55,7 @@ namespace Backend
         std::vector<int> multipliedResults;
         std::vector<int> accumulatedMultipliedResults;
         std::vector<std::string> dealInput;
-        std::function<unsigned short(unsigned int)> multiplierAccessor;
+        std::function<unsigned short(unsigned int)> multiplierAccessor; //NOLINT(google-runtime-int)
         std::function<int()> maxCurrentScoreAccessor;
 
     public:
@@ -66,122 +66,122 @@ namespace Backend
          * \param maxCurrentScoreAccessor A function to obtain the maximum current score among the players.
          */
         PlayerInfo(std::string name,
-                   std::function<unsigned short(unsigned int)> multiplierAccessor,
+                   std::function<unsigned short(unsigned int)> multiplierAccessor, //NOLINT(google-runtime-int)
                    std::function<int()> maxCurrentScoreAccessor);
 
         /*!
          * \brief Gets the name of the player.
          * \return The name of the player.
          */
-        std::string Name() const;
+        [[nodiscard]] std::string Name() const;
 
         /*!
          * \brief Gets a value indicating whether the player has participated in any deal.
          * \return A value indicating whether the player has participated in any deal.
          */
-        bool HasPlayed() const;
+        [[nodiscard]] bool HasPlayed() const;
 
         /*!
          * \brief Gets a value indicating whether the player is present at the table.
          * \return A value indicating whether the player is present at the table.
          */
-        bool IsPresent() const;
+        [[nodiscard]] bool IsPresent() const;
 
         /*!
          * \brief Gets a value indicating whether the player is playing during the next deal.
          * \return A value indicating whether the player is playing during the next deal.
          */
-        bool IsPlaying() const;
+        [[nodiscard]] bool IsPlaying() const;
 
         /*!
          * \brief Gets the current score of the player.
          * \return A number indicating the current score of the player.
          */
-        int CurrentScore() const;
+        [[nodiscard]] int CurrentScore() const;
 
         /*!
          * \brief Gets a value indicating whether the player played in the last persisted deal.
          * \return A value indicating whether the player played in the last persisted deal.
          */
-        bool ParticipatedInLastDeal() const;
+        [[nodiscard]] bool ParticipatedInLastDeal() const;
 
         /*!
          * \brief Gets the total change in points in the last deal.
          * \return The total change in points in the last deal.
          */
-        int ScoreInLastDeal() const;
+        [[nodiscard]] int ScoreInLastDeal() const;
 
         /*!
          * \brief Gets the input in the last deal, if any.
          * \return The input in the last deal, if any.
          */
-        std::string InputInLastDeal() const;
+        [[nodiscard]] std::string InputInLastDeal() const;
 
         /*!
          * \brief Gets the due balance in Euro cent.
          * \return The due balance in Euro cent.
          */
-        unsigned int CashCents() const;
+        [[nodiscard]] unsigned int CashCents() const;
 
         /*!
          * \brief Gets the number of won games.
          * \return The number of won games.
          */
-        unsigned int NumberGamesWon() const;
+        [[nodiscard]] unsigned int NumberGamesWon() const;
 
         /*!
          * \brief Gets the number of lost games.
          * \return The number of lost games.
          */
-        unsigned int NumberGamesLost() const;
+        [[nodiscard]] unsigned int NumberGamesLost() const;
 
         /*!
          * \brief Gets the number of games.
          * \return The number of games.
          */
-        unsigned int NumberGames() const;
+        [[nodiscard]] unsigned int NumberGames() const;
 
         /*!
          * \brief Gets the number of solos won.
          * \return The number of solos won.
          */
-        unsigned int SolosWon() const;
+        [[nodiscard]] unsigned int SolosWon() const;
 
         /*!
          * \brief Gets the number of solos lost.
          * \return The number of solos lost.
          */
-        unsigned int SolosLost() const;
+        [[nodiscard]] unsigned int SolosLost() const;
 
         /*!
          * \brief Gets the sum of points collected from played solos.
          * \return The sum of points collected from played solos.
          */
-        int TotalSoloPoints() const;
+        [[nodiscard]] int TotalSoloPoints() const;
 
         /*!
          * \brief Gets the points of the maximal single win.
          * \return The points of the maximal single win.
          */
-        int MaxSingleWin() const;
+        [[nodiscard]] int MaxSingleWin() const;
 
         /*!
          * \brief Gets the points of the maximal single loss.
          * \return The points of the maximal single loss.
          */
-        int MaxSingleLoss() const;
+        [[nodiscard]] int MaxSingleLoss() const;
 
         /*!
          * \brief Gets the score without applying the multiplier.
          * \return The score without applying the multiplier.
          */
-        int UnmultipliedScore() const;
+        [[nodiscard]] int UnmultipliedScore() const;
 
         /*!
          * \brief Gets the entire history of scores.
          * \return The entire history of scores.
          */
-        std::vector<int> ScoreHistory() const;
+        [[nodiscard]] std::vector<int> ScoreHistory() const;
     };
 }
 

@@ -44,7 +44,7 @@ namespace Backend
          * \brief Gets the kind of the entry.
          * \return The kind of the entry.
          */
-        virtual enum Kind Kind() const = 0;
+        [[nodiscard]] virtual enum Kind Kind() const = 0;
     };
 }
 

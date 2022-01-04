@@ -21,6 +21,7 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -28,15 +29,13 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/QDialog>
-#include <QtWidgets/QRadioButton>
-
-#include <utility>
 #include <set>
+#include <utility>
 #include <vector>
 
 class FrontendTest;
@@ -63,17 +62,17 @@ namespace Ui
         QString resultDealer;
         std::set<unsigned int> resultSitOutScheme;
 
-        QVBoxLayout * verticalDialogLayout;
-        QHBoxLayout * topLayout;
-        QGridLayout * playerNamesGridLayout;
-        QSpinBox * dialogNumberOfPresentPlayers;
-        QLabel * dialogAnzahlSpielerLabel;
+        QVBoxLayout * verticalDialogLayout{};
+        QHBoxLayout * topLayout{};
+        QGridLayout * playerNamesGridLayout{};
+        QSpinBox * dialogNumberOfPresentPlayers{};
+        QLabel * dialogAnzahlSpielerLabel{};
         std::vector<QLineEdit*> dialogNames;
         std::vector<QRadioButton*> dealerButtons;
-        QSpacerItem * dialogSpacer;
-        QVBoxLayout * bottomLayout;
-        QLabel * dialogAussitzenLabel;
-        QPushButton * dialogAcceptButton;
+        QSpacerItem * dialogSpacer{};
+        QVBoxLayout * bottomLayout{};
+        QLabel * dialogAussitzenLabel{};
+        QPushButton * dialogAcceptButton{};
         std::vector<QSpinBox*> dialogSittingOuts; // is one-indexed to the user
 
     public:
@@ -100,7 +99,7 @@ namespace Ui
          *           the name of the dealer
          *           the zero-indexed sitting out scheme, 0 is the dealer
          */
-        std::tuple<std::vector<QString>, QString, std::set<unsigned int>> GetResults() const;
+        [[nodiscard]] std::tuple<std::vector<QString>, QString, std::set<unsigned int>> GetResults() const;
 
     private:
         void SetupUi();
