@@ -279,6 +279,11 @@ namespace Backend
 
     unsigned int GameInfo::RemainingGamesInRound() const
     {
+        if(numberOfPresentPlayers == 0)
+        {
+            return 0;
+        }
+
         return (2 * this->numberOfPresentPlayers + this->initialDealerIndex - this->currentDealerIndex) % this->numberOfPresentPlayers;
     }
 

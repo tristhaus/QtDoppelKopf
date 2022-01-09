@@ -45,6 +45,7 @@ public:
 private slots:
     void ConstructionShallWorkCompletely();
 #ifdef _USE_LONG_TEST
+    void CancellingInitialPlayerSelectionLeadsToDisabledUI();
     void SetDataShallBeDisplayed();
     void PlayerSelectionButtonShallTriggerDialogAndSetDataShallBeUsed();
     void OneCommittedGameShallBeDisplayed();
@@ -278,6 +279,48 @@ void FrontendTest::ConstructionShallWorkCompletely()
 }
 
 #ifdef _USE_LONG_TEST
+
+void FrontendTest::CancellingInitialPlayerSelectionLeadsToDisabledUI()
+{
+    // Arrange
+    MainWindow mw(8u, std::make_shared<MemoryRepository>(), false);
+    auto ui = mw.ui;
+
+    // Act
+    // spy needed such that events actually happen
+    QSignalSpy spyChangePlayersButton(ui->changePlayersButton, &QAbstractButton::pressed);
+
+    // Act
+    int interval = 1000;
+    QTimer::singleShot(interval, [&]()
+    {
+        mw.playerSelection->reject();
+    });
+
+    QTest::mouseClick(mw.ui->changePlayersButton, Qt::LeftButton);
+
+    // Assert
+    QVERIFY2(mw.ui->changePlayersButton->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state changePlayersButton")));
+    QVERIFY2(mw.ui->loadButton->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state loadButton")));
+    QVERIFY2(mw.ui->saveButton->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state saveButton")));
+    QVERIFY2(mw.ui->mandatorySoloButton->isEnabled() == false, qPrintable(QString::fromUtf8(u8"incorrect state mandatorySoloButton")));
+    QVERIFY2(mw.ui->aboutButton->isEnabled() == true, qPrintable(QString::fromUtf8(u8"incorrect state aboutButton")));
+
+    QVERIFY2(mw.ui->actuals[0]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 0")));
+    QVERIFY2(mw.ui->actuals[1]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 1")));
+    QVERIFY2(mw.ui->actuals[2]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 2")));
+    QVERIFY2(mw.ui->actuals[3]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 3")));
+    QVERIFY2(mw.ui->actuals[4]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 4")));
+    QVERIFY2(mw.ui->actuals[5]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 5")));
+    QVERIFY2(mw.ui->actuals[6]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 6")));
+    QVERIFY2(mw.ui->actuals[7]->isVisible() == false, qPrintable(QString::fromUtf8(u8"incorrect state actuals 7")));
+
+    QVERIFY2(mw.ui->remainingGamesInRound->text().compare(QString::fromUtf8(u8"Neue Runde")) == 0, qPrintable(QString::fromUtf8(u8"incorrect remaining games in round")));
+
+    QVERIFY2(mw.ui->spinBox->isEnabled() == false, qPrintable(QString::fromUtf8(u8"events spinbox incorrect state")));
+    QVERIFY2(mw.ui->commitButton->isEnabled() == false, qPrintable(QString::fromUtf8(u8"commitButton incorrect state")));
+    QVERIFY2(mw.ui->resetButton->isEnabled() == false, qPrintable(QString::fromUtf8(u8"resetButton incorrect state")));
+}
 
 void FrontendTest::SetDataShallBeDisplayed()
 {

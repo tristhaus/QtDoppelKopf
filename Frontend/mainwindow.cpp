@@ -214,6 +214,7 @@ void MainWindow::UpdateDisplay()
     }
 
     ui->saveButton->setEnabled(this->gameInfo.HasPlayersSet());
+    ui->spinBox->setEnabled(this->gameInfo.HasPlayersSet());
     ui->commitButton->setEnabled(this->gameInfo.HasPlayersSet());
 
     this->DetermineAndSetMultiplierLabels();

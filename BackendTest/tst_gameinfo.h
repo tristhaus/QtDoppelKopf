@@ -1902,4 +1902,28 @@ TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRoundAfterPoppingP
     EXPECT_EQ(2u, remaining7);
 }
 
+TEST(BackendTest, GameInfoShallHandleNoPlayersSet)
+{
+    // Arrange
+    Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
+
+    // Act
+    auto playerInfos = gameInfo.PlayerInfos();
+    auto dealer = gameInfo.Dealer();
+    auto poppableEntry = gameInfo.LastPoppableEntry();
+    auto hasPlayersSet = gameInfo.HasPlayersSet();
+    auto lastNumberOfEvents = gameInfo.LastNumberOfEvents();
+    auto totalCashCents = gameInfo.TotalCashCents();
+    auto mandatorySolo = gameInfo.MandatorySolo();
+    auto remaingingGamesInRound = gameInfo.RemainingGamesInRound();
+
+    // Assert
+    EXPECT_EQ(Backend::GameInfo::PoppableEntry::None, poppableEntry);
+    EXPECT_FALSE(hasPlayersSet);
+    EXPECT_EQ(0u, lastNumberOfEvents);
+    EXPECT_EQ(0u, totalCashCents);
+    EXPECT_EQ(Backend::GameInfo::MandatorySolo::CannotTrigger, mandatorySolo);
+    EXPECT_EQ(0u, remaingingGamesInRound);
+}
+
 #endif // TST_GAMEINFO_H

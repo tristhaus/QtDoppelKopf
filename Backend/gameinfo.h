@@ -78,7 +78,7 @@ namespace Backend
         const unsigned int MaxPlayers;
         std::vector<std::shared_ptr<PlayerInfoInternal>> playerInfos;
         std::map<std::string, std::shared_ptr<PlayerInfoInternal>> nameToPlayerInfo;
-        unsigned int numberOfPresentPlayers;
+        unsigned int numberOfPresentPlayers{};
         unsigned int initialDealerIndex;
         unsigned int currentDealerIndex;
         std::set<unsigned int> sitOutScheme;
