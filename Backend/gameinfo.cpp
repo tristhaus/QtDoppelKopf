@@ -50,7 +50,7 @@ namespace Backend
                               const std::string& dealer,
                               const std::set<unsigned int>& sitOutScheme)
     {
-        std::string previousDealer = this->Dealer() != nullptr ? this->Dealer()->Name() : u8"";
+        std::string previousDealer = this->Dealer() != nullptr ? this->Dealer()->Name() : "";
         auto entry = std::make_shared<PlayersSet>(players, dealer, sitOutScheme, previousDealer);
 
         this->SetPlayersInternal(entry);
@@ -79,7 +79,7 @@ namespace Backend
     {
         if(this->MandatorySolo() != MandatorySolo::Ready)
         {
-            throw std::exception(u8"cannot trigger mandatory solo at this point");
+            throw std::exception("cannot trigger mandatory solo at this point");
         }
 
         this->entries.emplace_back(std::make_shared<MandatorySoloTrigger>());
@@ -103,7 +103,7 @@ namespace Backend
         case Backend::Entry::Kind::MandatorySoloTrigger:
             return GameInfo::PoppableEntry::MandatorySoloTrigger;
         default:
-            throw std::exception(u8"value of Entry::Kind not handled");
+            throw std::exception("value of Entry::Kind not handled");
         }
     }
 
@@ -126,7 +126,7 @@ namespace Backend
 
             if(lastPlayerSetEntry == this->entries.rend())
             {
-                throw std::exception(u8"must never happen 1");
+                throw std::exception("must never happen 1");
             }
 
             this->SetPlayersInternal(std::static_pointer_cast<Backend::PlayersSet>(*lastPlayerSetEntry));
@@ -139,14 +139,14 @@ namespace Backend
                         [](const std::shared_ptr<Backend::Entry>& entry){ return  entry->Kind() == Backend::Entry::Kind::PlayersSet; });
             if(relevantPlayerSetEntry == this->entries.rend())
             {
-                throw std::exception(u8"must never happen 2");
+                throw std::exception("must never happen 2");
             }
 
             auto relevantInitialDealerName = std::static_pointer_cast<Backend::PlayersSet>(*relevantPlayerSetEntry)->Dealer();
             auto relevantInitialDealerInfo = std::find_if(this->playerInfos.begin(), this->playerInfos.end(), [&relevantInitialDealerName](const std::shared_ptr<PlayerInfoInternal>& playerInfo) { return playerInfo->Name() == relevantInitialDealerName; });
             if(relevantInitialDealerInfo == this->playerInfos.end())
             {
-                throw std::exception(u8"must never happen 3");
+                throw std::exception("must never happen 3");
             }
 
             this->initialDealerIndex = static_cast<unsigned int>(relevantInitialDealerInfo - this->playerInfos.begin());
@@ -172,12 +172,12 @@ namespace Backend
         }
     }
 
-    void GameInfo::SaveTo(const std::string& id) const
+    void GameInfo::SaveTo(const std::u8string& id) const
     {
         this->repository->Save(this->entries, id);
     }
 
-    void GameInfo::LoadFrom(const std::string& id)
+    void GameInfo::LoadFrom(const std::u8string& id)
     {
         auto applyEntries = [&](const std::vector<std::shared_ptr<Entry>>& entries)
         {
@@ -211,7 +211,7 @@ namespace Backend
                     break;
                 }
                 default:
-                    throw std::exception(u8"value of Entry::Kind not handled");
+                    throw std::exception("value of Entry::Kind not handled");
                 }
             }
         };
@@ -307,7 +307,7 @@ namespace Backend
 
         if(playersSize < 4U)
         {
-            throw std::exception(u8"not enough players");
+            throw std::exception("not enough players");
         }
 
         for(size_t i = 0; i < playersSize; ++i)
@@ -321,20 +321,20 @@ namespace Backend
             {
                 if(players[i] == players[j])
                 {
-                    throw std::exception((std::string(u8"names must be unique, offender: \"") + players[i] + std::string("\"")).c_str());
+                    throw std::exception((std::string("names must be unique, offender: \"") + players[i] + std::string("\"")).c_str());
                 }
             }
         }
 
         if(!dealerFound)
         {
-            throw std::exception(u8"name of dealer must be among the players");
+            throw std::exception("name of dealer must be among the players");
         }
 
         const unsigned int playersSetSizeRequiringSitoutScheme = 5U;
         if(playersSize > playersSetSizeRequiringSitoutScheme && playersSet->SitOutScheme().size() + playersSetSizeRequiringSitoutScheme != playersSize)
         {
-            throw std::exception(u8"incorrect size of the sit out scheme");
+            throw std::exception("incorrect size of the sit out scheme");
         }
 
         this->SortAndSetPlayerInfos(playersSet->Players());
@@ -401,7 +401,7 @@ namespace Backend
 
         if(dealerIt == this->playerInfos.end())
         {
-            throw std::exception(u8"logic error: dealer must be among the players");
+            throw std::exception("logic error: dealer must be among the players");
         }
 
         this->currentDealerIndex = static_cast<unsigned int>(dealerIt - this->playerInfos.begin());
@@ -444,7 +444,7 @@ namespace Backend
 
             if(!player->IsPlaying())
             {
-                throw std::exception((std::string(u8"found change for player not playing: \"") + player->Name() + std::string("\"")).c_str());
+                throw std::exception((std::string("found change for player not playing: \"") + player->Name() + std::string("\"")).c_str());
             }
 
             player->PushDealResult(true, changesIt->second, player->Name() == soloPlayer);
@@ -458,7 +458,7 @@ namespace Backend
             }
             else
             {
-                player->SetInputInDeal(std::string(u8""));
+                player->SetInputInDeal(std::string(""));
             }
         }
 
@@ -469,7 +469,7 @@ namespace Backend
             if(!(*playerInfosIt)->IsPlaying())
             {
                 (*playerInfosIt)->PushDealResult(false, 0, false);
-                (*playerInfosIt)->SetInputInDeal(std::string(u8""));
+                (*playerInfosIt)->SetInputInDeal(std::string(""));
             }
         }
 
@@ -493,14 +493,14 @@ namespace Backend
                                            [](int s, const std::pair<std::string, int>& c){ s += c.second; return s; });
             if(checksum != 0)
             {
-                throw std::exception(u8"changes must sum to zero");
+                throw std::exception("changes must sum to zero");
             }
 
             return inputChanges;
         }
         else if(inputChanges.size() > 4 || inputChanges.empty())
         {
-            throw std::exception(u8"there can never be more than 4 or zero changes");
+            throw std::exception("there can never be more than 4 or zero changes");
         }
 
         std::vector<std::pair<std::string, int>> newChanges;
@@ -520,7 +520,7 @@ namespace Backend
             }
             else
             {
-                throw std::exception(u8"unable to complete the changes from the information given");
+                throw std::exception("unable to complete the changes from the information given");
             }
 
             newChanges.push_back(*changesIt);

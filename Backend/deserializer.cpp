@@ -21,7 +21,7 @@
 #include "rapidjson/ostreamwrapper.h"
 #include "rapidjson/writer.h"
 
-constexpr const char * DataVersion = u8"2";
+constexpr const char * DataVersion = "2";
 
 Backend::DeSerializer::DeSerializer()
 = default;
@@ -67,17 +67,17 @@ std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(
 
     if(!(document.IsObject()))
     {
-        throw std::exception(u8"did not parse to object");
+        throw std::exception("did not parse to object");
     }
 
     if(!(document.HasMember(KeyDataVersion) && document[KeyDataVersion].IsString() && std::strcmp(document[KeyDataVersion].GetString(), DataVersion) == 0))
     {
-        throw std::exception(u8"no valid data version found");
+        throw std::exception("no valid data version found");
     }
 
     if(!(document.HasMember(KeyData) && document[KeyData].IsArray()))
     {
-        throw std::exception(u8"no valid data member found");
+        throw std::exception("no valid data member found");
     }
 
     std::vector<std::shared_ptr<Backend::Entry>> entries;
@@ -86,17 +86,17 @@ std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(
     {
         if(!data.IsObject())
         {
-            throw std::exception(u8"entry is not object");
+            throw std::exception("entry is not object");
         }
 
         if(!data.HasMember(KeyKind))
         {
-            throw std::exception(u8"missing kind in entry");
+            throw std::exception("missing kind in entry");
         }
 
         if(!data[KeyKind].IsString())
         {
-            throw std::exception(u8"kind is not string");
+            throw std::exception("kind is not string");
         }
 
         const auto *kind = data[KeyKind].GetString();
@@ -116,7 +116,7 @@ std::vector<std::shared_ptr<Backend::Entry>> Backend::DeSerializer::Deserialize(
         }
         else
         {
-            throw std::exception((std::string(u8"unknown kind value in data: \"") + kind + std::string("\"")).c_str());
+            throw std::exception((std::string("unknown kind value in data: \"") + kind + std::string("\"")).c_str());
         }
     }
 
@@ -139,7 +139,7 @@ void Backend::DeSerializer::SerializeEntry(const std::shared_ptr<Entry>& entry,
         Backend::DeSerializer::SerializeMandatorySoloTrigger(serializedEntry, allocator);
         break;
     default:
-        throw std::exception(u8"value of Entry::Kind not handled");
+        throw std::exception("value of Entry::Kind not handled");
     }
 }
 
@@ -202,11 +202,11 @@ void Backend::DeSerializer::SerializeDeal(const std::shared_ptr<Deal>& deal,
     serializedEntry.AddMember(key, value, allocator);
 
     key.SetString(KeyPlayers, static_cast<rapidjson::SizeType>(strlen(KeyPlayers)), allocator);
-    value.SetInt(deal->Players().Value());
+    value.SetUint(deal->Players().Value());
     serializedEntry.AddMember(key, value, allocator);
 
     key.SetString(KeyNumberOfEvents, static_cast<rapidjson::SizeType>(strlen(KeyNumberOfEvents)), allocator);
-    value.SetInt(deal->NumberOfEvents().Value());
+    value.SetUint(deal->NumberOfEvents().Value());
     serializedEntry.AddMember(key, value, allocator);
 
     key.SetString(KeyChanges, static_cast<rapidjson::SizeType>(strlen(KeyChanges)), allocator);
@@ -246,12 +246,12 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(con
 {
     if(!data.HasMember(KeyPlayerNames))
     {
-        throw std::exception(u8"no member playerNames");
+        throw std::exception("no member playerNames");
     }
 
     if(!data[KeyPlayerNames].IsArray())
     {
-        throw std::exception(u8"playerNames is not array");
+        throw std::exception("playerNames is not array");
     }
 
     std::vector<std::string> players;
@@ -260,7 +260,7 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(con
     {
         if(!playerName.IsString())
         {
-            throw std::exception(u8"player name is not a string");
+            throw std::exception("player name is not a string");
         }
 
         players.emplace_back(playerName.GetString());
@@ -268,24 +268,24 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(con
 
     if(!data.HasMember(KeyDealerName))
     {
-        throw std::exception(u8"no member dealerName");
+        throw std::exception("no member dealerName");
     }
 
     if(!data[KeyDealerName].IsString())
     {
-        throw std::exception(u8"dealerName is not string");
+        throw std::exception("dealerName is not string");
     }
 
     const auto * dealer = data[KeyDealerName].GetString();
 
     if(!data.HasMember(KeySitOutScheme))
     {
-        throw std::exception(u8"no member sitOutScheme");
+        throw std::exception("no member sitOutScheme");
     }
 
     if(!data[KeySitOutScheme].IsArray())
     {
-        throw std::exception(u8"sitOutScheme is not array");
+        throw std::exception("sitOutScheme is not array");
     }
 
 
@@ -295,7 +295,7 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(con
     {
         if(!schemeMember.IsInt())
         {
-            throw std::exception(u8"sit out scheme item is not an int");
+            throw std::exception("sit out scheme item is not an int");
         }
 
         sitOutScheme.emplace(schemeMember.GetInt());
@@ -303,12 +303,12 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializePlayersSet(con
 
     if(!data.HasMember(KeyPreviousDealerName))
     {
-        throw std::exception(u8"no member previousDealerName");
+        throw std::exception("no member previousDealerName");
     }
 
     if(!data[KeyPreviousDealerName].IsString())
     {
-        throw std::exception(u8"previousDealerName is not string");
+        throw std::exception("previousDealerName is not string");
     }
 
     const auto * previousDealer = data[KeyPreviousDealerName].GetString();
@@ -320,36 +320,36 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializeDeal(const rap
 {
     if(!data.HasMember(KeyPlayers))
     {
-        throw std::exception(u8"no member players");
+        throw std::exception("no member players");
     }
 
     if(!data[KeyPlayers].IsInt())
     {
-        throw std::exception(u8"players is not int");
+        throw std::exception("players is not int");
     }
 
     unsigned int players = data[KeyPlayers].GetInt();
 
     if(!data.HasMember(KeyNumberOfEvents))
     {
-        throw std::exception(u8"no member numberOfEvents");
+        throw std::exception("no member numberOfEvents");
     }
 
     if(!data[KeyNumberOfEvents].IsInt())
     {
-        throw std::exception(u8"numberOfEvents is not int");
+        throw std::exception("numberOfEvents is not int");
     }
 
     unsigned int numberOfEvents = data[KeyNumberOfEvents].GetInt();
 
     if(!data.HasMember(KeyChanges))
     {
-        throw std::exception(u8"no member changes");
+        throw std::exception("no member changes");
     }
 
     if(!data[KeyChanges].IsArray())
     {
-        throw std::exception(u8"changes is not array");
+        throw std::exception("changes is not array");
     }
 
     std::vector<std::pair<std::string, int>> changes;
@@ -358,29 +358,29 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializeDeal(const rap
     {
         if(!change.IsObject())
         {
-            throw std::exception(u8"changes item is not an object");
+            throw std::exception("changes item is not an object");
         }
 
         if(!change.HasMember(KeyChangeName))
         {
-            throw std::exception(u8"changes item does not have a name member");
+            throw std::exception("changes item does not have a name member");
         }
 
         if(!change[KeyChangeName].IsString())
         {
-            throw std::exception(u8"change member name is not a string");
+            throw std::exception("change member name is not a string");
         }
 
         std::string name = change[KeyChangeName].GetString();
 
         if(!change.HasMember(KeyChangeDiff))
         {
-            throw std::exception(u8"changes item does not have a diff member");
+            throw std::exception("changes item does not have a diff member");
         }
 
         if(!change[KeyChangeDiff].IsInt())
         {
-            throw std::exception(u8"change member diff is not an int");
+            throw std::exception("change member diff is not an int");
         }
 
         int diff = change[KeyChangeDiff].GetInt();

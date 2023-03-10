@@ -35,25 +35,25 @@ namespace Backend
     class DeSerializer
     {
     private:
-        constexpr static const char * const KeyDataVersion = u8"dataVersion";
-        constexpr static const char * const KeyData = u8"data";
+        constexpr static const char * const KeyDataVersion = "dataVersion";
+        constexpr static const char * const KeyData = "data";
 
-        constexpr static const char * const KeyKind = u8"kind";
-        constexpr static const char * const ValuePlayersSet = u8"playersSet";
-        constexpr static const char * const ValueDeal = u8"deal";
-        constexpr static const char * const ValueMandatorySoloTrigger = u8"mandatorySoloTrigger";
+        constexpr static const char * const KeyKind = "kind";
+        constexpr static const char * const ValuePlayersSet = "playersSet";
+        constexpr static const char * const ValueDeal = "deal";
+        constexpr static const char * const ValueMandatorySoloTrigger = "mandatorySoloTrigger";
 
-        constexpr static const char * const KeyPlayerNames = u8"playerNames";
-        constexpr static const char * const KeyDealerName = u8"dealerName";
-        constexpr static const char * const KeySitOutScheme = u8"sitOutScheme";
-        constexpr static const char * const KeyPreviousDealerName = u8"previousDealerName";
+        constexpr static const char * const KeyPlayerNames = "playerNames";
+        constexpr static const char * const KeyDealerName = "dealerName";
+        constexpr static const char * const KeySitOutScheme = "sitOutScheme";
+        constexpr static const char * const KeyPreviousDealerName = "previousDealerName";
 
-        constexpr static const char * const KeyPlayers = u8"players";
-        constexpr static const char * const KeyNumberOfEvents = u8"numberOfEvents";
+        constexpr static const char * const KeyPlayers = "players";
+        constexpr static const char * const KeyNumberOfEvents = "numberOfEvents";
 
-        constexpr static const char * const KeyChanges = u8"changes";
-        constexpr static const char * const KeyChangeName = u8"name";
-        constexpr static const char * const KeyChangeDiff = u8"diff";
+        constexpr static const char * const KeyChanges = "changes";
+        constexpr static const char * const KeyChangeName = "name";
+        constexpr static const char * const KeyChangeDiff = "diff";
 
     public:
         /*!

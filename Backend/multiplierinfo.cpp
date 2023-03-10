@@ -94,7 +94,7 @@ unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int & index
 {
     if(this->effective.size() <= index)
     {
-        throw std::exception((std::string(u8"attempt to get multiplier for game ") + std::to_string(index) + std::string(u8" which does not exist")).c_str());
+        throw std::exception((std::string("attempt to get multiplier for game ") + std::to_string(index) + std::string(" which does not exist")).c_str());
     }
 
     switch (this->effective[index].first)
@@ -108,7 +108,7 @@ unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int & index
     case 0:
         return 1U; //NOLINT(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
     default:
-        throw std::exception((std::string(u8"not supported bock of ") + std::to_string(static_cast<unsigned int>(this->effective[index].first))).c_str());
+        throw std::exception((std::string("not supported bock of ") + std::to_string(static_cast<unsigned int>(this->effective[index].first))).c_str());
     }
 }
 
@@ -116,7 +116,7 @@ bool Backend::MultiplierInfo::GetIsMandatorySolo(const unsigned int & index) con
 {
     if(this->effective.size() <= index)
     {
-        throw std::exception((std::string(u8"attempt to get mandatory solo for game ") + std::to_string(index) + std::string(u8" which does not exist")).c_str());
+        throw std::exception((std::string("attempt to get mandatory solo for game ") + std::to_string(index) + std::string(" which does not exist")).c_str());
     }
 
     return this->effective[index].second;

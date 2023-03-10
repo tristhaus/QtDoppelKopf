@@ -33,14 +33,14 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
     std::set<unsigned int> sitOutScheme;
 
     // Act, Assert
-    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers(std::vector<std::string>{"A", "B", "C", "D"}, "A", sitOutScheme);
     std::vector<std::shared_ptr<Backend::PlayerInfo>> one(gameInfo.PlayerInfos());
 
     ASSERT_EQ(4, one.size());
-    EXPECT_STREQ(u8"A", one[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", one[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", one[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", one[3]->Name().c_str());
+    EXPECT_STREQ("A", one[0]->Name().c_str());
+    EXPECT_STREQ("B", one[1]->Name().c_str());
+    EXPECT_STREQ("C", one[2]->Name().c_str());
+    EXPECT_STREQ("D", one[3]->Name().c_str());
     EXPECT_TRUE(one[0]->IsPresent());
     EXPECT_TRUE(one[1]->IsPresent());
     EXPECT_TRUE(one[2]->IsPresent());
@@ -53,23 +53,23 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 0),
-                          std::make_pair<std::string, int>(u8"B", 0),
-                          std::make_pair<std::string, int>(u8"C", 0),
-                          std::make_pair<std::string, int>(u8"D", 0)
+                          std::make_pair<std::string, int>("A", 0),
+                          std::make_pair<std::string, int>("B", 0),
+                          std::make_pair<std::string, int>("C", 0),
+                          std::make_pair<std::string, int>("D", 0)
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
-    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"B", u8"E", u8"C", u8"D"}, u8"B", sitOutScheme);
+    gameInfo.SetPlayers(std::vector<std::string>{"A", "B", "E", "C", "D"}, "B", sitOutScheme);
     std::vector<std::shared_ptr<Backend::PlayerInfo>> two(gameInfo.PlayerInfos());
 
     ASSERT_EQ(5, two.size());
-    EXPECT_STREQ(u8"A", two[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", two[1]->Name().c_str());
-    EXPECT_STREQ(u8"E", two[2]->Name().c_str());
-    EXPECT_STREQ(u8"C", two[3]->Name().c_str());
-    EXPECT_STREQ(u8"D", two[4]->Name().c_str());
+    EXPECT_STREQ("A", two[0]->Name().c_str());
+    EXPECT_STREQ("B", two[1]->Name().c_str());
+    EXPECT_STREQ("E", two[2]->Name().c_str());
+    EXPECT_STREQ("C", two[3]->Name().c_str());
+    EXPECT_STREQ("D", two[4]->Name().c_str());
     EXPECT_TRUE(two[0]->IsPresent());
     EXPECT_TRUE(two[1]->IsPresent());
     EXPECT_TRUE(two[2]->IsPresent());
@@ -84,31 +84,31 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"E", 0),
-                          std::make_pair<std::string, int>(u8"C", 0),
-                          std::make_pair<std::string, int>(u8"D", 0),
-                          std::make_pair<std::string, int>(u8"A", 0)
+                          std::make_pair<std::string, int>("E", 0),
+                          std::make_pair<std::string, int>("C", 0),
+                          std::make_pair<std::string, int>("D", 0),
+                          std::make_pair<std::string, int>("A", 0)
                       }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"C", 0),
-                          std::make_pair<std::string, int>(u8"D", 0),
-                          std::make_pair<std::string, int>(u8"A", 0),
-                          std::make_pair<std::string, int>(u8"B", 0)
+                          std::make_pair<std::string, int>("C", 0),
+                          std::make_pair<std::string, int>("D", 0),
+                          std::make_pair<std::string, int>("A", 0),
+                          std::make_pair<std::string, int>("B", 0)
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
-    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"E", u8"C", u8"D"}, u8"E", sitOutScheme);
+    gameInfo.SetPlayers(std::vector<std::string>{"A", "E", "C", "D"}, "E", sitOutScheme);
     std::vector<std::shared_ptr<Backend::PlayerInfo>> three(gameInfo.PlayerInfos());
 
     ASSERT_EQ(5, three.size());
-    EXPECT_STREQ(u8"A", three[0]->Name().c_str());
-    EXPECT_STREQ(u8"E", three[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", three[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", three[3]->Name().c_str());
-    EXPECT_STREQ(u8"B", three[4]->Name().c_str());
+    EXPECT_STREQ("A", three[0]->Name().c_str());
+    EXPECT_STREQ("E", three[1]->Name().c_str());
+    EXPECT_STREQ("C", three[2]->Name().c_str());
+    EXPECT_STREQ("D", three[3]->Name().c_str());
+    EXPECT_STREQ("B", three[4]->Name().c_str());
     EXPECT_TRUE(three[0]->IsPresent());
     EXPECT_TRUE(three[1]->IsPresent());
     EXPECT_TRUE(three[2]->IsPresent());
@@ -121,16 +121,16 @@ TEST(BackendTest, GameInfoShallReportPlayersIncludingPresenceAndPlayingAfterSett
     EXPECT_FALSE(three[4]->IsPlaying());
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::PlayersSet, gameInfo.LastPoppableEntry());
 
-    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"E", u8"F", u8"C"}, u8"F", sitOutScheme);
+    gameInfo.SetPlayers(std::vector<std::string>{"A", "E", "F", "C"}, "F", sitOutScheme);
     std::vector<std::shared_ptr<Backend::PlayerInfo>> four(gameInfo.PlayerInfos());
 
     ASSERT_EQ(6, four.size());
-    EXPECT_STREQ(u8"A", four[0]->Name().c_str());
-    EXPECT_STREQ(u8"E", four[1]->Name().c_str());
-    EXPECT_STREQ(u8"F", four[2]->Name().c_str());
-    EXPECT_STREQ(u8"C", four[3]->Name().c_str());
-    EXPECT_TRUE(std::strcmp(u8"B", four[4]->Name().c_str()) == 0 || std::strcmp(u8"B", four[5]->Name().c_str()) == 0);
-    EXPECT_TRUE(std::strcmp(u8"D", four[4]->Name().c_str()) == 0 || std::strcmp(u8"D", four[5]->Name().c_str()) == 0);
+    EXPECT_STREQ("A", four[0]->Name().c_str());
+    EXPECT_STREQ("E", four[1]->Name().c_str());
+    EXPECT_STREQ("F", four[2]->Name().c_str());
+    EXPECT_STREQ("C", four[3]->Name().c_str());
+    EXPECT_TRUE(std::strcmp("B", four[4]->Name().c_str()) == 0 || std::strcmp("B", four[5]->Name().c_str()) == 0);
+    EXPECT_TRUE(std::strcmp("D", four[4]->Name().c_str()) == 0 || std::strcmp("D", four[5]->Name().c_str()) == 0);
     EXPECT_TRUE(four[0]->IsPresent());
     EXPECT_TRUE(four[1]->IsPresent());
     EXPECT_TRUE(four[2]->IsPresent());
@@ -153,17 +153,17 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames) //NOLINT (cert-err5
     std::set<unsigned int> emptySitOutScheme;
 
     // Act, Assert
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F", u8"G"}, u8"A", std::set<unsigned int> { 3U, 5U });
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E", "F", "G"}, "A", std::set<unsigned int> { 3U, 5U });
 
     EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
     {
         try
         {
-            gameInfo.SetPlayers({u8"A", u8"B", u8"C"}, u8"A", emptySitOutScheme);
+            gameInfo.SetPlayers({"A", "B", "C"}, "A", emptySitOutScheme);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"not enough players", e.what());
+            EXPECT_STREQ("not enough players", e.what());
             throw;
         }
     }, std::exception);
@@ -172,11 +172,11 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames) //NOLINT (cert-err5
     {
         try
         {
-            gameInfo.SetPlayers({u8"A", u8"B", u8"A", u8"D"}, u8"A", emptySitOutScheme);
+            gameInfo.SetPlayers({"A", "B", "A", "D"}, "A", emptySitOutScheme);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"names must be unique, offender: \"A\"", e.what());
+            EXPECT_STREQ("names must be unique, offender: \"A\"", e.what());
             throw;
         }
     }, std::exception );
@@ -185,26 +185,26 @@ TEST(BackendTest, GameInfoShallThrowOnSettingBadPlayerNames) //NOLINT (cert-err5
     {
         try
         {
-            gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"Z", emptySitOutScheme);
+            gameInfo.SetPlayers({"A", "B", "C", "D"}, "Z", emptySitOutScheme);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"name of dealer must be among the players", e.what());
+            EXPECT_STREQ("name of dealer must be among the players", e.what());
             throw;
         }
     }, std::exception );
 
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E"}, "A", emptySitOutScheme);
 
     EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
     {
         try
         {
-            gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F", u8"G"}, u8"A", std::set<unsigned int> { 3U });
+            gameInfo.SetPlayers({"A", "B", "C", "D", "E", "F", "G"}, "A", std::set<unsigned int> { 3U });
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"incorrect size of the sit out scheme", e.what());
+            EXPECT_STREQ("incorrect size of the sit out scheme", e.what());
             throw;
         }
     }, std::exception );
@@ -219,7 +219,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportIfPlayersWereSet) //NOLINT (cert-e
     // Act, Assert
     EXPECT_FALSE(gameInfo.HasPlayersSet());
 
-    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers(std::vector<std::string>{"A", "B", "C", "D"}, "A", sitOutScheme);
 
     EXPECT_TRUE(gameInfo.HasPlayersSet());
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::None, gameInfo.LastPoppableEntry());
@@ -231,16 +231,16 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges) //NOLINT (cert-e
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
 
     // Act, Assert
-    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"B", u8"C", u8"D", u8"E", u8"F"}, u8"A", std::set<unsigned int> { 3 });
+    gameInfo.SetPlayers(std::vector<std::string>{"A", "B", "C", "D", "E", "F"}, "A", std::set<unsigned int> { 3 });
     std::vector<std::shared_ptr<Backend::PlayerInfo>> one(gameInfo.PlayerInfos());
 
     ASSERT_EQ(6, one.size());
-    EXPECT_STREQ(u8"A", one[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", one[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", one[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", one[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", one[4]->Name().c_str());
-    EXPECT_STREQ(u8"F", one[5]->Name().c_str());
+    EXPECT_STREQ("A", one[0]->Name().c_str());
+    EXPECT_STREQ("B", one[1]->Name().c_str());
+    EXPECT_STREQ("C", one[2]->Name().c_str());
+    EXPECT_STREQ("D", one[3]->Name().c_str());
+    EXPECT_STREQ("E", one[4]->Name().c_str());
+    EXPECT_STREQ("F", one[5]->Name().c_str());
     EXPECT_TRUE(one[0]->IsPresent());
     EXPECT_TRUE(one[1]->IsPresent());
     EXPECT_TRUE(one[2]->IsPresent());
@@ -257,21 +257,21 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges) //NOLINT (cert-e
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 0),
-                          std::make_pair<std::string, int>(u8"C", 0),
-                          std::make_pair<std::string, int>(u8"E", 0),
-                          std::make_pair<std::string, int>(u8"F", 0)
+                          std::make_pair<std::string, int>("B", 0),
+                          std::make_pair<std::string, int>("C", 0),
+                          std::make_pair<std::string, int>("E", 0),
+                          std::make_pair<std::string, int>("F", 0)
                       }, 0U);
 
     std::vector<std::shared_ptr<Backend::PlayerInfo>> two(gameInfo.PlayerInfos());
 
     ASSERT_EQ(6, two.size());
-    EXPECT_STREQ(u8"A", two[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", two[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", two[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", two[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", two[4]->Name().c_str());
-    EXPECT_STREQ(u8"F", two[5]->Name().c_str());
+    EXPECT_STREQ("A", two[0]->Name().c_str());
+    EXPECT_STREQ("B", two[1]->Name().c_str());
+    EXPECT_STREQ("C", two[2]->Name().c_str());
+    EXPECT_STREQ("D", two[3]->Name().c_str());
+    EXPECT_STREQ("E", two[4]->Name().c_str());
+    EXPECT_STREQ("F", two[5]->Name().c_str());
     EXPECT_TRUE(two[0]->IsPresent());
     EXPECT_TRUE(two[1]->IsPresent());
     EXPECT_TRUE(two[2]->IsPresent());
@@ -286,24 +286,24 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges) //NOLINT (cert-e
     EXPECT_TRUE(two[5]->IsPlaying());
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
-    gameInfo.SetPlayers(std::vector<std::string>{u8"A", u8"C", u8"D", u8"E", u8"F"}, u8"F", std::set<unsigned int> {});
+    gameInfo.SetPlayers(std::vector<std::string>{"A", "C", "D", "E", "F"}, "F", std::set<unsigned int> {});
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 0),
-                          std::make_pair<std::string, int>(u8"C", 0),
-                          std::make_pair<std::string, int>(u8"D", 0),
-                          std::make_pair<std::string, int>(u8"E", 0)
+                          std::make_pair<std::string, int>("A", 0),
+                          std::make_pair<std::string, int>("C", 0),
+                          std::make_pair<std::string, int>("D", 0),
+                          std::make_pair<std::string, int>("E", 0)
                       }, 0U);
 
     std::vector<std::shared_ptr<Backend::PlayerInfo>> three(gameInfo.PlayerInfos());
 
     ASSERT_EQ(6, three.size());
-    EXPECT_STREQ(u8"A", three[0]->Name().c_str());
-    EXPECT_STREQ(u8"C", three[1]->Name().c_str());
-    EXPECT_STREQ(u8"D", three[2]->Name().c_str());
-    EXPECT_STREQ(u8"E", three[3]->Name().c_str());
-    EXPECT_STREQ(u8"F", three[4]->Name().c_str());
-    EXPECT_STREQ(u8"B", three[5]->Name().c_str());
+    EXPECT_STREQ("A", three[0]->Name().c_str());
+    EXPECT_STREQ("C", three[1]->Name().c_str());
+    EXPECT_STREQ("D", three[2]->Name().c_str());
+    EXPECT_STREQ("E", three[3]->Name().c_str());
+    EXPECT_STREQ("F", three[4]->Name().c_str());
+    EXPECT_STREQ("B", three[5]->Name().c_str());
     EXPECT_TRUE(three[0]->IsPresent());
     EXPECT_TRUE(three[1]->IsPresent());
     EXPECT_TRUE(three[2]->IsPresent());
@@ -320,21 +320,21 @@ TEST(BackendTest, GameInfoShallAdvanceDealerWhenPushingChanges) //NOLINT (cert-e
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"C", 0),
-                          std::make_pair<std::string, int>(u8"D", 0),
-                          std::make_pair<std::string, int>(u8"E", 0),
-                          std::make_pair<std::string, int>(u8"F", 0)
+                          std::make_pair<std::string, int>("C", 0),
+                          std::make_pair<std::string, int>("D", 0),
+                          std::make_pair<std::string, int>("E", 0),
+                          std::make_pair<std::string, int>("F", 0)
                       }, 0U);
 
     std::vector<std::shared_ptr<Backend::PlayerInfo>> four(gameInfo.PlayerInfos());
 
     ASSERT_EQ(6, four.size());
-    EXPECT_STREQ(u8"A", four[0]->Name().c_str());
-    EXPECT_STREQ(u8"C", four[1]->Name().c_str());
-    EXPECT_STREQ(u8"D", four[2]->Name().c_str());
-    EXPECT_STREQ(u8"E", four[3]->Name().c_str());
-    EXPECT_STREQ(u8"F", four[4]->Name().c_str());
-    EXPECT_STREQ(u8"B", four[5]->Name().c_str());
+    EXPECT_STREQ("A", four[0]->Name().c_str());
+    EXPECT_STREQ("C", four[1]->Name().c_str());
+    EXPECT_STREQ("D", four[2]->Name().c_str());
+    EXPECT_STREQ("E", four[3]->Name().c_str());
+    EXPECT_STREQ("F", four[4]->Name().c_str());
+    EXPECT_STREQ("B", four[5]->Name().c_str());
     EXPECT_TRUE(four[0]->IsPresent());
     EXPECT_TRUE(four[1]->IsPresent());
     EXPECT_TRUE(four[2]->IsPresent());
@@ -355,28 +355,28 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges) //NOLINT (cert-err58-cp
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", emptySitOutScheme);
 
     // Act, Assert
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 0),
-                          std::make_pair<std::string, int>(u8"B", 0),
-                          std::make_pair<std::string, int>(u8"C", 0),
-                          std::make_pair<std::string, int>(u8"D", 0)
+                          std::make_pair<std::string, int>("A", 0),
+                          std::make_pair<std::string, int>("B", 0),
+                          std::make_pair<std::string, int>("C", 0),
+                          std::make_pair<std::string, int>("D", 0)
                       }, 0U);
 
     EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
     { gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
       {
-          std::make_pair<std::string, int>(u8"A", 0),
-          std::make_pair<std::string, int>(u8"B", 0),
-          std::make_pair<std::string, int>(u8"C", 0),
-          std::make_pair<std::string, int>(u8"Z", 0)
+          std::make_pair<std::string, int>("A", 0),
+          std::make_pair<std::string, int>("B", 0),
+          std::make_pair<std::string, int>("C", 0),
+          std::make_pair<std::string, int>("Z", 0)
       }, 0U);
     }, std::exception);
 
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E"}, "A", emptySitOutScheme);
 
     EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
     {
@@ -384,20 +384,20 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges) //NOLINT (cert-err58-cp
         {
             gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                          {
-                             std::make_pair<std::string, int>(u8"A", 0),
-                             std::make_pair<std::string, int>(u8"B", 0),
-                             std::make_pair<std::string, int>(u8"C", 0),
-                             std::make_pair<std::string, int>(u8"E", 0)
+                             std::make_pair<std::string, int>("A", 0),
+                             std::make_pair<std::string, int>("B", 0),
+                             std::make_pair<std::string, int>("C", 0),
+                             std::make_pair<std::string, int>("E", 0)
                          }, 0U);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"found change for player not playing: \"A\"", e.what());
+            EXPECT_STREQ("found change for player not playing: \"A\"", e.what());
             throw;
         }
     }, std::exception);
 
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"E", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E"}, "E", emptySitOutScheme);
 
     EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
     {
@@ -405,15 +405,15 @@ TEST(BackendTest, GameInfoShallThrowOnPushingBadChanges) //NOLINT (cert-err58-cp
         {
             gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                          {
-                             std::make_pair<std::string, int>(u8"A", 3),
-                             std::make_pair<std::string, int>(u8"B", 3),
-                             std::make_pair<std::string, int>(u8"C", 0),
-                             std::make_pair<std::string, int>(u8"D", -3)
+                             std::make_pair<std::string, int>("A", 3),
+                             std::make_pair<std::string, int>("B", 3),
+                             std::make_pair<std::string, int>("C", 0),
+                             std::make_pair<std::string, int>("D", -3)
                          }, 0U);
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"changes must sum to zero", e.what());
+            EXPECT_STREQ("changes must sum to zero", e.what());
             throw;
         }
     }, std::exception);
@@ -424,7 +424,7 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier) //NOLINT (cert-err58-cpp,
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", emptySitOutScheme);
 
     // Act, Assert
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::None, gameInfo.LastPoppableEntry());
@@ -432,16 +432,16 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier) //NOLINT (cert-err58-cpp,
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 1),
-                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>("A", 1),
+                          std::make_pair<std::string, int>("B", 1),
                       }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
 
     EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -466,8 +466,8 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier) //NOLINT (cert-err58-cpp,
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 3),
-                          std::make_pair<std::string, int>(u8"C", 3),
+                          std::make_pair<std::string, int>("A", 3),
+                          std::make_pair<std::string, int>("C", 3),
                       }, 2U);
 
     EXPECT_EQ( 7, playerInfos[0]->CurrentScore());
@@ -493,8 +493,8 @@ TEST(BackendTest, GameInfoShallCorrectlyUseMultiplier) //NOLINT (cert-err58-cpp,
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"C", 2),
-                          std::make_pair<std::string, int>(u8"D", 2),
+                          std::make_pair<std::string, int>("C", 2),
+                          std::make_pair<std::string, int>("D", 2),
                       }, 0U);
 
     EXPECT_EQ( -9, playerInfos[0]->CurrentScore());
@@ -524,7 +524,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier) //NOLINT (cert-err58-c
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", emptySitOutScheme);
 
     // Act, Assert
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::None, gameInfo.LastPoppableEntry());
@@ -532,26 +532,26 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier) //NOLINT (cert-err58-c
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 1),
-                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>("A", 1),
+                          std::make_pair<std::string, int>("B", 1),
                       }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
 
     EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
 
-    EXPECT_STREQ(u8"1", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"1", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
@@ -567,8 +567,8 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier) //NOLINT (cert-err58-c
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 3),
-                          std::make_pair<std::string, int>(u8"C", 3),
+                          std::make_pair<std::string, int>("A", 3),
+                          std::make_pair<std::string, int>("C", 3),
                       }, 2U);
 
     EXPECT_EQ( 7, playerInfos[0]->CurrentScore());
@@ -576,10 +576,10 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier) //NOLINT (cert-err58-c
     EXPECT_EQ( 5, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-7, playerInfos[3]->CurrentScore());
 
-    EXPECT_STREQ(u8"3", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"3", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ("3", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ("3", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
@@ -600,10 +600,10 @@ TEST(BackendTest, GameInfoShallCorrectlyReportMultiplier) //NOLINT (cert-err58-c
     EXPECT_EQ(-1, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
 
-    EXPECT_STREQ(u8"1", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"1", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
 
     auto preview3 = gameInfo.MultiplierPreview();
 
@@ -621,7 +621,7 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal) //NOLINT (cert-err58-cpp, cppco
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", emptySitOutScheme);
 
     // Act, Assert
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::None, gameInfo.LastPoppableEntry());
@@ -629,34 +629,34 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal) //NOLINT (cert-err58-cpp, cppco
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 1),
-                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>("A", 1),
+                          std::make_pair<std::string, int>("B", 1),
                       }, 0U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
 
     EXPECT_EQ( 1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
 
-    EXPECT_STREQ(u8"1", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"1", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 3),
-                          std::make_pair<std::string, int>(u8"C", 3),
+                          std::make_pair<std::string, int>("A", 3),
+                          std::make_pair<std::string, int>("C", 3),
                       }, 0U);
 
     EXPECT_EQ( 4, playerInfos[0]->CurrentScore());
@@ -664,10 +664,10 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal) //NOLINT (cert-err58-cpp, cppco
     EXPECT_EQ( 2, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-4, playerInfos[3]->CurrentScore());
 
-    EXPECT_STREQ(u8"3", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"3", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ("3", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ("3", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
@@ -679,10 +679,10 @@ TEST(BackendTest, GameInfoShallCorrectlyPopDeal) //NOLINT (cert-err58-cpp, cppco
     EXPECT_EQ(-1, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
 
-    EXPECT_STREQ(u8"1", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"1", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ("1", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
 
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 }
@@ -692,13 +692,13 @@ TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping) //NOLINT (cert-err
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> emptySitOutScheme;
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", emptySitOutScheme);
 
     // Act
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 1),
-                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>("A", 1),
+                          std::make_pair<std::string, int>("B", 1),
                       }, 0U);
 
     while(gameInfo.LastPoppableEntry() != Backend::GameInfo::PoppableEntry::None)
@@ -708,8 +708,8 @@ TEST(BackendTest, GameInfoShallCorrectlyPushDealAfterPopping) //NOLINT (cert-err
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("A", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 0U);
 
     // Assert
@@ -728,25 +728,25 @@ TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries) //NOLINT (cert-err
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme = { 3 };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E", "F"}, "A", sitOutScheme);
 
     // Act, Assert
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
-    EXPECT_STREQ(u8"F", playerInfos[5]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("F", playerInfos[5]->Name().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::None, gameInfo.LastPoppableEntry());
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::CannotTrigger, gameInfo.MandatorySolo());
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 2),
-                          std::make_pair<std::string, int>(u8"C", 2),
+                          std::make_pair<std::string, int>("B", 2),
+                          std::make_pair<std::string, int>("C", 2),
                       }, 0U);
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
@@ -756,12 +756,12 @@ TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries) //NOLINT (cert-err
     EXPECT_EQ(-2, playerInfos[4]->CurrentScore());
     EXPECT_EQ(-2, playerInfos[5]->CurrentScore());
 
-    EXPECT_STREQ( u8"", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"2", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"2", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[4]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[5]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ("2", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ("2", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[4]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[5]->InputInLastDeal().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
@@ -771,27 +771,27 @@ TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries) //NOLINT (cert-err
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::MandatorySoloTrigger, gameInfo.LastPoppableEntry());
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"Z"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E", "Z"}, "A", sitOutScheme);
     playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
-    EXPECT_STREQ(u8"Z", playerInfos[5]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("Z", playerInfos[5]->Name().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::PlayersSet, gameInfo.LastPoppableEntry());
 
     gameInfo.PopLastEntry();
     playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
-    EXPECT_STREQ(u8"F", playerInfos[5]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("F", playerInfos[5]->Name().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::MandatorySoloTrigger, gameInfo.LastPoppableEntry());
 
@@ -800,12 +800,12 @@ TEST(BackendTest, GameInfoShallCorrectlyPopAllKindsOfEntries) //NOLINT (cert-err
 
     ASSERT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
 
-    EXPECT_STREQ( u8"", playerInfos[0]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"2", playerInfos[1]->InputInLastDeal().c_str());
-    EXPECT_STREQ(u8"2", playerInfos[2]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[3]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[4]->InputInLastDeal().c_str());
-    EXPECT_STREQ( u8"", playerInfos[5]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[0]->InputInLastDeal().c_str());
+    EXPECT_STREQ("2", playerInfos[1]->InputInLastDeal().c_str());
+    EXPECT_STREQ("2", playerInfos[2]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[3]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[4]->InputInLastDeal().c_str());
+    EXPECT_STREQ( "", playerInfos[5]->InputInLastDeal().c_str());
 
     ASSERT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
@@ -834,23 +834,23 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping) //NOLINT (cert
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { 3 };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E", u8"F"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E", "F"}, "A", sitOutScheme);
 
     // Act, Assert
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
-    EXPECT_STREQ(u8"F", playerInfos[5]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("F", playerInfos[5]->Name().c_str());
 
     EXPECT_EQ( 0, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -876,8 +876,8 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping) //NOLINT (cert
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 2),
-                          std::make_pair<std::string, int>(u8"C", 2),
+                          std::make_pair<std::string, int>("A", 2),
+                          std::make_pair<std::string, int>("C", 2),
                       }, 2U);
 
     EXPECT_EQ( 4, playerInfos[0]->CurrentScore());
@@ -904,8 +904,8 @@ TEST(BackendTest, GameInfoShallHaveCorrectMultiplierAfterPopping) //NOLINT (cert
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 2),
-                          std::make_pair<std::string, int>(u8"B", 2),
+                          std::make_pair<std::string, int>("A", 2),
+                          std::make_pair<std::string, int>("B", 2),
                       }, 0U);
 
     EXPECT_EQ( 20, playerInfos[0]->CurrentScore());
@@ -972,49 +972,49 @@ TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers) //NOLINT (cert-
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", sitOutScheme);
 
     // Act, Assert
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("A", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"C", 1),
-                          std::make_pair<std::string, int>(u8"D", 1),
+                          std::make_pair<std::string, int>("C", 1),
+                          std::make_pair<std::string, int>("D", 1),
                       }, 1U);
 
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
 
     EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[1]->CurrentScore());
     EXPECT_EQ( 3, playerInfos[2]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[3]->CurrentScore());
 
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"D", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E"}, "D", sitOutScheme);
 
     playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
 
     EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
     EXPECT_EQ(-1, playerInfos[1]->CurrentScore());
@@ -1028,8 +1028,8 @@ TEST(BackendTest, GameInfoShallUseMultiplierAfterSettingPlayers) //NOLINT (cert-
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"C", 1),
-                          std::make_pair<std::string, int>(u8"E", 1),
+                          std::make_pair<std::string, int>("C", 1),
+                          std::make_pair<std::string, int>("E", 1),
                       }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
@@ -1044,53 +1044,53 @@ TEST(BackendTest, GameInfoShallProvideCorrectStatistics) //NOLINT (cert-err58-cp
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme {};
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E"}, "A", sitOutScheme);
 
     // Act
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
                           /* A */
-                          std::make_pair<std::string, int>(u8"B", -1),
-                          std::make_pair<std::string, int>(u8"C", -1),
-                          std::make_pair<std::string, int>(u8"D",  1),
-                          std::make_pair<std::string, int>(u8"E",  1)
+                          std::make_pair<std::string, int>("B", -1),
+                          std::make_pair<std::string, int>("C", -1),
+                          std::make_pair<std::string, int>("D",  1),
+                          std::make_pair<std::string, int>("E",  1)
                       }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A",  3),
+                          std::make_pair<std::string, int>("A",  3),
                           /* B */
-                          std::make_pair<std::string, int>(u8"C", -1),
-                          std::make_pair<std::string, int>(u8"D", -1),
-                          std::make_pair<std::string, int>(u8"E", -1)
+                          std::make_pair<std::string, int>("C", -1),
+                          std::make_pair<std::string, int>("D", -1),
+                          std::make_pair<std::string, int>("E", -1)
                       }, 1U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A",  2),
-                          std::make_pair<std::string, int>(u8"B",  2),
+                          std::make_pair<std::string, int>("A",  2),
+                          std::make_pair<std::string, int>("B",  2),
                           /* C */
-                          std::make_pair<std::string, int>(u8"D",  2),
-                          std::make_pair<std::string, int>(u8"E", -6)
+                          std::make_pair<std::string, int>("D",  2),
+                          std::make_pair<std::string, int>("E", -6)
                       }, 0U);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A",  3),
-                          std::make_pair<std::string, int>(u8"B", -3),
-                          std::make_pair<std::string, int>(u8"C",  3),
+                          std::make_pair<std::string, int>("A",  3),
+                          std::make_pair<std::string, int>("B", -3),
+                          std::make_pair<std::string, int>("C",  3),
                           /* D */
-                          std::make_pair<std::string, int>(u8"E", -3)
+                          std::make_pair<std::string, int>("E", -3)
                       }, 0U);
 
     // Assert
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
 
     EXPECT_EQ( 13, playerInfos[0]->CurrentScore());
     EXPECT_EQ( -3, playerInfos[1]->CurrentScore());
@@ -1164,13 +1164,13 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", sitOutScheme);
 
     // Act, Assert
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
@@ -1179,10 +1179,10 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
 
     EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -1198,7 +1198,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 6),
+                          std::make_pair<std::string, int>("B", 6),
                       }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
@@ -1215,7 +1215,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"C", -3),
+                          std::make_pair<std::string, int>("C", -3),
                       }, 0U);
 
     EXPECT_EQ(-2, playerInfos[0]->CurrentScore());
@@ -1232,7 +1232,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"D", 3),
+                          std::make_pair<std::string, int>("D", 3),
                       }, 0U);
 
     EXPECT_EQ(-3, playerInfos[0]->CurrentScore());
@@ -1249,7 +1249,7 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", -9),
+                          std::make_pair<std::string, int>("A", -9),
                       }, 0U);
 
     EXPECT_EQ(-12, playerInfos[0]->CurrentScore());
@@ -1266,8 +1266,8 @@ TEST(BackendTest, GameInfoShallSuspendMultiplierForMandatorySolo) //NOLINT (cert
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 5),
-                          std::make_pair<std::string, int>(u8"C", 5),
+                          std::make_pair<std::string, int>("B", 5),
+                          std::make_pair<std::string, int>("C", 5),
                       }, 0U);
 
     EXPECT_EQ(-22, playerInfos[0]->CurrentScore());
@@ -1288,21 +1288,21 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo) //NOLINT (cert-err58-cpp, cppco
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", sitOutScheme);
 
     // Act, Assert
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
 
     EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -1313,8 +1313,8 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo) //NOLINT (cert-err58-cpp, cppco
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
@@ -1339,7 +1339,7 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo) //NOLINT (cert-err58-cpp, cppco
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 6),
+                          std::make_pair<std::string, int>("B", 6),
                       }, 0U);
 
     EXPECT_EQ(-5, playerInfos[0]->CurrentScore());
@@ -1389,8 +1389,8 @@ TEST(BackendTest, GameInfoShallPopMandatorySolo) //NOLINT (cert-err58-cpp, cppco
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 3),
-                          std::make_pair<std::string, int>(u8"C", 3),
+                          std::make_pair<std::string, int>("A", 3),
+                          std::make_pair<std::string, int>("C", 3),
                       }, 0U);
 
     EXPECT_EQ( 5, playerInfos[0]->CurrentScore());
@@ -1411,21 +1411,21 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet) //NOLINT (cert-
     // Arrange
     Backend::GameInfo gameInfo(std::make_shared<MemoryRepository>());
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", sitOutScheme);
 
     // Act, Assert
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 0U);
 
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
 
     EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -1434,15 +1434,15 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet) //NOLINT (cert-
 
     EXPECT_EQ(Backend::GameInfo::PoppableEntry::Deal, gameInfo.LastPoppableEntry());
 
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"B", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E"}, "B", sitOutScheme);
 
     playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
 
     EXPECT_EQ(-1, playerInfos[0]->CurrentScore());
     EXPECT_EQ( 1, playerInfos[1]->CurrentScore());
@@ -1457,40 +1457,40 @@ TEST(BackendTest, GameInfoShallAllowMandatorySoloAfterPlayerSet) //NOLINT (cert-
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"C", 1),
-                          std::make_pair<std::string, int>(u8"D", 1),
+                          std::make_pair<std::string, int>("C", 1),
+                          std::make_pair<std::string, int>("D", 1),
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"D", 1),
-                          std::make_pair<std::string, int>(u8"E", 1),
+                          std::make_pair<std::string, int>("D", 1),
+                          std::make_pair<std::string, int>("E", 1),
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"E", 1),
-                          std::make_pair<std::string, int>(u8"A", 1),
+                          std::make_pair<std::string, int>("E", 1),
+                          std::make_pair<std::string, int>("A", 1),
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 1),
-                          std::make_pair<std::string, int>(u8"B", 1),
+                          std::make_pair<std::string, int>("A", 1),
+                          std::make_pair<std::string, int>("B", 1),
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Active, gameInfo.MandatorySolo());
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 0U);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::Ready, gameInfo.MandatorySolo());
@@ -1503,7 +1503,7 @@ TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates) //NOLIN
     std::set<unsigned int> emptySitOutScheme;
 
     // Act, Assert
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D" }, u8"A", emptySitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D" }, "A", emptySitOutScheme);
 
     EXPECT_EQ(Backend::GameInfo::MandatorySolo::CannotTrigger, gameInfo.MandatorySolo());
 
@@ -1515,15 +1515,15 @@ TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates) //NOLIN
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"cannot trigger mandatory solo at this point", e.what());
+            EXPECT_STREQ("cannot trigger mandatory solo at this point", e.what());
             throw;
         }
     }, std::exception);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"A", 3),
-                          std::make_pair<std::string, int>(u8"C", 3),
+                          std::make_pair<std::string, int>("A", 3),
+                          std::make_pair<std::string, int>("C", 3),
                       }, 0U);
 
     gameInfo.TriggerMandatorySolo();
@@ -1538,7 +1538,7 @@ TEST(BackendTest, GameInfoShallThrowOnTriggerMandatorySoloInWrongStates) //NOLIN
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"cannot trigger mandatory solo at this point", e.what());
+            EXPECT_STREQ("cannot trigger mandatory solo at this point", e.what());
             throw;
         }
     }, std::exception);
@@ -1548,15 +1548,15 @@ TEST(BackendTest, GameInfoShallCorrectlySaveToRepository) //NOLINT (cert-err58-c
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
-    std::string id(u8"some Id");
+    std::u8string id(u8"some Id");
     Backend::GameInfo gameInfo(repository);
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"文字"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "文字"}, "A", sitOutScheme);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
 
     gameInfo.TriggerMandatorySolo();
@@ -1571,32 +1571,32 @@ TEST(BackendTest, GameInfoShallCorrectlySaveToRepository) //NOLINT (cert-err58-c
     ASSERT_TRUE(found);
 
     ASSERT_TRUE(persisted.length() > 0);
-    std::regex dataVersionRegex(u8R"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
+    std::regex dataVersionRegex(R"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, dataVersionRegex));
 
-    std::regex playersSetKindRegex(u8R"foo("kind":"playersSet")foo", std::regex_constants::ECMAScript);
+    std::regex playersSetKindRegex(R"foo("kind":"playersSet")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, playersSetKindRegex));
-    std::regex playerNamesRegex(u8R"foo("playerNames":\["A","B","C","\\u6587\\u5B57"\])foo", std::regex_constants::ECMAScript);
+    std::regex playerNamesRegex(R"foo("playerNames":\["A","B","C","\\u6587\\u5B57"\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, playerNamesRegex));
-    std::regex dealerNameRegex(u8R"foo("dealerName":"A")foo", std::regex_constants::ECMAScript);
+    std::regex dealerNameRegex(R"foo("dealerName":"A")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, dealerNameRegex));
-    std::regex sitOutSchemeRegex(u8R"foo("sitOutScheme":\[\])foo", std::regex_constants::ECMAScript);
+    std::regex sitOutSchemeRegex(R"foo("sitOutScheme":\[\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, sitOutSchemeRegex));
 
-    std::regex dealKindRegex(u8R"foo("kind":"deal")foo", std::regex_constants::ECMAScript);
+    std::regex dealKindRegex(R"foo("kind":"deal")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, dealKindRegex));
-    std::regex playersRegex(u8R"foo("players":4)foo", std::regex_constants::ECMAScript);
+    std::regex playersRegex(R"foo("players":4)foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, playersRegex));
-    std::regex numberOfEventsRegex(u8R"foo("numberOfEvents":1)foo", std::regex_constants::ECMAScript);
+    std::regex numberOfEventsRegex(R"foo("numberOfEvents":1)foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, numberOfEventsRegex));
-    std::regex changesRegex(u8R"foo("changes":\[\{)foo", std::regex_constants::ECMAScript);
+    std::regex changesRegex(R"foo("changes":\[\{)foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, sitOutSchemeRegex));
-    std::regex objectBRegex(u8R"foo(\{"name":"B","diff":1\})foo", std::regex_constants::ECMAScript);
+    std::regex objectBRegex(R"foo(\{"name":"B","diff":1\})foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, objectBRegex));
-    std::regex objectCRegex(u8R"foo(\{"name":"C","diff":1\})foo", std::regex_constants::ECMAScript);
+    std::regex objectCRegex(R"foo(\{"name":"C","diff":1\})foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, objectCRegex));
 
-    std::regex mandatorySoloTriggerKindRegex(u8R"foo("kind":"mandatorySoloTrigger")foo", std::regex_constants::ECMAScript);
+    std::regex mandatorySoloTriggerKindRegex(R"foo("kind":"mandatorySoloTrigger")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, mandatorySoloTriggerKindRegex));
 }
 
@@ -1608,31 +1608,31 @@ TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository) //NOLINT (cert-err58
     entries.push_back(std::make_shared<Backend::PlayersSet>(
                           std::vector<std::string>
                           {
-                              u8"A",
-                              u8"B",
-                              u8"C",
-                              u8"D",
-                              u8"E",
-                              u8"F",
-                              u8"文字",
+                              "A",
+                              "B",
+                              "C",
+                              "D",
+                              "E",
+                              "F",
+                              "文字",
                           },
-                          u8"C",
+                          "C",
                           std::set<unsigned int> { 2, 4 },
-                          u8""));
+                          ""));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::string, int>>
                           {
-                              std::make_pair<std::string, int>(u8"A", 1),
-                              std::make_pair<std::string, int>(u8"B", 1),
-                              std::make_pair<std::string, int>(u8"D", -1),
-                              std::make_pair<std::string, int>(u8"F", -1)
+                              std::make_pair<std::string, int>("A", 1),
+                              std::make_pair<std::string, int>("B", 1),
+                              std::make_pair<std::string, int>("D", -1),
+                              std::make_pair<std::string, int>("F", -1)
                           },
                           Backend::NumberOfEvents(2),
                           Backend::Players(7)));
     entries.push_back(std::make_shared<Backend::MandatorySoloTrigger>());
 
     auto repository = std::make_shared<MemoryRepository>();
-    std::string id = u8"some Id";
+    std::u8string id(u8"some Id");
     repository->Save(entries, id);
 
     Backend::GameInfo gameInfo(repository);
@@ -1643,15 +1643,15 @@ TEST(BackendTest, GameInfoShallCorrectlyLoadFromRepository) //NOLINT (cert-err58
     // Assert
     auto playerInfos = gameInfo.PlayerInfos();
 
-    EXPECT_STREQ(u8"A", playerInfos[0]->Name().c_str());
-    EXPECT_STREQ(u8"B", playerInfos[1]->Name().c_str());
-    EXPECT_STREQ(u8"C", playerInfos[2]->Name().c_str());
-    EXPECT_STREQ(u8"D", playerInfos[3]->Name().c_str());
-    EXPECT_STREQ(u8"E", playerInfos[4]->Name().c_str());
-    EXPECT_STREQ(u8"F", playerInfos[5]->Name().c_str());
-    EXPECT_STREQ(u8"文字", playerInfos[6]->Name().c_str());
+    EXPECT_STREQ("A", playerInfos[0]->Name().c_str());
+    EXPECT_STREQ("B", playerInfos[1]->Name().c_str());
+    EXPECT_STREQ("C", playerInfos[2]->Name().c_str());
+    EXPECT_STREQ("D", playerInfos[3]->Name().c_str());
+    EXPECT_STREQ("E", playerInfos[4]->Name().c_str());
+    EXPECT_STREQ("F", playerInfos[5]->Name().c_str());
+    EXPECT_STREQ("文字", playerInfos[6]->Name().c_str());
 
-    EXPECT_STREQ(u8"D", gameInfo.Dealer()->Name().c_str());
+    EXPECT_STREQ("D", gameInfo.Dealer()->Name().c_str());
 
     EXPECT_EQ(6U, gameInfo.RemainingGamesInRound());
 
@@ -1678,15 +1678,15 @@ TEST(BackendTest, GameInfoShallCorrectlyRoundtripRepository) //NOLINT (cert-err5
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
-    std::string id(u8"some Id");
+    std::u8string id(u8"some Id");
     Backend::GameInfo gameInfo(repository);
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", sitOutScheme);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
 
     gameInfo.TriggerMandatorySolo();
@@ -1736,18 +1736,18 @@ TEST(BackendTest, GameInfoShallCorrectlyHandleBadLoad) //NOLINT (cert-err58-cpp,
 {
     // Arrange
     auto repository = std::make_shared<MemoryRepository>();
-    std::string id(u8"some Id");
-    std::string content(u8R"foo({"will not work":"stuff"})foo");
+    std::u8string id(u8"some Id");
+    std::string content(R"foo({"will not work":"stuff"})foo");
     repository->SetByIdentifier(id, content);
 
     Backend::GameInfo gameInfo(repository);
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"A", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "A", sitOutScheme);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
 
     gameInfo.TriggerMandatorySolo();
@@ -1798,7 +1798,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRound) //NOLINT (c
 
     Backend::GameInfo gameInfo(repository);
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"C", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "C", sitOutScheme);
 
     // Act, Assert
     auto remaining1 = gameInfo.RemainingGamesInRound();
@@ -1806,40 +1806,40 @@ TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRound) //NOLINT (c
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining2 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(3U, remaining2);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining3 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(2U, remaining3);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining4 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(1U, remaining4);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining5 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(0U, remaining5);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining6 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(3U, remaining6);
@@ -1868,7 +1868,7 @@ TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRoundAfterPoppingP
 
     Backend::GameInfo gameInfo(repository);
     std::set<unsigned int> sitOutScheme { };
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D"}, u8"C", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D"}, "C", sitOutScheme);
 
     // Act, Assert
     auto remaining1 = gameInfo.RemainingGamesInRound();
@@ -1876,28 +1876,28 @@ TEST(BackendTest, GameInfoShallCorrectlyReportRemainingGamesInRoundAfterPoppingP
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining2 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(3U, remaining2);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining3 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(2U, remaining3);
 
-    gameInfo.SetPlayers({u8"A", u8"B", u8"C", u8"D", u8"E"}, u8"E", sitOutScheme);
+    gameInfo.SetPlayers({"A", "B", "C", "D", "E"}, "E", sitOutScheme);
     auto remaining4 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(0U, remaining4);
 
     gameInfo.PushDeal(std::vector<std::pair<std::string, int>>
                       {
-                          std::make_pair<std::string, int>(u8"B", 1),
-                          std::make_pair<std::string, int>(u8"C", 1),
+                          std::make_pair<std::string, int>("B", 1),
+                          std::make_pair<std::string, int>("C", 1),
                       }, 1U);
     auto remaining5 = gameInfo.RemainingGamesInRound();
     EXPECT_EQ(4U, remaining5);

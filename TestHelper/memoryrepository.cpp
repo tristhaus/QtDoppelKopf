@@ -23,7 +23,7 @@
 MemoryRepository::MemoryRepository()
 = default;
 
-void MemoryRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier)
+void MemoryRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::u8string & identifier)
 {
     std::stringstream ss;
     deserializer.Serialize(entries, ss);
@@ -34,14 +34,14 @@ void MemoryRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> &
     storage[identifier] = content;
 }
 
-std::vector<std::shared_ptr<Backend::Entry>> MemoryRepository::Load(const std::string & identifier)
+std::vector<std::shared_ptr<Backend::Entry>> MemoryRepository::Load(const std::u8string & identifier)
 {
     std::string content;
     bool found = TryGetByIdentifier(identifier, content);
 
     if(!found)
     {
-        throw std::exception((std::string(u8"content not found by identifier: \"") + identifier + std::string(u8"\"")).c_str());
+        throw std::exception("content not found by identifier");
     }
 
     std::stringstream ss;
@@ -50,7 +50,7 @@ std::vector<std::shared_ptr<Backend::Entry>> MemoryRepository::Load(const std::s
     return deserializer.Deserialize(ss);
 }
 
-bool MemoryRepository::TryGetByIdentifier(const std::string& identifier, std::string& string) const
+bool MemoryRepository::TryGetByIdentifier(const std::u8string& identifier, std::string& string) const
 {
     auto it = storage.find(identifier);
 
@@ -63,7 +63,7 @@ bool MemoryRepository::TryGetByIdentifier(const std::string& identifier, std::st
     return true;
 }
 
-void MemoryRepository::SetByIdentifier(const std::string& identifier, const std::string& string)
+void MemoryRepository::SetByIdentifier(const std::u8string& identifier, const std::string& string)
 {
     storage[identifier] = string;
 }

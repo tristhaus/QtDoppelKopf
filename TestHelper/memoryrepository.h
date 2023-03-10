@@ -32,7 +32,7 @@ class MemoryRepository final : public Backend::Repository
 {
 private:
     Backend::DeSerializer deserializer;
-    std::map<std::string, std::string> storage;
+    std::map<std::u8string, std::string> storage;
 
 public:
     /*!
@@ -43,12 +43,12 @@ public:
     /*!
      * \reimp
      */
-    virtual void Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier);
+    virtual void Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::u8string & identifier);
 
     /*!
      * \reimp
      */
-    virtual std::vector<std::shared_ptr<Backend::Entry>> Load(const std::string & identifier);
+    virtual std::vector<std::shared_ptr<Backend::Entry>> Load(const std::u8string & identifier);
 
     /*!
      * \brief Attempts to get the string stored under the identifier.
@@ -56,14 +56,14 @@ public:
      * \param string The stored string, if any.
      * \return true if found.
      */
-    bool TryGetByIdentifier(const std::string & identifier, std::string & string) const;
+    bool TryGetByIdentifier(const std::u8string & identifier, std::string & string) const;
 
     /*!
      * \brief Stores the string under the identifier.
      * \param identifier The identifier to set the string for.
      * \param string The string to be stored.
      */
-    void SetByIdentifier(const std::string & identifier, const std::string & string);
+    void SetByIdentifier(const std::u8string & identifier, const std::string & string);
 };
 
 #endif // MEMORYREPOSITORY_H

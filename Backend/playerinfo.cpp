@@ -73,7 +73,7 @@ namespace Backend
 
     std::string PlayerInfo::InputInLastDeal() const
     {
-        return !this->dealInput.empty() ? this->dealInput.back() : std::string(u8"");
+        return !this->dealInput.empty() ? this->dealInput.back() : std::string("");
     }
 
     unsigned int PlayerInfo::CashCents() const

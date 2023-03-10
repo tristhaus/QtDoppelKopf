@@ -32,14 +32,14 @@ namespace Backend
          * \param game The entries to save.
          * \param identifier The identifier, which may be a file path if the underlying storage is the disk.
          */
-        virtual void Save(const std::vector<std::shared_ptr<Entry>> & entries, const std::string & identifier) = 0;
+        virtual void Save(const std::vector<std::shared_ptr<Entry>> & entries, const std::u8string & identifier) = 0;
 
         /*!
          * \brief Loads entries from storage.
          * \param identifier The identifier, which may be a file path if the underlying storage is the disk.
          * \return The loaded entries.
          */
-        virtual std::vector<std::shared_ptr<Entry>> Load(const std::string & identifier) = 0;
+        virtual std::vector<std::shared_ptr<Entry>> Load(const std::u8string & identifier) = 0;
     };
 }
 

@@ -29,37 +29,37 @@
 TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     // Arrange
-    auto tempFile = std::filesystem::temp_directory_path() / std::filesystem::u8path(u8"qtdoppelkopf.testing.文字.temp.file");
+    auto tempFile = std::filesystem::temp_directory_path() / std::filesystem::path(u8"qtdoppelkopf.testing.文字.temp.file");
     std::vector<std::shared_ptr<Backend::Entry>> entries;
 
     entries.push_back(std::make_shared<Backend::PlayersSet>(
                           std::vector<std::string>
                           {
-                              u8"A",
-                              u8"B",
-                              u8"C",
-                              u8"D",
-                              u8"E",
-                              u8"F",
-                              u8"文字",
+                              "A",
+                              "B",
+                              "C",
+                              "D",
+                              "E",
+                              "F",
+                              "文字",
                           },
-                          u8"C",
+                          "C",
                           std::set<unsigned int> { 2, 4 },
-                          u8"Z"));
+                          "Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::string, int>>
                           {
-                              std::make_pair<std::string, int>(u8"A", 1),
-                              std::make_pair<std::string, int>(u8"B", 1),
-                              std::make_pair<std::string, int>(u8"C", -1),
-                              std::make_pair<std::string, int>(u8"D", -1)
+                              std::make_pair<std::string, int>("A", 1),
+                              std::make_pair<std::string, int>("B", 1),
+                              std::make_pair<std::string, int>("C", -1),
+                              std::make_pair<std::string, int>("D", -1)
                           },
                           Backend::NumberOfEvents(2),
                           Backend::Players(7)));
     entries.push_back(std::make_shared<Backend::MandatorySoloTrigger>());
 
     Backend::DiskRepository repo;
-    std::string id = tempFile.u8string();
+    auto id = tempFile.u8string();
 
     // Act
     repo.Save(entries, id);
@@ -69,19 +69,19 @@ TEST(BackendTest, DiskRepositoryShallCorrectlyRoundtripGame) //NOLINT (cert-err5
     ASSERT_EQ(3, entries.size());
 
     auto playersSet = std::static_pointer_cast<Backend::PlayersSet>(result[0]);
-    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::string(u8"A"), std::string(u8"B"), std::string(u8"C"), std::string(u8"D"), std::string(u8"E"), std::string(u8"F"), std::string(u8"文字")));
-    EXPECT_STREQ(u8"C", playersSet->Dealer().c_str());
+    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::string("A"), std::string("B"), std::string("C"), std::string("D"), std::string("E"), std::string("F"), std::string("文字")));
+    EXPECT_STREQ("C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
-    EXPECT_STREQ(u8"Z", playersSet->PreviousDealer().c_str());
+    EXPECT_STREQ("Z", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());
     EXPECT_EQ(2, deal->NumberOfEvents().Value());
     auto changes = deal->Changes();
-    EXPECT_STREQ(u8"A", changes[0].first.c_str());
-    EXPECT_STREQ(u8"B", changes[1].first.c_str());
-    EXPECT_STREQ(u8"C", changes[2].first.c_str());
-    EXPECT_STREQ(u8"D", changes[3].first.c_str());
+    EXPECT_STREQ("A", changes[0].first.c_str());
+    EXPECT_STREQ("B", changes[1].first.c_str());
+    EXPECT_STREQ("C", changes[2].first.c_str());
+    EXPECT_STREQ("D", changes[3].first.c_str());
     EXPECT_EQ( 1, changes[0].second);
     EXPECT_EQ( 1, changes[1].second);
     EXPECT_EQ(-1, changes[2].second);

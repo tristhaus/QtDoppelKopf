@@ -25,7 +25,7 @@ GOOGLETEST_DIR = D:\\VSProject\\googletest
 include(gtest_dependency.pri)
 
 TEMPLATE = app
-CONFIG += console c++11 thread
+CONFIG += console c++20 thread
 CONFIG -= app_bundle
 
 HEADERS += \

@@ -152,13 +152,13 @@ namespace Backend
          * \brief Saves the state to the ID, which should be a filename.
          * \param id The identifier to save to.
          */
-        void SaveTo(const std::string& id) const;
+        void SaveTo(const std::u8string& id) const;
 
         /*!
          * \brief Load the persisted state from the ID, which should be a filename.
          * \param id The identifier to load from.
          */
-        void LoadFrom(const std::string& id);
+        void LoadFrom(const std::u8string& id);
 
         /*!
          * \brief Gets a value indicating whether any players are set in this instance.

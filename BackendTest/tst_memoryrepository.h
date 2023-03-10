@@ -32,31 +32,31 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries) //NOLINT (cert-err
     entries.push_back(std::make_shared<Backend::PlayersSet>(
                           std::vector<std::string>
                           {
-                              u8"A",
-                              u8"B",
-                              u8"C",
-                              u8"D",
-                              u8"E",
-                              u8"F",
-                              u8"文字",
+                              "A",
+                              "B",
+                              "C",
+                              "D",
+                              "E",
+                              "F",
+                              "文字",
                           },
-                          u8"C",
+                          "C",
                           std::set<unsigned int> { 2, 4 },
-                          u8"Z"));
+                          "Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::string, int>>
                           {
-                              std::make_pair<std::string, int>(u8"A", 1),
-                              std::make_pair<std::string, int>(u8"B", 1),
-                              std::make_pair<std::string, int>(u8"C", -1),
-                              std::make_pair<std::string, int>(u8"D", -1)
+                              std::make_pair<std::string, int>("A", 1),
+                              std::make_pair<std::string, int>("B", 1),
+                              std::make_pair<std::string, int>("C", -1),
+                              std::make_pair<std::string, int>("D", -1)
                           },
                           Backend::NumberOfEvents(2),
                           Backend::Players(7)));
     entries.push_back(std::make_shared<Backend::MandatorySoloTrigger>());
 
     MemoryRepository repo;
-    std::string id = u8"someId";
+    std::u8string id = u8"someId";
 
     // Act
     repo.Save(entries, id);
@@ -68,44 +68,44 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyStoreEntries) //NOLINT (cert-err
     ASSERT_TRUE(found);
 
     ASSERT_TRUE(persisted.length() > 0);
-    std::regex dataVersionRegex(u8R"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
+    std::regex dataVersionRegex(R"foo("dataVersion":"[0-9]+")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, dataVersionRegex));
 
-    std::regex playersSetKindRegex(u8R"foo("kind":"playersSet")foo", std::regex_constants::ECMAScript);
+    std::regex playersSetKindRegex(R"foo("kind":"playersSet")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, playersSetKindRegex));
-    std::regex playerNamesRegex(u8R"foo("playerNames":\["A","B","C","D","E","F","\\u6587\\u5B57"\])foo", std::regex_constants::ECMAScript);
+    std::regex playerNamesRegex(R"foo("playerNames":\["A","B","C","D","E","F","\\u6587\\u5B57"\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, playerNamesRegex));
-    std::regex dealerNameRegex(u8R"foo("dealerName":"C")foo", std::regex_constants::ECMAScript);
+    std::regex dealerNameRegex(R"foo("dealerName":"C")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, dealerNameRegex));
-    std::regex sitOutSchemeRegex(u8R"foo("sitOutScheme":\[2,4\])foo", std::regex_constants::ECMAScript);
+    std::regex sitOutSchemeRegex(R"foo("sitOutScheme":\[2,4\])foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, sitOutSchemeRegex));
-    std::regex previousDealerNameRegex(u8R"foo("previousDealerName":"Z")foo", std::regex_constants::ECMAScript);
+    std::regex previousDealerNameRegex(R"foo("previousDealerName":"Z")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, previousDealerNameRegex));
 
-    std::regex dealKindRegex(u8R"foo("kind":"deal")foo", std::regex_constants::ECMAScript);
+    std::regex dealKindRegex(R"foo("kind":"deal")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, dealKindRegex));
-    std::regex playersRegex(u8R"foo("players":7)foo", std::regex_constants::ECMAScript);
+    std::regex playersRegex(R"foo("players":7)foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, playersRegex));
-    std::regex numberOfEventsRegex(u8R"foo("numberOfEvents":2)foo", std::regex_constants::ECMAScript);
+    std::regex numberOfEventsRegex(R"foo("numberOfEvents":2)foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, numberOfEventsRegex));
-    std::regex changesRegex(u8R"foo("changes":\[\{)foo", std::regex_constants::ECMAScript);
+    std::regex changesRegex(R"foo("changes":\[\{)foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, sitOutSchemeRegex));
-    std::regex objectARegex(u8R"foo(\{"name":"A","diff":1\})foo", std::regex_constants::ECMAScript);
+    std::regex objectARegex(R"foo(\{"name":"A","diff":1\})foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, objectARegex));
-    std::regex objectBRegex(u8R"foo(\{"name":"B","diff":1\})foo", std::regex_constants::ECMAScript);
+    std::regex objectBRegex(R"foo(\{"name":"B","diff":1\})foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, objectBRegex));
-    std::regex objectCRegex(u8R"foo(\{"name":"C","diff":-1\})foo", std::regex_constants::ECMAScript);
+    std::regex objectCRegex(R"foo(\{"name":"C","diff":-1\})foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, objectCRegex));
-    std::regex objectDRegex(u8R"foo(\{"name":"D","diff":-1\})foo", std::regex_constants::ECMAScript);
+    std::regex objectDRegex(R"foo(\{"name":"D","diff":-1\})foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, objectDRegex));
 
-    std::regex mandatorySoloTriggerKindRegex(u8R"foo("kind":"mandatorySoloTrigger")foo", std::regex_constants::ECMAScript);
+    std::regex mandatorySoloTriggerKindRegex(R"foo("kind":"mandatorySoloTrigger")foo", std::regex_constants::ECMAScript);
     EXPECT_TRUE(std::regex_search(persisted, mandatorySoloTriggerKindRegex));
 }
 
 TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
-    std::string content(u8R"foo({
+    std::string content(R"foo({
     "dataVersion": "2",
     "data": [
         {
@@ -156,7 +156,7 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries) //NOLINT (cert-err5
 })foo");
 
     MemoryRepository repo;
-    std::string id = u8"someId";
+    std::u8string id = u8"someId";
     repo.SetByIdentifier(id, content);
 
     // Act
@@ -166,19 +166,19 @@ TEST(BackendTest, MemoryRepositoryShallCorrectlyLoadEntries) //NOLINT (cert-err5
     ASSERT_EQ(3, result.size());
 
     auto playersSet = std::static_pointer_cast<Backend::PlayersSet>(result[0]);
-    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::string(u8"A"), std::string(u8"B"), std::string(u8"C"), std::string(u8"D"), std::string(u8"E"), std::string(u8"F"), std::string(u8"G")));
-    EXPECT_STREQ(u8"C", playersSet->Dealer().c_str());
+    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::string("A"), std::string("B"), std::string("C"), std::string("D"), std::string("E"), std::string("F"), std::string("G")));
+    EXPECT_STREQ("C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
-    EXPECT_STREQ(u8"B", playersSet->PreviousDealer().c_str());
+    EXPECT_STREQ("B", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());
     EXPECT_EQ(2, deal->NumberOfEvents().Value());
     auto changes = deal->Changes();
-    EXPECT_STREQ(u8"A", changes[0].first.c_str());
-    EXPECT_STREQ(u8"B", changes[1].first.c_str());
-    EXPECT_STREQ(u8"C", changes[2].first.c_str());
-    EXPECT_STREQ(u8"D", changes[3].first.c_str());
+    EXPECT_STREQ("A", changes[0].first.c_str());
+    EXPECT_STREQ("B", changes[1].first.c_str());
+    EXPECT_STREQ("C", changes[2].first.c_str());
+    EXPECT_STREQ("D", changes[3].first.c_str());
     EXPECT_EQ( 1, changes[0].second);
     EXPECT_EQ( 1, changes[1].second);
     EXPECT_EQ(-1, changes[2].second);
@@ -196,31 +196,31 @@ TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly) //NOLINT (cert-er
     entries.push_back(std::make_shared<Backend::PlayersSet>(
                           std::vector<std::string>
                           {
-                              u8"A",
-                              u8"B",
-                              u8"C",
-                              u8"D",
-                              u8"E",
-                              u8"F",
-                              u8"文字",
+                              "A",
+                              "B",
+                              "C",
+                              "D",
+                              "E",
+                              "F",
+                              "文字",
                           },
-                          u8"C",
+                          "C",
                           std::set<unsigned int> { 2, 4 },
-                          u8"Z"));
+                          "Z"));
     entries.push_back(std::make_shared<Backend::Deal>(
                           std::vector<std::pair<std::string, int>>
                           {
-                              std::make_pair<std::string, int>(u8"A", 1),
-                              std::make_pair<std::string, int>(u8"B", 1),
-                              std::make_pair<std::string, int>(u8"C", -1),
-                              std::make_pair<std::string, int>(u8"D", -1)
+                              std::make_pair<std::string, int>("A", 1),
+                              std::make_pair<std::string, int>("B", 1),
+                              std::make_pair<std::string, int>("C", -1),
+                              std::make_pair<std::string, int>("D", -1)
                           },
                           Backend::NumberOfEvents(2),
                           Backend::Players(7)));
     entries.push_back(std::make_shared<Backend::MandatorySoloTrigger>());
 
     MemoryRepository repo;
-    std::string id = u8"someId";
+    std::u8string id = u8"someId";
 
     // Act
     repo.Save(entries, id);
@@ -230,19 +230,19 @@ TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly) //NOLINT (cert-er
     ASSERT_EQ(3, entries.size());
 
     auto playersSet = std::static_pointer_cast<Backend::PlayersSet>(result[0]);
-    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::string(u8"A"), std::string(u8"B"), std::string(u8"C"), std::string(u8"D"), std::string(u8"E"), std::string(u8"F"), std::string(u8"文字")));
-    EXPECT_STREQ(u8"C", playersSet->Dealer().c_str());
+    EXPECT_THAT(playersSet->Players(), ::testing::ElementsAre(std::string("A"), std::string("B"), std::string("C"), std::string("D"), std::string("E"), std::string("F"), std::string("文字")));
+    EXPECT_STREQ("C", playersSet->Dealer().c_str());
     EXPECT_THAT(playersSet->SitOutScheme(), ::testing::ElementsAre(2, 4));
-    EXPECT_STREQ(u8"Z", playersSet->PreviousDealer().c_str());
+    EXPECT_STREQ("Z", playersSet->PreviousDealer().c_str());
 
     auto deal = std::static_pointer_cast<Backend::Deal>(result[1]);
     EXPECT_EQ(7, deal->Players().Value());
     EXPECT_EQ(2, deal->NumberOfEvents().Value());
     auto changes = deal->Changes();
-    EXPECT_STREQ(u8"A", changes[0].first.c_str());
-    EXPECT_STREQ(u8"B", changes[1].first.c_str());
-    EXPECT_STREQ(u8"C", changes[2].first.c_str());
-    EXPECT_STREQ(u8"D", changes[3].first.c_str());
+    EXPECT_STREQ("A", changes[0].first.c_str());
+    EXPECT_STREQ("B", changes[1].first.c_str());
+    EXPECT_STREQ("C", changes[2].first.c_str());
+    EXPECT_STREQ("D", changes[3].first.c_str());
     EXPECT_EQ( 1, changes[0].second);
     EXPECT_EQ( 1, changes[1].second);
     EXPECT_EQ(-1, changes[2].second);
@@ -255,7 +255,7 @@ TEST(BackendTest, MemoryRepositoryRoundtripShallWorkCorrectly) //NOLINT (cert-er
 TEST(BackendTest, MemoryRepositoryShallThrowIfNoContentFound) //NOLINT (cert-err58-cpp, cppcoreguidelines-avoid-non-const-global-variables, cppcoreguidelines-owning-memory, fuchsia-statically-constructed-objects, misc-definitions-in-headers)
 {
     MemoryRepository repo;
-    std::string id = u8"someId ä 文字";
+    std::u8string id = u8"someId ä 文字";
 
     // Act, Assert
     EXPECT_THROW( //NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
@@ -266,7 +266,7 @@ TEST(BackendTest, MemoryRepositoryShallThrowIfNoContentFound) //NOLINT (cert-err
         }
         catch( const std::exception& e )
         {
-            EXPECT_STREQ(u8"content not found by identifier: \"someId ä 文字\"", e.what());
+            EXPECT_STREQ("content not found by identifier", e.what());
             throw;
         }
     }, std::exception);

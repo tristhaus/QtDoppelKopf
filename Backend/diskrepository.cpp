@@ -23,32 +23,32 @@
 Backend::DiskRepository::DiskRepository()
 = default;
 
-void Backend::DiskRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::string & identifier)
+void Backend::DiskRepository::Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::u8string & identifier)
 {
-    std::filesystem::path path = std::filesystem::u8path(identifier);
+    std::filesystem::path path = std::filesystem::path(identifier);
     std::ofstream ofs(path);
 
     if(!(ofs.is_open() && ofs.good()))
     {
-        throw std::exception((std::string(u8"unable to open stream for writing \"") + path.string() + std::string(u8"\"")).c_str());
+        throw std::exception((std::string("unable to open stream for writing \"") + path.string() + std::string("\"")).c_str());
     }
 
     deserializer.Serialize(entries, ofs);
 
     if(!(ofs.is_open() && ofs.good()))
     {
-        throw std::exception((std::string(u8"bad stream after writing \"") + path.string() + std::string(u8"\"")).c_str());
+        throw std::exception((std::string("bad stream after writing \"") + path.string() + std::string("\"")).c_str());
     }
 
     ofs.close();
 }
 
-std::vector<std::shared_ptr<Backend::Entry>> Backend::DiskRepository::Load(const std::string & identifier)
+std::vector<std::shared_ptr<Backend::Entry>> Backend::DiskRepository::Load(const std::u8string & identifier)
 {
-    std::filesystem::path path = std::filesystem::u8path(identifier);
+    std::filesystem::path path = std::filesystem::path(identifier);
     if(!std::filesystem::exists(path))
     {
-        throw std::exception((std::string(u8"file \"") + path.string() + std::string(u8"\" does not exist")).c_str());
+        throw std::exception((std::string("file \"") + path.string() + std::string("\" does not exist")).c_str());
     }
 
     std::ifstream ifs;
@@ -59,12 +59,12 @@ std::vector<std::shared_ptr<Backend::Entry>> Backend::DiskRepository::Load(const
     }
     catch (const std::exception& exception)
     {
-        throw std::exception((std::string(u8"when opening \"") + path.string() + std::string(u8"\" exception: \"") + exception.what() + std::string(u8"\"")).c_str());
+        throw std::exception((std::string("when opening \"") + path.string() + std::string("\" exception: \"") + exception.what() + std::string("\"")).c_str());
     }
 
     if(!(ifs.is_open() && ifs.good()))
     {
-        throw std::exception((std::string(u8"unable to open stream \"") + path.string() + std::string(u8"\" for reading")).c_str());
+        throw std::exception((std::string("unable to open stream \"") + path.string() + std::string("\" for reading")).c_str());
     }
 
     auto entries = deserializer.Deserialize(ifs);
