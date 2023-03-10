@@ -385,7 +385,7 @@ std::shared_ptr<Backend::Entry> Backend::DeSerializer::DeserializeDeal(const rap
 
         int diff = change[KeyChangeDiff].GetInt();
 
-        changes.emplace_back(std::pair<std::string, int>(name, diff));
+        changes.emplace_back(name, diff);
     }
 
     return std::make_shared<Deal>(changes, NumberOfEvents(numberOfEvents), Players(players));

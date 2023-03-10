@@ -42,7 +42,7 @@ Ui::PlayerSelection::PlayerSelection(unsigned int maxNumberOfPlayers,
 
 std::tuple<std::vector<QString>, QString, std::set<unsigned int>> Ui::PlayerSelection::GetResults() const
 {
-    return std::tuple<std::vector<QString>, QString, std::set<unsigned int>>(resultPlayers, resultDealer, resultSitOutScheme);
+    return {resultPlayers, resultDealer, resultSitOutScheme};
 }
 
 void Ui::PlayerSelection::SetupUi()

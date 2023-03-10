@@ -17,8 +17,8 @@
  */
 
 #include "../Backend/repository.h"
-#include "../Backend/entry.h"
 #include "../Backend/deserializer.h"
+#include "../Backend/entry.h"
 #include <map>
 
 #ifndef MEMORYREPOSITORY_H
@@ -43,12 +43,12 @@ public:
     /*!
      * \reimp
      */
-    virtual void Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::u8string & identifier);
+    void Save(const std::vector<std::shared_ptr<Backend::Entry>> & entries, const std::u8string & identifier) override;
 
     /*!
      * \reimp
      */
-    virtual std::vector<std::shared_ptr<Backend::Entry>> Load(const std::u8string & identifier);
+    std::vector<std::shared_ptr<Backend::Entry>> Load(const std::u8string & identifier) override;
 
     /*!
      * \brief Attempts to get the string stored under the identifier.

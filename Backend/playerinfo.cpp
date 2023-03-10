@@ -73,7 +73,7 @@ namespace Backend
 
     std::string PlayerInfo::InputInLastDeal() const
     {
-        return !this->dealInput.empty() ? this->dealInput.back() : std::string("");
+        return !this->dealInput.empty() ? this->dealInput.back() : std::string();
     }
 
     unsigned int PlayerInfo::CashCents() const
@@ -83,37 +83,35 @@ namespace Backend
 
     unsigned int PlayerInfo::NumberGamesWon() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](DealResult item){ return item.HasPlayedInDeal && item.UnmultipliedScore > 0; }));
+        return static_cast<unsigned int>(std::ranges::count_if(this->dealResults, [](DealResult item){ return item.HasPlayedInDeal && item.UnmultipliedScore > 0; }));
     }
 
     unsigned int PlayerInfo::NumberGamesLost() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](DealResult item){ return item.HasPlayedInDeal && item.UnmultipliedScore < 0; }));
+        return static_cast<unsigned int>(std::ranges::count_if(this->dealResults, [](DealResult item){ return item.HasPlayedInDeal && item.UnmultipliedScore < 0; }));
     }
 
     unsigned int PlayerInfo::NumberGames() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(), this->dealResults.end(), [](DealResult item){ return item.HasPlayedInDeal; }));
+        return static_cast<unsigned int>(std::ranges::count_if(this->dealResults, [](DealResult item){ return item.HasPlayedInDeal; }));
     }
 
     unsigned int PlayerInfo::SolosWon() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(),
-                                                       this->dealResults.end(),
-                                                       [](DealResult item)
-                                                       {
-                                                          return item.HasPlayedInDeal && item.PlayedSolo && item.UnmultipliedScore > 0;
-                                                       }));
+        return static_cast<unsigned int>(std::ranges::count_if(this->dealResults,
+                                                               [](DealResult item)
+                                                               {
+                                                                  return item.HasPlayedInDeal && item.PlayedSolo && item.UnmultipliedScore > 0;
+                                                               }));
     }
 
     unsigned int PlayerInfo::SolosLost() const
     {
-        return static_cast<unsigned int>(std::count_if(this->dealResults.begin(),
-                                                       this->dealResults.end(),
-                                                       [](DealResult item)
-                                                       {
-                                                          return item.HasPlayedInDeal && item.PlayedSolo && item.UnmultipliedScore < 0;
-                                                       }));
+        return static_cast<unsigned int>(std::ranges::count_if(this->dealResults,
+                                                               [](DealResult item)
+                                                               {
+                                                                  return item.HasPlayedInDeal && item.PlayedSolo && item.UnmultipliedScore < 0;
+                                                               }));
     }
 
     int PlayerInfo::TotalSoloPoints() const
@@ -138,7 +136,7 @@ namespace Backend
             return 0;
         }
 
-        return std::max(0, *std::max_element(this->multipliedResults.begin(), this->multipliedResults.end()));
+        return std::max(0, *std::ranges::max_element(this->multipliedResults));
     }
 
     int PlayerInfo::MaxSingleLoss() const
@@ -148,18 +146,15 @@ namespace Backend
             return 0;
         }
 
-        return std::min(0, *std::min_element(this->multipliedResults.begin(), this->multipliedResults.end()));
+        return std::min(0, *std::ranges::min_element(this->multipliedResults));
     }
 
     int PlayerInfo::UnmultipliedScore() const
     {
-        int sum = 0;
-
-        std::for_each(this->dealResults.begin(),
-                      this->dealResults.end(),
-                      [&sum](DealResult item) { sum += item.UnmultipliedScore; } );
-
-        return sum;
+        return std::accumulate(this->dealResults.begin(),
+                               this->dealResults.end(),
+                               0,
+                               [](int total, DealResult item) { total += item.UnmultipliedScore; return total; });
     }
 
     std::vector<int> PlayerInfo::ScoreHistory() const

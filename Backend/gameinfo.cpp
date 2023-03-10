@@ -33,7 +33,7 @@ namespace Backend
 
     std::vector<std::shared_ptr<PlayerInfo>> GameInfo::PlayerInfos() const
     {
-        return std::vector<std::shared_ptr<PlayerInfo>>(this->playerInfos.begin(), this->playerInfos.end());
+        return { this->playerInfos.begin(), this->playerInfos.end() };
     }
 
     std::shared_ptr<PlayerInfo> GameInfo::Dealer() const
@@ -87,7 +87,7 @@ namespace Backend
         this->ReconstructEventsForMultiplierInfo();
     }
 
-    GameInfo::PoppableEntry GameInfo::LastPoppableEntry()
+    GameInfo::PoppableEntry GameInfo::LastPoppableEntry() const
     {
         if(this->entries.size() < 2)
         {
@@ -143,7 +143,7 @@ namespace Backend
             }
 
             auto relevantInitialDealerName = std::static_pointer_cast<Backend::PlayersSet>(*relevantPlayerSetEntry)->Dealer();
-            auto relevantInitialDealerInfo = std::find_if(this->playerInfos.begin(), this->playerInfos.end(), [&relevantInitialDealerName](const std::shared_ptr<PlayerInfoInternal>& playerInfo) { return playerInfo->Name() == relevantInitialDealerName; });
+            auto relevantInitialDealerInfo = std::ranges::find_if(this->playerInfos, [&relevantInitialDealerName](const std::shared_ptr<PlayerInfoInternal>& playerInfo) { return playerInfo->Name() == relevantInitialDealerName; });
             if(relevantInitialDealerInfo == this->playerInfos.end())
             {
                 throw std::exception("must never happen 3");
@@ -153,11 +153,9 @@ namespace Backend
         }
         else if(entry->Kind() == Entry::Kind::Deal)
         {
-            auto playerInfosIt = this->playerInfos.begin();
-            auto playerInfosEnd = this->playerInfos.end();
-            for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+            for(const auto & playerInfosIt : this->playerInfos)
             {
-                (*playerInfosIt)->PopLastDealResult();
+                playerInfosIt->PopLastDealResult();
             }
 
             this->currentDealerIndex = (this->currentDealerIndex - 1 + this->numberOfPresentPlayers) % this->numberOfPresentPlayers;
@@ -235,10 +233,9 @@ namespace Backend
 
     bool GameInfo::HasPlayersSet() const
     {
-        return std::find_if(
-                    this->entries.begin(),
-                    this->entries.end(),
-                    [](const std::shared_ptr<Entry>& entry) { return entry->Kind() == Entry::Kind::PlayersSet; }) != this->entries.end();
+        return std::ranges::any_of(
+                    this->entries,
+                    [](const std::shared_ptr<Entry>& entry) { return entry->Kind() == Entry::Kind::PlayersSet; });
     }
 
     std::vector<unsigned int> GameInfo::MultiplierPreview() const
@@ -263,11 +260,14 @@ namespace Backend
 
     unsigned int GameInfo::TotalCashCents() const
     {
-        auto sum = std::accumulate(this->playerInfos.begin(),
-                                  this->playerInfos.end(),
-                                  0,
-                                  [](unsigned int total, const std::shared_ptr<PlayerInfoInternal>& player){ total += player->CashCents(); return total; });
-        sum += (MaxPlayers - static_cast<int>(this->playerInfos.size())) * this->AbsentPlayerCashCents();
+        auto absentPlayersContribution = (MaxPlayers - static_cast<unsigned int>(this->playerInfos.size())) * this->AbsentPlayerCashCents();
+
+        auto sum = std::accumulate(
+                    this->playerInfos.begin(),
+                    this->playerInfos.end(),
+                    absentPlayersContribution,
+                    [](unsigned int total, const std::shared_ptr<PlayerInfoInternal>& player){ total += player->CashCents(); return total; });
+
         return sum;
     }
 
@@ -300,9 +300,8 @@ namespace Backend
 
     void Backend::GameInfo::SetPlayersInternal(const std::shared_ptr<PlayersSet>& playersSet)
     {
-        bool dealerFound = false;
         auto players = playersSet->Players();
-        auto dealer = playersSet->Dealer();
+        const auto & dealer = playersSet->Dealer();
         const auto playersSize = players.size();
 
         if(playersSize < 4U)
@@ -310,28 +309,18 @@ namespace Backend
             throw std::exception("not enough players");
         }
 
-        for(size_t i = 0; i < playersSize; ++i)
-        {
-            if(dealer == players[i])
-            {
-                dealerFound = true;
-            }
-
-            for(size_t j = i + 1; j < playersSize; ++j)
-            {
-                if(players[i] == players[j])
-                {
-                    throw std::exception((std::string("names must be unique, offender: \"") + players[i] + std::string("\"")).c_str());
-                }
-            }
-        }
-
-        if(!dealerFound)
+        if(!std::ranges::any_of(players, [&](const auto & player){ return dealer == player; }))
         {
             throw std::exception("name of dealer must be among the players");
         }
 
-        const unsigned int playersSetSizeRequiringSitoutScheme = 5U;
+        std::ranges::sort(players);
+        if(auto duplicatedName = std::ranges::adjacent_find(players); duplicatedName != players.end())
+        {
+            throw std::exception((std::string("names must be unique, offender: \"") + *duplicatedName + std::string("\"")).c_str());
+        }
+
+        constexpr unsigned int playersSetSizeRequiringSitoutScheme = 5U;
         if(playersSize > playersSetSizeRequiringSitoutScheme && playersSet->SitOutScheme().size() + playersSetSizeRequiringSitoutScheme != playersSize)
         {
             throw std::exception("incorrect size of the sit out scheme");
@@ -343,60 +332,55 @@ namespace Backend
         this->SetAndApplyScheme(playersSet->SitOutScheme());
     }
 
-    void GameInfo::SortAndSetPlayerInfos(std::vector<std::string> players)
+    void GameInfo::SortAndSetPlayerInfos(const std::vector<std::string>& players)
     {
         this->numberOfPresentPlayers = static_cast<unsigned int>(players.size());
 
         std::vector<std::shared_ptr<PlayerInfoInternal>> newInfos;
 
-        auto playersIt = players.begin();
-        auto playersEnd = players.end();
-        for(; playersIt != playersEnd; ++playersIt)
+        for(const auto & playerName : players)
         {
-            if(this->nameToPlayerInfo.count(*playersIt) == 0)
+            if(!this->nameToPlayerInfo.contains(playerName))
             {
-                auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(*playersIt,
+                auto newPlayerInfo = std::make_shared<PlayerInfoInternal>(playerName,
                                                                           [&](unsigned int index){ return this->multiplierInfo.GetMultiplier(index); },
                                                                           [&](){ return this->MaximumCurrentScore(); });
-                while(newPlayerInfo->NumberOfRecordedDeals() < this->DealsRecorded())
+
+                auto iterations = this->DealsRecorded();
+                while(iterations--)
                 {
                     newPlayerInfo->PushDealResult(false, 0, false);
                 }
 
-                this->nameToPlayerInfo[*playersIt] = newPlayerInfo;
+                this->nameToPlayerInfo[playerName] = newPlayerInfo;
             }
 
-            auto currentPlayerInfo = this->nameToPlayerInfo[*playersIt];
+            auto currentPlayerInfo = this->nameToPlayerInfo[playerName];
             currentPlayerInfo->SetIsPresent(true);
             newInfos.push_back(currentPlayerInfo);
         }
 
-        auto playerInfosIt = this->playerInfos.begin();
-        auto playerInfosEnd = this->playerInfos.end();
-        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        for(const auto & playerInfo : playerInfos)
         {
+            auto isActivePlayer = std::ranges::any_of(
+                        players,
+                        [&](const std::string& player){ return player == playerInfo->Name(); });
 
-            auto playerIt = std::find_if(
-                        players.begin(),
-                        players.end(),
-                        [&](const std::string& player){ return player == (*playerInfosIt)->Name(); });
-
-            if(playerIt == players.end() && (*playerInfosIt)->HasPlayed())
+            if(!isActivePlayer && playerInfo->HasPlayed())
             {
-                (*playerInfosIt)->SetIsPresent(false);
-                (*playerInfosIt)->SetIsPlaying(false);
-                newInfos.push_back(*playerInfosIt);
+                playerInfo->SetIsPresent(false);
+                playerInfo->SetIsPlaying(false);
+                newInfos.push_back(playerInfo);
             }
         }
 
         this->playerInfos = newInfos;
     }
 
-    void GameInfo::SetDealer(std::string dealer)
+    void GameInfo::SetDealer(const std::string& dealer)
     {
-        auto dealerIt = std::find_if(
-                    this->playerInfos.begin(),
-                    this->playerInfos.end(),
+        auto dealerIt = std::ranges::find_if(
+                    this->playerInfos,
                     [&](const std::shared_ptr<PlayerInfoInternal>& pi){ return pi->Name() == dealer; });
 
         if(dealerIt == this->playerInfos.end())
@@ -407,9 +391,9 @@ namespace Backend
         this->currentDealerIndex = static_cast<unsigned int>(dealerIt - this->playerInfos.begin());
     }
 
-    void GameInfo::SetAndApplyScheme(std::set<unsigned int> newScheme)
+    void GameInfo::SetAndApplyScheme(const std::set<unsigned int>& newScheme)
     {
-        this->sitOutScheme = std::move(newScheme);
+        this->sitOutScheme = newScheme;
 
         if(this->numberOfPresentPlayers > 4)
         {
@@ -423,7 +407,7 @@ namespace Backend
     {
         for(unsigned int i = this->currentDealerIndex; i < this->currentDealerIndex + this->numberOfPresentPlayers; ++i)
         {
-            bool isPlaying = this->sitOutScheme.count(i - this->currentDealerIndex) == 0;
+            bool isPlaying = !this->sitOutScheme.contains(i - this->currentDealerIndex);
 
             this->playerInfos[i % this->numberOfPresentPlayers]->SetIsPlaying(isPlaying);
         }
@@ -436,22 +420,20 @@ namespace Backend
 
         std::string soloPlayer = GameInfo::FindSoloPlayer(actualChanges);
 
-        auto changesIt = actualChanges.begin();
-        auto changesEnd = actualChanges.end();
-        for(; changesIt != changesEnd; ++changesIt)
+        for(const auto & change : actualChanges)
         {
-            auto player = this->nameToPlayerInfo.at(changesIt->first);
+            auto player = this->nameToPlayerInfo.at(change.first);
 
             if(!player->IsPlaying())
             {
                 throw std::exception((std::string("found change for player not playing: \"") + player->Name() + std::string("\"")).c_str());
             }
 
-            player->PushDealResult(true, changesIt->second, player->Name() == soloPlayer);
+            player->PushDealResult(true, change.second, player->Name() == soloPlayer);
 
             player->SetHasPlayed(true);
 
-            auto relevantChange = std::find_if(changes.begin(), changes.end(), [&](const std::pair<std::string, int>& change){ return change.first == player->Name(); });
+            auto relevantChange = std::ranges::find_if(changes, [&](const std::pair<std::string, int>& change){ return change.first == player->Name(); });
             if(relevantChange != changes.end())
             {
                 player->SetInputInDeal(std::to_string(relevantChange->second));
@@ -462,20 +444,18 @@ namespace Backend
             }
         }
 
-        auto playerInfosIt = this->playerInfos.begin();
-        auto playerInfosEnd = this->playerInfos.end();
-        for(; playerInfosIt != playerInfosEnd; ++playerInfosIt)
+        for(const auto & playerInfo : this->playerInfos)
         {
-            if(!(*playerInfosIt)->IsPlaying())
+            if(!playerInfo->IsPlaying())
             {
-                (*playerInfosIt)->PushDealResult(false, 0, false);
-                (*playerInfosIt)->SetInputInDeal(std::string(""));
+                playerInfo->PushDealResult(false, 0, false);
+                playerInfo->SetInputInDeal(std::string(""));
             }
         }
 
         this->currentDealerIndex = (this->currentDealerIndex + 1) % this->numberOfPresentPlayers;
 
-        EventInfo eventInfo { deal->NumberOfEvents(), Players(this->numberOfPresentPlayers), ::Backend::MandatorySolo(false) };
+        EventInfo eventInfo { deal->NumberOfEvents(), Players(this->numberOfPresentPlayers), Backend::MandatorySolo(false) };
         this->multiplierInfo.PushDeal(eventInfo);
 
         this->ApplyScheme();
@@ -483,12 +463,10 @@ namespace Backend
 
     std::vector<std::pair<std::string, int>> GameInfo::AutoCompleteDeal(std::vector<std::pair<std::string, int>> inputChanges)
     {
-        auto changesIt = inputChanges.begin();
-        auto changesEnd = inputChanges.end();
         if(inputChanges.size() == 4)
         {
-            int checksum = std::accumulate(changesIt,
-                                           changesEnd,
+            int checksum = std::accumulate(inputChanges.begin(),
+                                           inputChanges.end(),
                                            0,
                                            [](int s, const std::pair<std::string, int>& c){ s += c.second; return s; });
             if(checksum != 0)
@@ -507,14 +485,14 @@ namespace Backend
         int found = 0;
         int instances = 0;
 
-        for(; changesIt != changesEnd; ++changesIt)
+        for(const auto & changesIt : inputChanges)
         {
             if(instances == 0)
             {
-                found = changesIt->second;
+                found = changesIt.second;
                 ++instances;
             }
-            else if(found == changesIt->second)
+            else if(found == changesIt.second)
             {
                 ++instances;
             }
@@ -523,29 +501,26 @@ namespace Backend
                 throw std::exception("unable to complete the changes from the information given");
             }
 
-            newChanges.push_back(*changesIt);
+            newChanges.push_back(changesIt);
         }
 
         int valueToSet = - (instances * found) / (4 - static_cast<int>(inputChanges.size()));
 
         auto playersIt = this->playerInfos.begin();
         auto playersEnd = this->playerInfos.end();
-        for(; playersIt != playersEnd; ++playersIt)
+        for(const auto & playersIt : this->playerInfos)
         {
-            if(!(*playersIt)->IsPlaying())
+            if(!playersIt->IsPlaying())
             {
                 continue;
             }
 
-            auto changeIt = std::find_if(inputChanges.begin(),
-                                         changesEnd,
-                                         [&](const std::pair<std::string, int>& change){ return change.first == (*playersIt)->Name(); });
-            if(changeIt != changesEnd)
+            if(std::ranges::any_of(inputChanges, [&](const std::pair<std::string, int>& change){ return change.first == playersIt->Name(); }))
             {
                 continue;
             }
 
-            newChanges.emplace_back(std::pair<std::string, int>((*playersIt)->Name(), valueToSet));
+            newChanges.emplace_back(playersIt->Name(), valueToSet);
         }
 
         return newChanges;
@@ -583,7 +558,7 @@ namespace Backend
         }
         else
         {
-            return std::string();
+            return {};
         }
     }
 
@@ -594,8 +569,7 @@ namespace Backend
             return 0;
         }
 
-        return (*std::max_element(this->playerInfos.begin(),
-                                  this->playerInfos.end(),
+        return (*std::ranges::max_element(this->playerInfos,
                                   [](const std::shared_ptr<PlayerInfoInternal>& p1, const std::shared_ptr<PlayerInfoInternal>& p2){ return p1->CurrentScore() < p2->CurrentScore(); }))->CurrentScore();
     }
 
@@ -635,9 +609,8 @@ namespace Backend
 
     unsigned int GameInfo::DealsRecorded() const
     {
-        return static_cast<unsigned int>(std::count_if(
-                                             this->entries.begin(),
-                                             this->entries.end(),
+        return static_cast<unsigned int>(std::ranges::count_if(
+                                             this->entries,
                                              [](const std::shared_ptr<Entry>& entry) { return entry->Kind() == Entry::Kind::Deal; }));
     }
 

@@ -22,7 +22,6 @@
 #include "deal.h"
 #include "diskrepository.h"
 #include "entry.h"
-#include "eventinfo.h"
 #include "mandatorysolotrigger.h"
 #include "multiplierinfo.h"
 #include "playerinfo.h"
@@ -141,7 +140,7 @@ namespace Backend
          * \brief Gets whether and what can be popped from the entries.
          * \return A value indicating whether and what can be popped from the entries.
          */
-        PoppableEntry LastPoppableEntry();
+        [[nodiscard]] PoppableEntry LastPoppableEntry() const;
 
         /*!
          * \brief Removes the last entry from the collection of deals.
@@ -204,9 +203,9 @@ namespace Backend
 
     private:
         void SetPlayersInternal(const std::shared_ptr<PlayersSet>& playersSet);
-        void SortAndSetPlayerInfos(std::vector<std::string> players);
-        void SetDealer(std::string dealer);
-        void SetAndApplyScheme(std::set<unsigned int> newScheme);
+        void SortAndSetPlayerInfos(const std::vector<std::string>& players);
+        void SetDealer(const std::string& dealer);
+        void SetAndApplyScheme(const std::set<unsigned int>& newScheme);
         void ApplyScheme();
         void PushDealInternal(const std::shared_ptr<Deal>& deal);
         std::vector<std::pair<std::string, int>> AutoCompleteDeal(std::vector<std::pair<std::string, int>> inputChanges);

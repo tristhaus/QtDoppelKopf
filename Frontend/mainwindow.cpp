@@ -236,7 +236,7 @@ void MainWindow::ShowPlayerSelection()
 
         for(const auto & playerInfo : playerInfos)
         {
-            currentPlayers.emplace_back(std::pair<QString, bool>(QString::fromUtf8(playerInfo->Name()), playerInfo->IsPresent()));
+            currentPlayers.emplace_back(QString::fromUtf8(playerInfo->Name()), playerInfo->IsPresent());
         }
 
         std::string dealerName = gameInfo.Dealer()->Name();
