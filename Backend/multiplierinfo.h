@@ -31,8 +31,58 @@ namespace Backend
     class MultiplierInfo
     {
     private:
+        template<typename T>
+        class SparseVector{
+        private:
+            std::vector<T> data;
+
+        public:
+            T& at(const unsigned int index)
+            {
+                this->ensureSizeOfAtLeast(index + 1);
+
+                return this->data.at(index);
+            }
+
+            [[nodiscard]] const T at(const unsigned int index) const
+            {
+                return index < data.size()
+                        ? this->data.at(index)
+                        : T{};
+            }
+
+            void insert(const unsigned int index, const unsigned int count, const T & value)
+            {
+                this->ensureSizeOfAtLeast(index + 1);
+
+                this->data.insert(data.begin() + index, count, value);
+            }
+
+            void clear()
+            {
+                this->data.clear();
+            }
+
+            unsigned int countAfter(const unsigned int index, const T & value) const
+            {
+                return index < data.size()
+                        ? static_cast<unsigned int>(std::count(this->data.begin() + index, this->data.end(), value))
+                        : 0U;
+            }
+
+        private:
+            void ensureSizeOfAtLeast(const unsigned int targetSize)
+            {
+                const auto oldSize = this->data.size();
+                if(oldSize <= targetSize)
+                {
+                    this->data.insert(this->data.end(), targetSize - oldSize, T{});
+                }
+            }
+        };
+
         unsigned int dealIndex;
-        std::vector<std::pair<unsigned short, bool>> effective; //NOLINT(google-runtime-int)
+        SparseVector<std::pair<unsigned short, bool>> effective; //NOLINT(google-runtime-int)
 
     public:
         /*!

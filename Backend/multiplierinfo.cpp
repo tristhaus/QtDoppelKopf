@@ -24,52 +24,31 @@
 Backend::MultiplierInfo::MultiplierInfo()
     : dealIndex(0)
 {
-    this->effective.emplace_back(0U, false);
 }
 
 void Backend::MultiplierInfo::PushDeal(const Backend::EventInfo & eventInfo)
 {
-    auto GrowEffective = [this](unsigned int minIndex)
-    {
-        while(minIndex >= this->effective.size())
-        {
-            this->effective.emplace_back(0U, false);
-        }
-    };
-
     unsigned int effectiveIndex = this->dealIndex + 1;
-
-    GrowEffective(effectiveIndex);
 
     if(eventInfo.mandatorySolo)
     {
-        for(unsigned int iter = 0; iter < eventInfo.players.Value(); ++iter)
-        {
-            this->effective.insert(this->effective.begin() + effectiveIndex, std::make_pair(0U, true));
-            ++effectiveIndex;
-        }
+        this->effective.insert(effectiveIndex, eventInfo.players.Value(), std::make_pair(0U, true));
     }
 
-    unsigned int baseIndex = effectiveIndex;
+    const unsigned int baseIndex = effectiveIndex;
 
     for(unsigned int event = 0; event < eventInfo.number.Value(); ++event)
     {
         effectiveIndex = baseIndex;
 
-        GrowEffective(effectiveIndex);
-
-        while(this->effective[effectiveIndex].first == 3U)
+        while(this->effective.at(effectiveIndex).first == 3U || this->effective.at(effectiveIndex).second)
         {
             ++effectiveIndex;
-
-            GrowEffective(effectiveIndex);
         }
 
         for(unsigned int iter = 0; iter < eventInfo.players.Value(); ++iter)
         {
-            GrowEffective(effectiveIndex);
-
-            this->effective[effectiveIndex++].first++;
+            this->effective.at(effectiveIndex++).first++;
         }
     }
 
@@ -80,7 +59,6 @@ void Backend::MultiplierInfo::ResetTo(const std::vector<EventInfo> & events)
 {
     this->effective.clear();
     this->dealIndex = 0;
-    this->effective.emplace_back(0U, false);
 
     for (const auto & event : events)
     {
@@ -92,12 +70,7 @@ void Backend::MultiplierInfo::ResetTo(const std::vector<EventInfo> & events)
 
 unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int & index) const //NOLINT(google-runtime-int)
 {
-    if(this->effective.size() <= index)
-    {
-        throw std::exception((std::string("attempt to get multiplier for game ") + std::to_string(index) + std::string(" which does not exist")).c_str());
-    }
-
-    switch (this->effective[index].first)
+    switch (this->effective.at(index).first)
     {
     case 3:
         return 8U; //NOLINT(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
@@ -108,26 +81,26 @@ unsigned short Backend::MultiplierInfo::GetMultiplier(const unsigned int & index
     case 0:
         return 1U; //NOLINT(cppcoreguidelines-avoid-magic-numbers, readability-magic-numbers)
     default:
-        throw std::exception((std::string("not supported bock of ") + std::to_string(static_cast<unsigned int>(this->effective[index].first))).c_str());
+        throw std::exception((std::string("not supported bock of ") + std::to_string(static_cast<unsigned int>(this->effective.at(index).first))).c_str());
     }
 }
 
 bool Backend::MultiplierInfo::GetIsMandatorySolo(const unsigned int & index) const
 {
-    if(this->effective.size() <= index)
-    {
-        throw std::exception((std::string("attempt to get mandatory solo for game ") + std::to_string(index) + std::string(" which does not exist")).c_str());
-    }
-
-    return this->effective[index].second;
+    return this->effective.at(index).second;
 }
 
 std::vector<unsigned int> Backend::MultiplierInfo::GetPreview() const
 {
+    const auto getCount = [&](const unsigned int exponent) -> unsigned int
+    {
+        return this->effective.countAfter(this->dealIndex, std::pair<unsigned short, bool>(exponent, false)); //NOLINT(google-runtime-int)
+    };
+
     return std::vector<unsigned int>
     {
-        static_cast<unsigned int>(std::count(this->effective.begin() + this->dealIndex, this->effective.end(), std::pair<unsigned short, bool>(1U, false))), //NOLINT(google-runtime-int)
-        static_cast<unsigned int>(std::count(this->effective.begin() + this->dealIndex, this->effective.end(), std::pair<unsigned short, bool>(2U, false))), //NOLINT(google-runtime-int)
-        static_cast<unsigned int>(std::count(this->effective.begin() + this->dealIndex, this->effective.end(), std::pair<unsigned short, bool>(3U, false)))  //NOLINT(google-runtime-int)
+        getCount(1U),
+        getCount(2U),
+        getCount(3U)
     };
 }
